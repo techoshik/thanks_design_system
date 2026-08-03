@@ -67,6 +67,37 @@ void main() {
 
     expect(tester.getSize(find.byType(PillSelector<int>)).width, 320);
   });
+
+  testWidgets('ThanksScaffold applies its default page padding',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          body: SizedBox(key: Key('body'), width: 10, height: 10),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getTopLeft(find.byKey(const Key('body'))),
+      const Offset(ThanksSpacing.large, ThanksSpacing.large),
+    );
+  });
+
+  testWidgets('ThanksScaffold can leave body padding to a scroll view', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          applyBodyPadding: false,
+          body: SizedBox(key: Key('body'), width: 10, height: 10),
+        ),
+      ),
+    );
+
+    expect(tester.getTopLeft(find.byKey(const Key('body'))), Offset.zero);
+  });
 }
 
 String _label(int value) => '$value';
