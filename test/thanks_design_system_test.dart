@@ -44,4 +44,30 @@ void main() {
     expect(plainHeight, greaterThanOrEqualTo(ThanksSpacing.inputHeight));
     expect(iconHeight, plainHeight);
   });
+
+  testWidgets('expanded pill selector fills the available width',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: Scaffold(
+          body: SizedBox(
+            width: 320,
+            child: PillSelector<int>(
+              options: const [1, 2, 3],
+              labelBuilder: _label,
+              selected: 1,
+              onChanged: _noop,
+              isExpanded: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(PillSelector<int>)).width, 320);
+  });
 }
+
+String _label(int value) => '$value';
+void _noop(int? value) {}

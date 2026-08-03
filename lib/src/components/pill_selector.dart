@@ -35,6 +35,7 @@ class PillSelector<T> extends StatelessWidget {
         : height ?? ThanksSpacing.inputHeight - 4;
 
     return SizedBox(
+      width: isExpanded ? double.infinity : null,
       height: pillHeight,
       child: Card(
         shape: StadiumBorder(
@@ -48,23 +49,70 @@ class PillSelector<T> extends StatelessWidget {
             mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
             children: options.map((option) {
               final isSelected = selected == option;
-              final chip = ChoiceChip(
-                label: Text(labelBuilder(option)),
-                avatar: isSelected ? null : iconBuilder?.call(option),
-                selected: isSelected,
-                onSelected: (_) => onChanged(isSelected ? null : option),
-                shape: const StadiumBorder(),
-                selectedColor: colorScheme.primary,
-                backgroundColor: colorScheme.surfaceContainer,
-                checkmarkColor: colorScheme.onPrimary,
-                labelStyle: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: isSelected
-                          ? colorScheme.onPrimary
-                          : colorScheme.onSurface,
-                    ),
-                side: BorderSide.none,
-              );
-              return isExpanded ? Expanded(child: chip) : chip;
+              return isExpanded
+                  ? Expanded(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(pillHeight),
+                          onTap: () => onChanged(isSelected ? null : option),
+                          child: Container(
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? colorScheme.primary
+                                  : colorScheme.surfaceContainer,
+                              borderRadius: BorderRadius.circular(pillHeight),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isSelected)
+                                  Icon(
+                                    Icons.check,
+                                    size: 18,
+                                    color: colorScheme.onPrimary,
+                                  )
+                                else if (iconBuilder != null)
+                                  iconBuilder!(option),
+                                if (isSelected || iconBuilder != null)
+                                  const SizedBox(width: 6),
+                                Text(
+                                  labelBuilder(option),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: isSelected
+                                            ? colorScheme.onPrimary
+                                            : colorScheme.onSurface,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : ChoiceChip(
+                      label: Text(labelBuilder(option)),
+                      avatar: isSelected ? null : iconBuilder?.call(option),
+                      selected: isSelected,
+                      onSelected: (_) => onChanged(isSelected ? null : option),
+                      shape: const StadiumBorder(),
+                      selectedColor: colorScheme.primary,
+                      backgroundColor: colorScheme.surfaceContainer,
+                      checkmarkColor: colorScheme.onPrimary,
+                      labelStyle:
+                          Theme.of(context).textTheme.titleSmall?.copyWith(
+                                color: isSelected
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurface,
+                              ),
+                      side: BorderSide.none,
+                    );
             }).toList(),
           ),
         ),
