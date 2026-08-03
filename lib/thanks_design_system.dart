@@ -9,5 +9,3 @@ export 'src/foundations/spacing.dart';
 export 'src/foundations/theme.dart';
 export 'src/foundations/typography.dart';
 export 'src/layout/app_grid.dart';
-export 'src/layout/responsive_section.dart';
-export 'src/layout/section.dart';
