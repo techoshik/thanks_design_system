@@ -9,3 +9,4 @@ export 'src/foundations/spacing.dart';
 export 'src/foundations/theme.dart';
 export 'src/foundations/typography.dart';
 export 'src/layout/app_grid.dart';
+export 'src/components/pill_selector.dart';
