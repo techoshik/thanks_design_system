@@ -11,6 +11,7 @@ void main() {
     expect(theme.visualDensity, VisualDensity.compact);
     expect(ThanksSpacing.inputHeight, 40);
     expect(ThanksSpacing.buttonHeight, 32);
+    expect(theme.iconTheme.size, 20);
     expect(ThanksSpacing.radiusSmall, 8);
     expect(
       theme.textTheme.bodyMedium?.fontFamily,
@@ -312,17 +313,22 @@ void main() {
     final paddings = tester.widgetList<SliverPadding>(
       find.byType(SliverPadding),
     );
-    const sectionMargin = EdgeInsets.fromLTRB(
+    const headerMargin = EdgeInsets.fromLTRB(
+      ThanksSpacing.large,
+      ThanksSpacing.small,
+      ThanksSpacing.large,
+      0,
+    );
+    const filterMargin = EdgeInsets.fromLTRB(
       ThanksSpacing.large,
       ThanksSpacing.large,
       ThanksSpacing.large,
       0,
     );
 
-    expect(
-      paddings.where((padding) => padding.padding == sectionMargin),
-      hasLength(2),
-    );
+    expect(paddings, hasLength(2));
+    expect(paddings.first.padding, headerMargin);
+    expect(paddings.last.padding, filterMargin);
   });
 
   testWidgets('ThanksScaffold doubles horizontal gutters above tablet', (
@@ -379,10 +385,11 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
+        theme: ThanksTheme.light(),
         home: MediaQuery(
-          data: MediaQueryData(size: Size(375, 800)),
-          child: ThanksScaffold(
+          data: const MediaQueryData(size: Size(375, 800)),
+          child: const ThanksScaffold(
             title: 'Invoices',
             filters: [Text('Open'), Text('Overdue')],
           ),
@@ -392,7 +399,9 @@ void main() {
 
     expect(find.text('Open'), findsNothing);
     expect(
-      tester.widget<Icon>(find.byIcon(Icons.filter_list_rounded)).size,
+      IconTheme.of(
+        tester.element(find.byIcon(Icons.filter_list_rounded)),
+      ).size,
       20,
     );
     await tester.tap(find.byIcon(Icons.filter_list_rounded));
@@ -459,6 +468,10 @@ void main() {
     final morePosition = tester.getTopLeft(find.byIcon(Icons.more_vert));
 
     expect(
+      tester.getTopLeft(find.text('Home')).dy,
+      ThanksSpacing.small + ThanksSpacing.buttonHeight,
+    );
+    expect(
       morePosition.dx - searchPosition.dx,
       24 + ThanksSpacing.small,
     );
@@ -490,17 +503,54 @@ void main() {
     );
 
     expect(find.byIcon(Icons.arrow_back), findsOneWidget);
-    expect(find.byType(OutlinedButton), findsOneWidget);
+    expect(find.byType(TextButton), findsOneWidget);
     expect(find.text('Back to Invoices'), findsOneWidget);
     expect(
-      tester.getSize(find.byType(OutlinedButton)).height,
+      tester.getSize(find.byType(TextButton)).height,
       ThanksSpacing.buttonHeight,
+    );
+    expect(
+      tester.getTopLeft(find.byType(TextButton)).dy,
+      ThanksSpacing.small,
+    );
+    expect(
+      tester.getTopLeft(find.text('Details')).dy,
+      ThanksSpacing.small + ThanksSpacing.buttonHeight,
     );
     expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.menu_rounded));
     await tester.pumpAndSettle();
     expect(find.byType(Drawer), findsOneWidget);
+  });
+
+  testWidgets('ThanksScaffold keeps its back button below the top safe area', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: MediaQuery(
+          data: const MediaQueryData(padding: EdgeInsets.only(top: 24)),
+          child: Navigator(
+            onGenerateInitialRoutes: (_, __) => [
+              MaterialPageRoute<void>(builder: (_) => const SizedBox()),
+              MaterialPageRoute<void>(
+                builder: (_) => const ThanksScaffold(title: 'Details'),
+              ),
+            ],
+            onGenerateRoute: (_) => MaterialPageRoute<void>(
+              builder: (_) => const SizedBox(),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getTopLeft(find.byType(TextButton)).dy,
+      24 + ThanksSpacing.small,
+    );
   });
 
   testWidgets('ThanksScaffoldController opens the right drawer',

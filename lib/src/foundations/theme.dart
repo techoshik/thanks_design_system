@@ -155,13 +155,14 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       colorScheme: colorScheme,
       extensions: [_lightExtension],
       visualDensity: VisualDensity.compact,
+      iconTheme: const IconThemeData(size: 20),
       scaffoldBackgroundColor: ThanksColors.pageBackground,
       appBarTheme: AppBarTheme(
         centerTitle: false,
         toolbarHeight: ThanksSpacing.appBarHeight,
         actionsPadding: const EdgeInsets.only(right: ThanksSpacing.large),
         titleSpacing: ThanksSpacing.large,
-        iconTheme: IconThemeData(color: brand.primary),
+        iconTheme: IconThemeData(color: brand.primary, size: 20),
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -219,6 +220,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           shape: iconShape,
+          iconSize: 20,
           minimumSize: buttonMinimumSize,
           fixedSize: const Size.square(ThanksSpacing.buttonHeight),
           padding: EdgeInsets.zero,

@@ -140,40 +140,49 @@ class ThanksScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showFiltersInBottomSheet = _showFiltersInBottomSheet(context);
+    final hasBackButton = appBar == null &&
+        title != null &&
+        showBackButton &&
+        Navigator.of(context).canPop();
     final topBar = _buildTopBar(
       context,
       showFiltersInBottomSheet: showFiltersInBottomSheet,
+      showBackButton: hasBackButton,
     );
     final contentSliver =
         sliver ?? (body == null ? null : SliverToBoxAdapter(child: body));
 
     return Scaffold(
       key: controller?._scaffoldKey,
-      body: CustomScrollView(
-        slivers: [
-          if (topBar != null)
-            SliverPadding(
-              padding: _sectionPadding(context),
-              sliver: topBar,
-            ),
-          if (filters.isNotEmpty && !showFiltersInBottomSheet)
-            SliverPadding(
-              padding: _sectionPadding(context),
-              sliver: SliverToBoxAdapter(
-                child: Wrap(
-                  spacing: filterSpacing,
-                  runSpacing: filterSpacing,
-                  children: filters,
+      body: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            if (topBar != null)
+              SliverPadding(
+                padding: _sectionPadding(context, top: ThanksSpacing.small),
+                sliver: topBar,
+              ),
+            if (filters.isNotEmpty && !showFiltersInBottomSheet)
+              SliverPadding(
+                padding: _sectionPadding(context),
+                sliver: SliverToBoxAdapter(
+                  child: Wrap(
+                    spacing: filterSpacing,
+                    runSpacing: filterSpacing,
+                    children: filters,
+                  ),
                 ),
               ),
-            ),
-          if (contentSliver != null)
-            SliverPadding(
-              padding:
-                  applyBodyPadding ? _contentPadding(context) : EdgeInsets.zero,
-              sliver: contentSliver,
-            ),
-        ],
+            if (contentSliver != null)
+              SliverPadding(
+                padding: applyBodyPadding
+                    ? _contentPadding(context)
+                    : EdgeInsets.zero,
+                sliver: contentSliver,
+              ),
+          ],
+        ),
       ),
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
@@ -183,9 +192,12 @@ class ThanksScaffold extends StatelessWidget {
     );
   }
 
-  EdgeInsets _sectionPadding(BuildContext context) {
+  EdgeInsets _sectionPadding(
+    BuildContext context, {
+    double top = ThanksSpacing.large,
+  }) {
     final gutter = _horizontalGutter(context);
-    return EdgeInsets.fromLTRB(gutter, ThanksSpacing.large, gutter, 0);
+    return EdgeInsets.fromLTRB(gutter, top, gutter, 0);
   }
 
   EdgeInsets _contentPadding(BuildContext context) {
@@ -202,22 +214,24 @@ class ThanksScaffold extends StatelessWidget {
     return size.isTabletOrBelow ? ThanksSpacing.large : ThanksSpacing.large * 2;
   }
 
-  bool _showFiltersInBottomSheet(BuildContext context) =>
-      switch (filterDisplayMode) {
-        ThanksFilterDisplayMode.inline => false,
-        ThanksFilterDisplayMode.bottomSheet => true,
-        ThanksFilterDisplayMode.adaptive =>
-          MediaQuery.sizeOf(context).width < compactFilterBreakpoint,
-      };
+  bool _showFiltersInBottomSheet(BuildContext context) {
+    if (filters.isEmpty) return false;
+    return switch (filterDisplayMode) {
+      ThanksFilterDisplayMode.inline => false,
+      ThanksFilterDisplayMode.bottomSheet => true,
+      ThanksFilterDisplayMode.adaptive =>
+        MediaQuery.sizeOf(context).width < compactFilterBreakpoint,
+    };
+  }
 
   Widget? _buildTopBar(
     BuildContext context, {
     required bool showFiltersInBottomSheet,
+    required bool showBackButton,
   }) {
     if (appBar != null) return SliverToBoxAdapter(child: appBar!);
     if (title == null) return null;
 
-    final canGoBack = showBackButton && Navigator.of(context).canPop();
     final hasDrawer = drawer != null;
 
     return SliverToBoxAdapter(
@@ -226,7 +240,7 @@ class ThanksScaffold extends StatelessWidget {
           title: title!,
           subtitle: subtitle,
           actions: actions,
-          showBackButton: canGoBack,
+          showBackButton: showBackButton,
           backDestinationLabel: backDestinationLabel,
           showMenuButton: hasDrawer,
           onBackPressed:
@@ -284,58 +298,63 @@ class _ThanksTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final backButtonLabel =
+        backDestinationLabel == null ? 'Back' : 'Back to $backDestinationLabel';
 
-    return Row(
-      spacing: ThanksSpacing.small,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (showMenuButton)
-          ThanksButton.icon(
-            tooltip: 'Open menu',
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (showBackButton)
+        Padding(
+          padding: EdgeInsetsGeometry.only(
+            left: ThanksSpacing.buttonHeight + ThanksSpacing.small,
+          ),
+          child: ThanksButton(
+            label: backButtonLabel,
+            onPressed: onBackPressed,
             variant: ThanksButtonVariant.text,
-            icon: const Icon(Icons.menu_rounded),
-            onPressed: onMenuPressed,
+            leadingIcon: const Icon(Icons.arrow_back),
+            style: ButtonStyle(
+              padding: const WidgetStatePropertyAll(
+                EdgeInsets.symmetric(horizontal: ThanksSpacing.small),
+              ),
+              textStyle: WidgetStatePropertyAll(textTheme.labelSmall),
+            ),
           ),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (showBackButton)
-                ThanksButton(
-                  label: backDestinationLabel == null
-                      ? 'Back'
-                      : 'Back to $backDestinationLabel',
-                  onPressed: onBackPressed,
-                  variant: ThanksButtonVariant.outlined,
-                  leadingIcon: const Icon(Icons.arrow_back, size: 14),
-                  style: ButtonStyle(
-                    padding: const WidgetStatePropertyAll(
-                      EdgeInsets.symmetric(horizontal: ThanksSpacing.small),
-                    ),
-                    side: WidgetStatePropertyAll(
-                      BorderSide(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                      ),
-                    ),
-                    textStyle: WidgetStatePropertyAll(textTheme.labelSmall),
-                  ),
-                ),
-              Text(title, style: textTheme.titleLarge),
-              if (subtitle != null) Text(subtitle!, style: textTheme.bodySmall),
-            ],
+        )
+      else
+        const SizedBox(height: ThanksSpacing.buttonHeight),
+      Row(
+        spacing: ThanksSpacing.small,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (showMenuButton)
+            ThanksButton.icon(
+              tooltip: 'Open menu',
+              icon: const Icon(Icons.menu_rounded),
+              onPressed: onMenuPressed,
+              variant: ThanksButtonVariant.text,
+            ),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: textTheme.titleLarge),
+                if (subtitle != null)
+                  Text(subtitle!, style: textTheme.bodySmall),
+              ],
+            ),
           ),
-        ),
-        ...actions,
-        if (onFiltersPressed != null)
-          ThanksButton.icon(
-            tooltip: 'Show filters',
-            variant: ThanksButtonVariant.text,
-            icon: const Icon(Icons.filter_list_rounded, size: 20),
-            onPressed: onFiltersPressed,
-          ),
-      ],
-    );
+          ...actions,
+          if (onFiltersPressed != null)
+            ThanksButton.icon(
+              tooltip: 'Show filters',
+              variant: ThanksButtonVariant.text,
+              icon: const Icon(Icons.filter_list_rounded),
+              onPressed: onFiltersPressed,
+            ),
+        ],
+      )
+    ]);
   }
 }
 
