@@ -305,7 +305,9 @@ class _ThanksTopBar extends StatelessWidget {
       if (showBackButton)
         Padding(
           padding: EdgeInsetsGeometry.only(
-            left: ThanksSpacing.buttonHeight + ThanksSpacing.small,
+            left: showMenuButton
+                ? ThanksSpacing.buttonHeight + ThanksSpacing.small
+                : 0,
           ),
           child: ThanksButton(
             label: backButtonLabel,
