@@ -91,8 +91,8 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
     final selectedBackground = brand.primary.withAlpha(28);
     final buttonTextStyle = textTheme.bodyMedium;
     const buttonMinimumSize = Size(
-      ThanksSpacing.inputHeight,
-      ThanksSpacing.inputHeight,
+      ThanksSpacing.buttonHeight,
+      ThanksSpacing.buttonHeight,
     );
     final buttonShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(ThanksSpacing.radiusSmall),
@@ -193,13 +193,8 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
           textStyle: buttonTextStyle,
           shape: buttonShape,
           minimumSize: buttonMinimumSize,
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          textStyle: buttonTextStyle,
-          shape: buttonShape,
-          minimumSize: buttonMinimumSize,
+          fixedSize: const Size.fromHeight(ThanksSpacing.buttonHeight),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -207,6 +202,8 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
           textStyle: buttonTextStyle,
           shape: buttonShape,
           minimumSize: buttonMinimumSize,
+          fixedSize: const Size.fromHeight(ThanksSpacing.buttonHeight),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -215,12 +212,15 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
           side: BorderSide(color: brand.primary),
           shape: buttonShape,
           minimumSize: buttonMinimumSize,
+          fixedSize: const Size.fromHeight(ThanksSpacing.buttonHeight),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           shape: iconShape,
           minimumSize: buttonMinimumSize,
+          fixedSize: const Size.square(ThanksSpacing.buttonHeight),
           padding: EdgeInsets.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),

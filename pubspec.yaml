@@ -7,6 +7,8 @@ environment:
   sdk: ^3.5.0
 
 dependencies:
+  fit_it:
+    git: https://github.com/techoshik/fit_it
   flutter:
     sdk: flutter
 

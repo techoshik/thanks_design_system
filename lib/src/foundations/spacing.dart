@@ -18,7 +18,7 @@ abstract final class ThanksSpacing {
   static const double formWidthMaximum = 450;
   static const double fabClearance = 100;
   static const double inputHeight = 40;
-  static const double inputHeightSmall = 32;
+  static const double buttonHeight = 32;
 
   static const inputContentPadding = EdgeInsets.symmetric(
     horizontal: medium,

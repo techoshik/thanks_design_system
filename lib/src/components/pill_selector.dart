@@ -31,7 +31,7 @@ class PillSelector<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final pillHeight = isDense
-        ? ThanksSpacing.inputHeightSmall
+        ? ThanksSpacing.buttonHeight
         : height ?? ThanksSpacing.inputHeight - 4;
 
     return SizedBox(
