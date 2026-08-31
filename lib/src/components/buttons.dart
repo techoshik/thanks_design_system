@@ -3,18 +3,10 @@ import 'package:flutter/material.dart';
 import '../foundations/spacing.dart';
 
 /// The visual treatment used by [ThanksButton].
-enum ThanksButtonVariant {
-  text,
-  filled,
-  outlined,
-}
+enum ThanksButtonVariant { text, filled, outlined }
 
 /// The semantic color used by [ThanksButton].
-enum ThanksButtonColor {
-  primary,
-  secondary,
-  tertiary,
-}
+enum ThanksButtonColor { primary, secondary, tertiary }
 
 /// A common action button with Thanks defaults from the active [ThemeData].
 ///
@@ -35,24 +27,22 @@ class ThanksButton extends StatelessWidget {
     this.isExpanded = false,
     this.style,
     super.key,
-  })  : _icon = null,
-        _tooltip = null;
+  }) : _icon = null,
+       _tooltip = null;
 
   const ThanksButton.icon({
-    required Widget icon,
-    required String tooltip,
+    required Widget this._icon,
+    required String this._tooltip,
     required this.onPressed,
     this.variant = ThanksButtonVariant.filled,
     this.color = ThanksButtonColor.primary,
     this.isLoading = false,
     this.style,
     super.key,
-  })  : label = null,
-        leadingIcon = null,
-        trailingIcon = null,
-        isExpanded = false,
-        _icon = icon,
-        _tooltip = tooltip;
+  }) : label = null,
+       leadingIcon = null,
+       trailingIcon = null,
+       isExpanded = false;
 
   final String? label;
   final VoidCallback? onPressed;
@@ -75,13 +65,13 @@ class ThanksButton extends StatelessWidget {
     final (backgroundColor, foregroundColor) = switch (color) {
       ThanksButtonColor.primary => (colorScheme.primary, colorScheme.onPrimary),
       ThanksButtonColor.secondary => (
-          colorScheme.secondary,
-          colorScheme.onSecondary
-        ),
+        colorScheme.secondary,
+        colorScheme.onSecondary,
+      ),
       ThanksButtonColor.tertiary => (
-          colorScheme.tertiary,
-          colorScheme.onTertiary
-        ),
+        colorScheme.tertiary,
+        colorScheme.onTertiary,
+      ),
     };
 
     final buttonStyle = _buttonStyle(
@@ -101,7 +91,8 @@ class ThanksButton extends StatelessWidget {
       isLoading: isLoading,
       leadingIcon: leadingIcon,
       trailingIcon: trailingIcon,
-      color: variant == ThanksButtonVariant.text ||
+      color:
+          variant == ThanksButtonVariant.text ||
               variant == ThanksButtonVariant.outlined
           ? backgroundColor
           : foregroundColor,
@@ -109,20 +100,20 @@ class ThanksButton extends StatelessWidget {
 
     final button = switch (variant) {
       ThanksButtonVariant.text => TextButton(
-          onPressed: isLoading ? null : onPressed,
-          style: buttonStyle,
-          child: child,
-        ),
+        onPressed: isLoading ? null : onPressed,
+        style: buttonStyle,
+        child: child,
+      ),
       ThanksButtonVariant.filled => FilledButton(
-          onPressed: isLoading ? null : onPressed,
-          style: buttonStyle,
-          child: child,
-        ),
+        onPressed: isLoading ? null : onPressed,
+        style: buttonStyle,
+        child: child,
+      ),
       ThanksButtonVariant.outlined => OutlinedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: buttonStyle,
-          child: child,
-        ),
+        onPressed: isLoading ? null : onPressed,
+        style: buttonStyle,
+        child: child,
+      ),
     };
 
     return isExpanded
@@ -136,16 +127,16 @@ class ThanksButton extends StatelessWidget {
   }) {
     final base = switch (variant) {
       ThanksButtonVariant.text => ButtonStyle(
-          foregroundColor: WidgetStatePropertyAll(backgroundColor),
-        ),
+        foregroundColor: WidgetStatePropertyAll(backgroundColor),
+      ),
       ThanksButtonVariant.filled => ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(backgroundColor),
-          foregroundColor: WidgetStatePropertyAll(foregroundColor),
-        ),
+        backgroundColor: WidgetStatePropertyAll(backgroundColor),
+        foregroundColor: WidgetStatePropertyAll(foregroundColor),
+      ),
       ThanksButtonVariant.outlined => ButtonStyle(
-          foregroundColor: WidgetStatePropertyAll(backgroundColor),
-          side: WidgetStatePropertyAll(BorderSide(color: backgroundColor)),
-        ),
+        foregroundColor: WidgetStatePropertyAll(backgroundColor),
+        side: WidgetStatePropertyAll(BorderSide(color: backgroundColor)),
+      ),
     };
     return style == null ? base : base.merge(style!);
   }
@@ -170,23 +161,23 @@ class ThanksButton extends StatelessWidget {
 
     return switch (variant) {
       ThanksButtonVariant.text => IconButton(
-          tooltip: _tooltip,
-          onPressed: onPressed,
-          style: buttonStyle,
-          icon: icon,
-        ),
+        tooltip: _tooltip,
+        onPressed: onPressed,
+        style: buttonStyle,
+        icon: icon,
+      ),
       ThanksButtonVariant.filled => IconButton.filled(
-          tooltip: _tooltip,
-          onPressed: onPressed,
-          style: buttonStyle,
-          icon: icon,
-        ),
+        tooltip: _tooltip,
+        onPressed: onPressed,
+        style: buttonStyle,
+        icon: icon,
+      ),
       ThanksButtonVariant.outlined => IconButton.outlined(
-          tooltip: _tooltip,
-          onPressed: onPressed,
-          style: buttonStyle,
-          icon: icon,
-        ),
+        tooltip: _tooltip,
+        onPressed: onPressed,
+        style: buttonStyle,
+        icon: icon,
+      ),
     };
   }
 }
@@ -226,10 +217,7 @@ class _ButtonChild extends StatelessWidget {
         if (isLoading)
           SizedBox.square(
             dimension: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: color,
-            ),
+            child: CircularProgressIndicator(strokeWidth: 2, color: color),
           ),
       ],
     );

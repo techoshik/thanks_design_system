@@ -82,6 +82,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       onSecondary: ThanksColors.surface,
       secondaryContainer: brand.primaryContainer,
       surfaceContainer: ThanksColors.surface,
+      surfaceContainerHighest: ThanksColors.surface2,
       error: ThanksColors.danger,
       errorContainer: ThanksColors.dangerBackground,
       onSurface: ThanksColors.textPrimary,
@@ -127,7 +128,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       alignLabelWithHint: true,
       filled: true,
       fillColor: ThanksColors.surface,
-      focusColor: brand.primary,
+      focusColor: Colors.transparent,
       iconColor: brand.primary,
       hoverColor: selectedBackground,
       suffixIconColor: brand.primary,
@@ -169,6 +170,14 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
         titleTextStyle: textTheme.titleLarge,
       ),
       dividerColor: colorScheme.outlineVariant,
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: const WidgetStatePropertyAll(ThanksColors.surface),
+          surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+          elevation: const WidgetStatePropertyAll(4),
+          shadowColor: const WidgetStatePropertyAll(Color(0x33000000)),
+        ),
+      ),
       dividerTheme: const DividerThemeData(thickness: 0.5, space: 0),
       cardTheme: CardThemeData(
         clipBehavior: Clip.hardEdge,
@@ -254,6 +263,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
         menuStyle: MenuStyle(
           shape: WidgetStatePropertyAll(buttonShape),
           backgroundColor: const WidgetStatePropertyAll(ThanksColors.surface),
+          surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
           minimumSize: const WidgetStatePropertyAll(Size.fromHeight(300)),
           maximumSize: const WidgetStatePropertyAll(Size.fromHeight(600)),
           padding: const WidgetStatePropertyAll(EdgeInsets.zero),
@@ -281,26 +291,25 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
     Color? dangerBackground,
     Color? dangerBorder,
     TextStyle? mono,
-  }) =>
-      ThanksTheme(
-        surfaceElevated: surfaceElevated ?? this.surfaceElevated,
-        surface2: surface2 ?? this.surface2,
-        borderSubtle: borderSubtle ?? this.borderSubtle,
-        borderStrong: borderStrong ?? this.borderStrong,
-        textPrimary: textPrimary ?? this.textPrimary,
-        textSecondary: textSecondary ?? this.textSecondary,
-        textMuted: textMuted ?? this.textMuted,
-        success: success ?? this.success,
-        successBackground: successBackground ?? this.successBackground,
-        successBorder: successBorder ?? this.successBorder,
-        warning: warning ?? this.warning,
-        warningBackground: warningBackground ?? this.warningBackground,
-        warningBorder: warningBorder ?? this.warningBorder,
-        danger: danger ?? this.danger,
-        dangerBackground: dangerBackground ?? this.dangerBackground,
-        dangerBorder: dangerBorder ?? this.dangerBorder,
-        mono: mono ?? this.mono,
-      );
+  }) => ThanksTheme(
+    surfaceElevated: surfaceElevated ?? this.surfaceElevated,
+    surface2: surface2 ?? this.surface2,
+    borderSubtle: borderSubtle ?? this.borderSubtle,
+    borderStrong: borderStrong ?? this.borderStrong,
+    textPrimary: textPrimary ?? this.textPrimary,
+    textSecondary: textSecondary ?? this.textSecondary,
+    textMuted: textMuted ?? this.textMuted,
+    success: success ?? this.success,
+    successBackground: successBackground ?? this.successBackground,
+    successBorder: successBorder ?? this.successBorder,
+    warning: warning ?? this.warning,
+    warningBackground: warningBackground ?? this.warningBackground,
+    warningBorder: warningBorder ?? this.warningBorder,
+    danger: danger ?? this.danger,
+    dangerBackground: dangerBackground ?? this.dangerBackground,
+    dangerBorder: dangerBorder ?? this.dangerBorder,
+    mono: mono ?? this.mono,
+  );
 
   @override
   ThanksTheme lerp(covariant ThanksTheme? other, double t) {

@@ -82,6 +82,7 @@ class ThanksScaffold extends StatelessWidget {
     this.filterDisplayMode = ThanksFilterDisplayMode.adaptive,
     this.compactFilterBreakpoint = 600,
     this.showBackButton = true,
+    this.pinAppBar = false,
     this.backDestinationLabel,
     this.onBackPressed,
     this.body,
@@ -120,6 +121,10 @@ class ThanksScaffold extends StatelessWidget {
 
   final bool showBackButton;
 
+  /// Keeps the generated or custom [appBar] fixed while [body] or [sliver]
+  /// scrolls underneath.
+  final bool pinAppBar;
+
   /// Human-readable name of the page reached by the back action.
   ///
   /// When set to `Invoices`, the button label becomes `Back to Invoices`.
@@ -151,38 +156,71 @@ class ThanksScaffold extends StatelessWidget {
     );
     final contentSliver =
         sliver ?? (body == null ? null : SliverToBoxAdapter(child: body));
+    final inlineFilters = filters.isNotEmpty && !showFiltersInBottomSheet
+        ? Wrap(
+            spacing: filterSpacing,
+            runSpacing: filterSpacing,
+            children: filters,
+          )
+        : null;
 
     return Scaffold(
       key: controller?._scaffoldKey,
       body: SafeArea(
         bottom: false,
-        child: CustomScrollView(
-          slivers: [
-            if (topBar != null)
-              SliverPadding(
-                padding: _sectionPadding(context, top: ThanksSpacing.small),
-                sliver: topBar,
-              ),
-            if (filters.isNotEmpty && !showFiltersInBottomSheet)
-              SliverPadding(
-                padding: _sectionPadding(context),
-                sliver: SliverToBoxAdapter(
-                  child: Wrap(
-                    spacing: filterSpacing,
-                    runSpacing: filterSpacing,
-                    children: filters,
+        child: pinAppBar
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (topBar != null)
+                    Padding(
+                      padding:
+                          _sectionPadding(context, top: ThanksSpacing.small),
+                      child: topBar,
+                    ),
+                  if (inlineFilters != null)
+                    Padding(
+                      padding: _sectionPadding(context),
+                      child: inlineFilters,
+                    ),
+                  Expanded(
+                    child: contentSliver == null
+                        ? const SizedBox.shrink()
+                        : CustomScrollView(
+                            slivers: [
+                              SliverPadding(
+                                padding: applyBodyPadding
+                                    ? _contentPadding(context)
+                                    : EdgeInsets.zero,
+                                sliver: contentSliver,
+                              ),
+                            ],
+                          ),
                   ),
-                ),
+                ],
+              )
+            : CustomScrollView(
+                slivers: [
+                  if (topBar != null)
+                    SliverPadding(
+                      padding:
+                          _sectionPadding(context, top: ThanksSpacing.small),
+                      sliver: SliverToBoxAdapter(child: topBar),
+                    ),
+                  if (inlineFilters != null)
+                    SliverPadding(
+                      padding: _sectionPadding(context),
+                      sliver: SliverToBoxAdapter(child: inlineFilters),
+                    ),
+                  if (contentSliver != null)
+                    SliverPadding(
+                      padding: applyBodyPadding
+                          ? _contentPadding(context)
+                          : EdgeInsets.zero,
+                      sliver: contentSliver,
+                    ),
+                ],
               ),
-            if (contentSliver != null)
-              SliverPadding(
-                padding: applyBodyPadding
-                    ? _contentPadding(context)
-                    : EdgeInsets.zero,
-                sliver: contentSliver,
-              ),
-          ],
-        ),
       ),
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
@@ -229,14 +267,13 @@ class ThanksScaffold extends StatelessWidget {
     required bool showFiltersInBottomSheet,
     required bool showBackButton,
   }) {
-    if (appBar != null) return SliverToBoxAdapter(child: appBar!);
+    if (appBar != null) return appBar;
     if (title == null) return null;
 
     final hasDrawer = drawer != null;
 
-    return SliverToBoxAdapter(
-      child: Builder(
-        builder: (buttonContext) => _ThanksTopBar(
+    return Builder(
+      builder: (buttonContext) => _ThanksTopBar(
           title: title!,
           subtitle: subtitle,
           actions: actions,
@@ -256,7 +293,6 @@ class ThanksScaffold extends StatelessWidget {
               ? () => _showFiltersBottomSheet(buttonContext)
               : null,
         ),
-      ),
     );
   }
 

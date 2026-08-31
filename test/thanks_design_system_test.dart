@@ -298,6 +298,31 @@ void main() {
     expect(find.text('Invoice list'), findsOneWidget);
   });
 
+  testWidgets('ThanksScaffold can pin the app bar while content scrolls', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          title: 'Invoices',
+          pinAppBar: true,
+          body: SizedBox(height: 2000, child: Text('Invoice list')),
+        ),
+      ),
+    );
+
+    expect(find.byType(CustomScrollView), findsOneWidget);
+    final titleOffsetBefore = tester.getTopLeft(find.text('Invoices'));
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+    await tester.pump();
+
+    expect(
+      tester.getTopLeft(find.text('Invoices')),
+      titleOffsetBefore,
+    );
+  });
+
   testWidgets('ThanksScaffold gives top bar and filters one large gap', (
     tester,
   ) async {
@@ -571,7 +596,209 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Actions'), findsOneWidget);
   });
+
+  testWidgets('ThanksCard renders child with default none variant and zero padding/margin',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ThanksCard(
+            child: Text('Card Content'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Card Content'), findsOneWidget);
+    final container = tester.widget<Container>(find.byType(Container));
+    final decoration = container.decoration as BoxDecoration?;
+    expect(decoration?.color, Colors.transparent);
+    expect(decoration?.border, isNull);
+  });
+
+  testWidgets('ThanksCard renders outside header with title, subtitle, and actions',
+      (tester) async {
+    var actionClicked = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: Scaffold(
+          body: ThanksCard(
+            title: 'Card Title',
+            subtitle: 'Card Subtitle',
+            actions: [
+              IconButton(
+                key: const Key('header-action'),
+                icon: const Icon(Icons.more_horiz),
+                onPressed: () => actionClicked = true,
+              ),
+            ],
+            headerPosition: ThanksCardHeaderPosition.outside,
+            variant: ThanksCardVariant.filledOutlined,
+            child: const Text('Body Content'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Card Title'), findsOneWidget);
+    expect(find.text('Card Subtitle'), findsOneWidget);
+    expect(find.byKey(const Key('header-action')), findsOneWidget);
+    expect(find.text('Body Content'), findsOneWidget);
+
+    final titleOffset = tester.getTopLeft(find.text('Card Title'));
+    final bodyOffset = tester.getTopLeft(find.text('Body Content'));
+    expect(titleOffset.dy, lessThan(bodyOffset.dy));
+
+    await tester.tap(find.byKey(const Key('header-action')));
+    expect(actionClicked, isTrue);
+  });
+
+  testWidgets('ThanksCard renders inside header with title, subtitle, and divider',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: const Scaffold(
+          body: ThanksCard(
+            title: 'Inside Title',
+            subtitle: 'Inside Subtitle',
+            headerPosition: ThanksCardHeaderPosition.inside,
+            variant: ThanksCardVariant.outlined,
+            showDivider: true,
+            child: Text('Inside Body'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Inside Title'), findsOneWidget);
+    expect(find.text('Inside Subtitle'), findsOneWidget);
+    expect(find.text('Inside Body'), findsOneWidget);
+    expect(find.byType(Divider), findsOneWidget);
+  });
+
+  testWidgets('ThanksCard supports filled, outlined, and filledOutlined variants',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: const Scaffold(
+          body: Column(
+            children: [
+              ThanksCard(
+                key: Key('card-filled'),
+                variant: ThanksCardVariant.filled,
+                child: Text('Filled'),
+              ),
+              ThanksCard(
+                key: Key('card-outlined'),
+                variant: ThanksCardVariant.outlined,
+                child: Text('Outlined'),
+              ),
+              ThanksCard(
+                key: Key('card-filled-outlined'),
+                variant: ThanksCardVariant.filledOutlined,
+                child: Text('Filled Outlined'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final filledContainer =
+        tester.widget<Container>(find.descendant(of: find.byKey(const Key('card-filled')), matching: find.byType(Container)).first);
+    final filledDeco = filledContainer.decoration as BoxDecoration;
+    expect(filledDeco.color, ThanksColors.surface);
+    expect(filledDeco.border, isNull);
+
+    final outlinedContainer =
+        tester.widget<Container>(find.descendant(of: find.byKey(const Key('card-outlined')), matching: find.byType(Container)).first);
+    final outlinedDeco = outlinedContainer.decoration as BoxDecoration;
+    expect(outlinedDeco.color, Colors.transparent);
+    expect(outlinedDeco.border?.top.color, ThanksColors.border);
+
+    final filledOutlinedContainer =
+        tester.widget<Container>(find.descendant(of: find.byKey(const Key('card-filled-outlined')), matching: find.byType(Container)).first);
+    final filledOutlinedDeco = filledOutlinedContainer.decoration as BoxDecoration;
+    expect(filledOutlinedDeco.color, ThanksColors.surface);
+    expect(filledOutlinedDeco.border?.top.color, ThanksColors.border);
+  });
+
+  testWidgets('ThanksCard applies spacing presets and custom margin/padding',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ThanksCard(
+            margin: ThanksCardSpacing.medium,
+            padding: ThanksCardSpacing.large,
+            child: SizedBox(key: Key('child-box'), width: 100, height: 50),
+          ),
+        ),
+      ),
+    );
+
+    final outerPadding = tester.widget<Padding>(find.byType(Padding).first);
+    expect(outerPadding.padding, const EdgeInsets.all(ThanksSpacing.medium));
+
+    final childOffset = tester.getTopLeft(find.byKey(const Key('child-box')));
+    expect(childOffset.dx, ThanksSpacing.medium + ThanksSpacing.large);
+    expect(childOffset.dy, ThanksSpacing.medium + ThanksSpacing.large);
+  });
+
+  testWidgets('ThanksCard handles tap events when onTap is provided',
+      (tester) async {
+    var tapped = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: Scaffold(
+          body: ThanksCard(
+            variant: ThanksCardVariant.filledOutlined,
+            onTap: () => tapped = true,
+            child: const Text('Tap Me'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(InkWell), findsOneWidget);
+    await tester.tap(find.text('Tap Me'));
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('ThanksCard supports nesting an inner card inside a main card',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: const Scaffold(
+          body: ThanksCard(
+            key: Key('main-card'),
+            title: 'Main Page Card',
+            variant: ThanksCardVariant.filledOutlined,
+            padding: ThanksCardSpacing.large,
+            child: ThanksCard(
+              key: Key('inner-card'),
+              title: 'Nested Card',
+              headerPosition: ThanksCardHeaderPosition.inside,
+              variant: ThanksCardVariant.outlined,
+              padding: ThanksCardSpacing.medium,
+              child: Text('Nested content'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Main Page Card'), findsOneWidget);
+    expect(find.text('Nested Card'), findsOneWidget);
+    expect(find.text('Nested content'), findsOneWidget);
+  });
 }
 
 String _label(int value) => '$value';
 void _noop(int? value) {}
+

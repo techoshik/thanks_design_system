@@ -11,23 +11,21 @@ abstract final class ThanksSpacing {
   static const double radiusFull = 100;
 
   static const double appBarHeight = 64;
+  static const double inputHeight = 40;
+  static const double buttonHeight = 32;
+
   static const double navigationDrawerWidth = 260;
   static const double rightNavigationDrawerWidth = 344;
   static const double viewHeightMinimum = 304;
   static const double formWidthMinimum = 300;
   static const double formWidthMaximum = 450;
   static const double fabClearance = 100;
-  static const double inputHeight = 40;
-  static const double buttonHeight = 32;
 
   static const inputContentPadding = EdgeInsets.symmetric(
     horizontal: medium,
     vertical: (inputHeight - medium) / 2,
   );
-  static const dialogConstraints = BoxConstraints(
-    minWidth: 350,
-    maxWidth: 600,
-  );
+  static const dialogConstraints = BoxConstraints(minWidth: 350, maxWidth: 600);
 
   static const spaceSmall = SizedBox.square(dimension: small);
   static const spaceMedium = SizedBox.square(dimension: medium);
@@ -58,9 +56,7 @@ abstract final class ThanksSpacing {
   static const insetMediumSymmetric = EdgeInsets.all(medium);
   static const insetLargeSymmetric = EdgeInsets.all(large);
   static const insetSmallHorizontal = EdgeInsets.symmetric(horizontal: small);
-  static const insetMediumHorizontal = EdgeInsets.symmetric(
-    horizontal: medium,
-  );
+  static const insetMediumHorizontal = EdgeInsets.symmetric(horizontal: medium);
   static const insetLargeHorizontal = EdgeInsets.symmetric(horizontal: large);
   static const insetLargeVertical = EdgeInsets.symmetric(vertical: large);
   static const insetMediumVertical = EdgeInsets.symmetric(vertical: medium);

@@ -14,6 +14,7 @@ abstract final class ThanksColors {
   static const pageBackground = Color(0xFFF7F6F3);
   static const border = Color(0xFFE2DFD8);
   static const borderStrong = Color(0xFFC8C4BB);
+
   static const surface = Color(0xFFFFFFFF);
   static const surface2 = Color(0xFFF0EEE9);
 
@@ -24,9 +25,11 @@ abstract final class ThanksColors {
   static const success = Color(0xFF1A7A4A);
   static const successBackground = Color(0xFFE8F7EE);
   static const successBorder = Color(0xFFB2DDCA);
+
   static const warning = Color(0xFF8A5A00);
   static const warningBackground = Color(0xFFFFF4D9);
   static const warningBorder = Color(0xFFFFDB80);
+
   static const danger = Color(0xFFB92B2B);
   static const dangerBackground = Color(0xFFFDEAEA);
   static const dangerBorder = Color(0xFFF4C0C0);

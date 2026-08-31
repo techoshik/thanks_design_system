@@ -2,8 +2,7 @@
 library;
 
 export 'src/components/buttons.dart';
-export 'src/components/cards.dart';
-export 'src/components/form_fields.dart';
+export 'src/components/thanks_card.dart';
 export 'src/foundations/colors.dart';
 export 'src/foundations/spacing.dart';
 export 'src/foundations/theme.dart';
