@@ -87,7 +87,7 @@ class ThanksScaffold extends StatelessWidget {
     this.onBackPressed,
     this.body,
     this.sliver,
-    this.bodyPadding = ThanksSpacing.insetLargeWithFab,
+    this.bodyPadding = ThanksSpacing.insetMediumWithFab,
     this.applyBodyPadding = true,
     this.floatingActionButton,
     this.bottomNavigationBar,
@@ -232,7 +232,7 @@ class ThanksScaffold extends StatelessWidget {
 
   EdgeInsets _sectionPadding(
     BuildContext context, {
-    double top = ThanksSpacing.large,
+    double top = ThanksSpacing.medium,
   }) {
     final gutter = _horizontalGutter(context);
     return EdgeInsets.fromLTRB(gutter, top, gutter, 0);
@@ -249,7 +249,7 @@ class ThanksScaffold extends StatelessWidget {
 
   double _horizontalGutter(BuildContext context) {
     final size = FitSize.parse(MediaQuery.sizeOf(context).width);
-    return size.isTabletOrBelow ? ThanksSpacing.large : ThanksSpacing.large * 2;
+    return size.isTabletOrBelow ? ThanksSpacing.medium : ThanksSpacing.medium * 2;
   }
 
   bool _showFiltersInBottomSheet(BuildContext context) {
@@ -412,10 +412,10 @@ class _ThanksFiltersBottomSheet extends StatelessWidget {
     return SafeArea(
       child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(
-          ThanksSpacing.large,
-          ThanksSpacing.large,
-          ThanksSpacing.large,
-          ThanksSpacing.large + bottomInset,
+          ThanksSpacing.medium,
+          ThanksSpacing.medium,
+          ThanksSpacing.medium,
+          ThanksSpacing.medium + bottomInset,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

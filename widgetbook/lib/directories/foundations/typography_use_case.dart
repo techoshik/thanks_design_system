@@ -26,17 +26,17 @@ Widget typographyUseCase(BuildContext context) {
   return Scaffold(
     backgroundColor: ThanksColors.pageBackground,
     body: SingleChildScrollView(
-      padding: const EdgeInsets.all(ThanksSpacing.large),
+      padding: ThanksSpacing.insetMedium,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('DM Sans Type Scale', style: textTheme.headlineSmall),
-          const SizedBox(height: ThanksSpacing.small),
+          ThanksSpacing.spaceSmall,
           Text(
             'The production type scale provided by thanks_design_system.',
             style: textTheme.bodyMedium?.copyWith(color: ThanksColors.textSecondary),
           ),
-          const SizedBox(height: ThanksSpacing.large),
+          ThanksSpacing.spaceMedium,
           for (final (name, spec, style) in styles) ...[
             Container(
               margin: const EdgeInsets.only(bottom: ThanksSpacing.medium),

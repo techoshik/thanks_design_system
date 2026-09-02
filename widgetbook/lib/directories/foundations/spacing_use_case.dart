@@ -5,7 +5,6 @@ Widget spacingUseCase(BuildContext context) {
   final spaces = <(String, double)>[
     ('Small', ThanksSpacing.small),
     ('Medium', ThanksSpacing.medium),
-    ('Large', ThanksSpacing.large),
     ('Button Height', ThanksSpacing.buttonHeight),
     ('Input Height', ThanksSpacing.inputHeight),
     ('App Bar Height', ThanksSpacing.appBarHeight),
@@ -15,12 +14,12 @@ Widget spacingUseCase(BuildContext context) {
   return Scaffold(
     backgroundColor: ThanksColors.pageBackground,
     body: SingleChildScrollView(
-      padding: const EdgeInsets.all(ThanksSpacing.large),
+      padding: ThanksSpacing.insetMedium,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Spacing Dimensions', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: ThanksSpacing.large),
+          ThanksSpacing.spaceMedium,
           for (final (name, dimension) in spaces) ...[
             Padding(
               padding: const EdgeInsets.only(bottom: ThanksSpacing.medium),

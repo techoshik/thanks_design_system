@@ -5,12 +5,12 @@ Widget colorsUseCase(BuildContext context) {
   return Scaffold(
     backgroundColor: ThanksColors.pageBackground,
     body: SingleChildScrollView(
-      padding: const EdgeInsets.all(ThanksSpacing.large),
+      padding: ThanksSpacing.insetMedium,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Primary Scale', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: ThanksSpacing.medium),
+          ThanksSpacing.spaceMedium,
           Wrap(
             spacing: ThanksSpacing.medium,
             runSpacing: ThanksSpacing.medium,
@@ -25,9 +25,9 @@ Widget colorsUseCase(BuildContext context) {
               _ColorCard(name: 'primary950', color: ThanksColors.primary950, textColor: Colors.white),
             ],
           ),
-          const SizedBox(height: ThanksSpacing.large * 1.5),
+          const SizedBox(height: ThanksSpacing.medium * 1.5),
           Text('Surfaces & Backgrounds', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: ThanksSpacing.medium),
+          ThanksSpacing.spaceMedium,
           Wrap(
             spacing: ThanksSpacing.medium,
             runSpacing: ThanksSpacing.medium,
@@ -37,9 +37,9 @@ Widget colorsUseCase(BuildContext context) {
               _ColorCard(name: 'surface2', color: ThanksColors.surface2, textColor: Colors.black87, hasBorder: true),
             ],
           ),
-          const SizedBox(height: ThanksSpacing.large * 1.5),
+          const SizedBox(height: ThanksSpacing.medium * 1.5),
           Text('Borders & Text', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: ThanksSpacing.medium),
+          ThanksSpacing.spaceMedium,
           Wrap(
             spacing: ThanksSpacing.medium,
             runSpacing: ThanksSpacing.medium,
@@ -51,9 +51,9 @@ Widget colorsUseCase(BuildContext context) {
               _ColorCard(name: 'textMuted', color: ThanksColors.textMuted, textColor: Colors.white),
             ],
           ),
-          const SizedBox(height: ThanksSpacing.large * 1.5),
+          const SizedBox(height: ThanksSpacing.medium * 1.5),
           Text('Semantic Feedback', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: ThanksSpacing.medium),
+          ThanksSpacing.spaceMedium,
           Wrap(
             spacing: ThanksSpacing.medium,
             runSpacing: ThanksSpacing.medium,

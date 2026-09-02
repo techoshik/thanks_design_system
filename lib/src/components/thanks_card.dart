@@ -29,17 +29,13 @@ enum ThanksCardSpacing {
   small,
 
   /// Standard spacing (`16px`).
-  medium,
-
-  /// Generous spacing (`24px`).
-  large;
+  medium;
 
   /// Returns the corresponding symmetric [EdgeInsets].
   EdgeInsets get insets => switch (this) {
         ThanksCardSpacing.none => EdgeInsets.zero,
         ThanksCardSpacing.small => const EdgeInsets.all(ThanksSpacing.small),
         ThanksCardSpacing.medium => const EdgeInsets.all(ThanksSpacing.medium),
-        ThanksCardSpacing.large => const EdgeInsets.all(ThanksSpacing.large),
       };
 }
 
@@ -171,11 +167,11 @@ class ThanksCard extends StatelessWidget {
         children: [
           headerWidget,
           if (showDivider) ...[
-            const SizedBox(height: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
             Divider(color: borderColor, height: 1),
-            const SizedBox(height: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
           ] else ...[
-            const SizedBox(height: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
           ],
           child,
         ],
@@ -205,7 +201,7 @@ class ThanksCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           headerWidget,
-          const SizedBox(height: ThanksSpacing.small),
+          ThanksSpacing.spaceSmall,
           surface,
         ],
       );
@@ -258,7 +254,7 @@ class ThanksCard extends StatelessWidget {
           const Spacer(),
         if (actions.isNotEmpty) ...[
           if (title != null || subtitle != null)
-            const SizedBox(width: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
           Row(
             mainAxisSize: MainAxisSize.min,
             spacing: ThanksSpacing.small,

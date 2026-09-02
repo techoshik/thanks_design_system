@@ -40,7 +40,7 @@ Widget buttonPlaygroundUseCase(BuildContext context) {
     backgroundColor: ThanksColors.pageBackground,
     body: Center(
       child: Padding(
-        padding: const EdgeInsets.all(ThanksSpacing.large),
+        padding: ThanksSpacing.insetMedium,
         child: ThanksButton(
           label: label,
           variant: variant,
@@ -61,13 +61,13 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
     backgroundColor: ThanksColors.pageBackground,
     body: Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(ThanksSpacing.large),
+        padding: ThanksSpacing.insetMedium,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Primary Color', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
             Wrap(
               spacing: ThanksSpacing.medium,
               runSpacing: ThanksSpacing.medium,
@@ -77,9 +77,9 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
                 ThanksButton(label: 'Text Primary', variant: ThanksButtonVariant.text, onPressed: () {}),
               ],
             ),
-            const SizedBox(height: ThanksSpacing.large),
+            ThanksSpacing.spaceMedium,
             Text('Secondary Color', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
             Wrap(
               spacing: ThanksSpacing.medium,
               runSpacing: ThanksSpacing.medium,
@@ -89,9 +89,9 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
                 ThanksButton(label: 'Text Secondary', color: ThanksButtonColor.secondary, variant: ThanksButtonVariant.text, onPressed: () {}),
               ],
             ),
-            const SizedBox(height: ThanksSpacing.large),
+            ThanksSpacing.spaceMedium,
             Text('Tertiary Color', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
             Wrap(
               spacing: ThanksSpacing.medium,
               runSpacing: ThanksSpacing.medium,
@@ -101,9 +101,9 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
                 ThanksButton(label: 'Text Tertiary', color: ThanksButtonColor.tertiary, variant: ThanksButtonVariant.text, onPressed: () {}),
               ],
             ),
-            const SizedBox(height: ThanksSpacing.large),
+            ThanksSpacing.spaceMedium,
             Text('Icon Buttons', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: ThanksSpacing.small),
+            ThanksSpacing.spaceSmall,
             Wrap(
               spacing: ThanksSpacing.medium,
               runSpacing: ThanksSpacing.medium,

@@ -273,7 +273,7 @@ void main() {
 
     expect(
       tester.getTopLeft(find.byKey(const Key('body'))),
-      const Offset(ThanksSpacing.large, ThanksSpacing.large),
+      const Offset(ThanksSpacing.medium, ThanksSpacing.medium),
     );
   });
 
@@ -323,7 +323,7 @@ void main() {
     );
   });
 
-  testWidgets('ThanksScaffold gives top bar and filters one large gap', (
+  testWidgets('ThanksScaffold gives top bar and filters one medium gap', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -339,15 +339,15 @@ void main() {
       find.byType(SliverPadding),
     );
     const headerMargin = EdgeInsets.fromLTRB(
-      ThanksSpacing.large,
+      ThanksSpacing.medium,
       ThanksSpacing.small,
-      ThanksSpacing.large,
+      ThanksSpacing.medium,
       0,
     );
     const filterMargin = EdgeInsets.fromLTRB(
-      ThanksSpacing.large,
-      ThanksSpacing.large,
-      ThanksSpacing.large,
+      ThanksSpacing.medium,
+      ThanksSpacing.medium,
+      ThanksSpacing.medium,
       0,
     );
 
@@ -376,9 +376,9 @@ void main() {
       find.byType(SliverPadding),
     );
 
-    expect(paddings.first.padding.resolve(TextDirection.ltr).left, 48);
-    expect(paddings.elementAt(1).padding.resolve(TextDirection.ltr).right, 48);
-    expect(tester.getTopLeft(find.byKey(const Key('body'))).dx, 48);
+    expect(paddings.first.padding.resolve(TextDirection.ltr).left, 32);
+    expect(paddings.elementAt(1).padding.resolve(TextDirection.ltr).right, 32);
+    expect(tester.getTopLeft(find.byKey(const Key('body'))).dx, 32);
   });
 
   testWidgets('ThanksScaffold wraps inline filters onto additional rows', (
@@ -733,7 +733,7 @@ void main() {
         home: Scaffold(
           body: ThanksCard(
             margin: ThanksCardSpacing.medium,
-            padding: ThanksCardSpacing.large,
+            padding: ThanksCardSpacing.small,
             child: SizedBox(key: Key('child-box'), width: 100, height: 50),
           ),
         ),
@@ -744,8 +744,8 @@ void main() {
     expect(outerPadding.padding, const EdgeInsets.all(ThanksSpacing.medium));
 
     final childOffset = tester.getTopLeft(find.byKey(const Key('child-box')));
-    expect(childOffset.dx, ThanksSpacing.medium + ThanksSpacing.large);
-    expect(childOffset.dy, ThanksSpacing.medium + ThanksSpacing.large);
+    expect(childOffset.dx, ThanksSpacing.medium + ThanksSpacing.small);
+    expect(childOffset.dy, ThanksSpacing.medium + ThanksSpacing.small);
   });
 
   testWidgets('ThanksCard handles tap events when onTap is provided',
@@ -779,7 +779,7 @@ void main() {
             key: Key('main-card'),
             title: 'Main Page Card',
             variant: ThanksCardVariant.filledOutlined,
-            padding: ThanksCardSpacing.large,
+            padding: ThanksCardSpacing.medium,
             child: ThanksCard(
               key: Key('inner-card'),
               title: 'Nested Card',

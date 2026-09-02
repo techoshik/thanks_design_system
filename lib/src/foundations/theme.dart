@@ -161,8 +161,8 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       appBarTheme: AppBarTheme(
         centerTitle: false,
         toolbarHeight: ThanksSpacing.appBarHeight,
-        actionsPadding: const EdgeInsets.only(right: ThanksSpacing.large),
-        titleSpacing: ThanksSpacing.large,
+        actionsPadding: const EdgeInsets.only(right: ThanksSpacing.medium),
+        titleSpacing: ThanksSpacing.medium,
         iconTheme: IconThemeData(color: brand.primary, size: 20),
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,

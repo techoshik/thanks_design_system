@@ -82,7 +82,7 @@ Widget cardPlaygroundUseCase(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text('Primary card content goes here. This area adapts to any layout or widgets.'),
-              const SizedBox(height: ThanksSpacing.medium),
+              ThanksSpacing.spaceMedium,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -112,7 +112,7 @@ Widget cardSectionOutsideUseCase(BuildContext context) {
           subtitle: 'Update your profile photo and contact details.',
           headerPosition: ThanksCardHeaderPosition.outside,
           variant: ThanksCardVariant.filledOutlined,
-          padding: ThanksCardSpacing.large,
+          padding: ThanksCardSpacing.medium,
           margin: ThanksCardSpacing.medium,
           actions: [
             ThanksButton(
@@ -168,7 +168,7 @@ Widget cardMetricInsideUseCase(BuildContext context) {
                       color: ThanksColors.primary500,
                     ),
               ),
-              const SizedBox(height: ThanksSpacing.small),
+              ThanksSpacing.spaceSmall,
               const Text('Target for Q3: \$50,000', style: TextStyle(fontSize: 12, color: ThanksColors.textMuted)),
             ],
           ),
@@ -189,7 +189,7 @@ Widget cardNestedUseCase(BuildContext context) {
           subtitle: 'Manage workspace members and billing subscriptions',
           headerPosition: ThanksCardHeaderPosition.outside,
           variant: ThanksCardVariant.filledOutlined,
-          padding: ThanksCardSpacing.large,
+          padding: ThanksCardSpacing.medium,
           margin: ThanksCardSpacing.medium,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -210,7 +210,7 @@ Widget cardNestedUseCase(BuildContext context) {
                 ],
                 child: const Text('Includes unlimited seats and dedicated 24/7 SLA support.'),
               ),
-              const SizedBox(height: ThanksSpacing.medium),
+              ThanksSpacing.spaceMedium,
               ThanksCard(
                 title: 'Payment Method',
                 subtitle: 'Visa ending in 4242',

@@ -16,7 +16,7 @@ Widget pillSelectorPlaygroundUseCase(BuildContext context) {
     backgroundColor: ThanksColors.pageBackground,
     body: Center(
       child: Padding(
-        padding: const EdgeInsets.all(ThanksSpacing.large),
+        padding: ThanksSpacing.insetMedium,
         child: _InteractivePillSelector(
           isDense: isDense,
           isExpanded: isExpanded,
@@ -69,7 +69,7 @@ class _InteractivePillSelectorState extends State<_InteractivePillSelector> {
             isExpanded: widget.isExpanded,
           ),
         ),
-        const SizedBox(height: ThanksSpacing.medium),
+        ThanksSpacing.spaceMedium,
         Text('Selected filter: $selected', style: const TextStyle(color: ThanksColors.textSecondary)),
       ],
     );
