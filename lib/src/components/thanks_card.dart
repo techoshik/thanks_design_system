@@ -20,7 +20,7 @@ enum ThanksCardVariant {
   filledOutlined,
 }
 
-/// Spacing preset sizes for [ThanksCard] padding and margin.
+/// Spacing preset sizes for [ThanksCard] padding, margin, and radius.
 enum ThanksCardSpacing {
   /// Zero spacing (`0px`).
   none,
@@ -33,10 +33,26 @@ enum ThanksCardSpacing {
 
   /// Returns the corresponding symmetric [EdgeInsets].
   EdgeInsets get insets => switch (this) {
-        ThanksCardSpacing.none => EdgeInsets.zero,
-        ThanksCardSpacing.small => const EdgeInsets.all(ThanksSpacing.small),
-        ThanksCardSpacing.medium => const EdgeInsets.all(ThanksSpacing.medium),
-      };
+    ThanksCardSpacing.none => EdgeInsets.zero,
+    ThanksCardSpacing.small => const EdgeInsets.all(ThanksSpacing.small),
+    ThanksCardSpacing.medium => const EdgeInsets.all(ThanksSpacing.medium),
+  };
+
+  /// Returns the corresponding [BorderRadius].
+  BorderRadius get borderRadius => switch (this) {
+    ThanksCardSpacing.none => BorderRadius.zero,
+    ThanksCardSpacing.small => BorderRadius.circular(ThanksSpacing.radiusSmall),
+    ThanksCardSpacing.medium => BorderRadius.circular(
+      ThanksSpacing.radiusMedium,
+    ),
+  };
+
+  /// Returns the radius value in pixels.
+  double get radius => switch (this) {
+    ThanksCardSpacing.none => 0,
+    ThanksCardSpacing.small => ThanksSpacing.radiusSmall,
+    ThanksCardSpacing.medium => ThanksSpacing.radiusMedium,
+  };
 }
 
 /// The placement of the title, subtitle, and actions relative to the card surface.
@@ -69,7 +85,7 @@ enum ThanksCardHeaderPosition {
 ///
 /// Can be used as a top-level page card or nested within other cards.
 /// Supports [variant] surface styling (`none`, `filled`, `outlined`, `filledOutlined`),
-/// customizable [padding] and [margin] spacing presets, [onTap] interactions,
+/// customizable [padding], [margin], and [radius] spacing presets, [onTap] interactions,
 /// and header placement via [headerPosition] (`outside` or `inside`).
 ///
 /// Use [ThanksCardHeaderPosition.outside] for page sections and form groups, or
@@ -86,10 +102,11 @@ class ThanksCard extends StatelessWidget {
     this.variant = ThanksCardVariant.none,
     this.padding = ThanksCardSpacing.none,
     this.margin = ThanksCardSpacing.none,
+    this.radius = ThanksCardSpacing.medium,
     this.customPadding,
     this.customMargin,
+    this.customBorderRadius,
     this.showDivider = false,
-    this.borderRadius,
     this.onTap,
   });
 
@@ -119,23 +136,26 @@ class ThanksCard extends StatelessWidget {
   /// External margin preset around the entire card widget.
   final ThanksCardSpacing margin;
 
+  /// Corner radius preset for the card surface container. Defaults to [ThanksCardSpacing.medium].
+  final ThanksCardSpacing radius;
+
   /// Explicit internal padding overriding [padding].
   final EdgeInsetsGeometry? customPadding;
 
   /// Explicit external margin overriding [margin].
   final EdgeInsetsGeometry? customMargin;
 
+  /// Optional custom border radius for the card surface overriding [radius].
+  final BorderRadiusGeometry? customBorderRadius;
+
+  /// Optional callback invoked when the card is tapped.
+  final VoidCallback? onTap;
+
   /// Whether to render a divider between the inside header and the [child].
   ///
   /// Only applies when [headerPosition] is [ThanksCardHeaderPosition.inside]
   /// and a header is present.
   final bool showDivider;
-
-  /// Custom border radius for the card surface. Defaults to [ThanksSpacing.radiusLarge] (16px).
-  final BorderRadiusGeometry? borderRadius;
-
-  /// Optional callback invoked when the card is tapped.
-  final VoidCallback? onTap;
 
   bool get _hasHeader =>
       title != null || subtitle != null || actions.isNotEmpty;
@@ -149,13 +169,12 @@ class ThanksCard extends StatelessWidget {
 
     final effectiveMargin = customMargin ?? margin.insets;
     final effectivePadding = customPadding ?? padding.insets;
-    final effectiveRadius =
-        borderRadius ?? BorderRadius.circular(ThanksSpacing.radiusLarge);
+    final effectiveRadius = customBorderRadius ?? radius.borderRadius;
 
-    final isOutsideHeader = _hasHeader &&
-        headerPosition == ThanksCardHeaderPosition.outside;
-    final isInsideHeader = _hasHeader &&
-        headerPosition == ThanksCardHeaderPosition.inside;
+    final isOutsideHeader =
+        _hasHeader && headerPosition == ThanksCardHeaderPosition.outside;
+    final isInsideHeader =
+        _hasHeader && headerPosition == ThanksCardHeaderPosition.inside;
 
     Widget surfaceContent = child;
 
@@ -179,10 +198,7 @@ class ThanksCard extends StatelessWidget {
     }
 
     // Apply internal padding
-    surfaceContent = Padding(
-      padding: effectivePadding,
-      child: surfaceContent,
-    );
+    surfaceContent = Padding(padding: effectivePadding, child: surfaceContent);
 
     // Build the visual card surface
     final surface = _buildSurface(
@@ -199,21 +215,14 @@ class ThanksCard extends StatelessWidget {
       rootWidget = Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          headerWidget,
-          ThanksSpacing.spaceSmall,
-          surface,
-        ],
+        children: [headerWidget, ThanksSpacing.spaceSmall, surface],
       );
     } else {
       rootWidget = surface;
     }
 
     if (effectiveMargin != EdgeInsets.zero) {
-      rootWidget = Padding(
-        padding: effectiveMargin,
-        child: rootWidget,
-      );
+      rootWidget = Padding(padding: effectiveMargin, child: rootWidget);
     }
 
     return rootWidget;
@@ -231,15 +240,12 @@ class ThanksCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (title != null)
-                  Text(
-                    title!,
-                    style: textTheme.titleMedium,
-                  ),
+                if (title != null) Text(title!, style: textTheme.titleMedium),
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: textTheme.bodySmall?.copyWith(
+                    style:
+                        textTheme.bodySmall?.copyWith(
                           color: ThanksColors.textSecondary,
                         ) ??
                         const TextStyle(
@@ -253,8 +259,7 @@ class ThanksCard extends StatelessWidget {
         else
           const Spacer(),
         if (actions.isNotEmpty) ...[
-          if (title != null || subtitle != null)
-            ThanksSpacing.spaceSmall,
+          if (title != null || subtitle != null) ThanksSpacing.spaceSmall,
           Row(
             mainAxisSize: MainAxisSize.min,
             spacing: ThanksSpacing.small,
@@ -276,13 +281,13 @@ class ThanksCard extends StatelessWidget {
       ThanksCardVariant.none => (Colors.transparent, null),
       ThanksCardVariant.filled => (surfaceColor, null),
       ThanksCardVariant.outlined => (
-          Colors.transparent,
-          Border.all(color: borderColor),
-        ),
+        Colors.transparent,
+        Border.all(color: borderColor),
+      ),
       ThanksCardVariant.filledOutlined => (
-          surfaceColor,
-          Border.all(color: borderColor),
-        ),
+        surfaceColor,
+        Border.all(color: borderColor),
+      ),
     };
 
     if (onTap != null) {
@@ -307,8 +312,9 @@ class ThanksCard extends StatelessWidget {
         border: border,
         borderRadius: borderRadius,
       ),
-      clipBehavior:
-          variant == ThanksCardVariant.none ? Clip.none : Clip.antiAlias,
+      clipBehavior: variant == ThanksCardVariant.none
+          ? Clip.none
+          : Clip.antiAlias,
       child: content,
     );
   }

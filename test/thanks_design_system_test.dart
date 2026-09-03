@@ -30,10 +30,9 @@ void main() {
             children: [
               TextField(key: Key('plain')),
               TextField(
-                  key: Key('icon'),
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(Icons.visibility),
-                  )),
+                key: Key('icon'),
+                decoration: InputDecoration(suffixIcon: Icon(Icons.visibility)),
+              ),
             ],
           ),
         ),
@@ -238,8 +237,9 @@ void main() {
     );
   });
 
-  testWidgets('expanded pill selector fills the available width',
-      (tester) async {
+  testWidgets('expanded pill selector fills the available width', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThanksTheme.light(),
@@ -261,8 +261,9 @@ void main() {
     expect(tester.getSize(find.byType(PillSelector<int>)).width, 320);
   });
 
-  testWidgets('ThanksScaffold applies its default page padding',
-      (tester) async {
+  testWidgets('ThanksScaffold applies its default page padding', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: ThanksScaffold(
@@ -317,10 +318,7 @@ void main() {
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
     await tester.pump();
 
-    expect(
-      tester.getTopLeft(find.text('Invoices')),
-      titleOffsetBefore,
-    );
+    expect(tester.getTopLeft(find.text('Invoices')), titleOffsetBefore);
   });
 
   testWidgets('ThanksScaffold gives top bar and filters one medium gap', (
@@ -328,10 +326,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: ThanksScaffold(
-          title: 'Invoices',
-          filters: [Text('Open')],
-        ),
+        home: ThanksScaffold(title: 'Invoices', filters: [Text('Open')]),
       ),
     );
 
@@ -406,36 +401,35 @@ void main() {
   });
 
   testWidgets(
-      'ThanksScaffold shows adaptive filters in a bottom sheet on mobile', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThanksTheme.light(),
-        home: MediaQuery(
-          data: const MediaQueryData(size: Size(375, 800)),
-          child: const ThanksScaffold(
-            title: 'Invoices',
-            filters: [Text('Open'), Text('Overdue')],
+    'ThanksScaffold shows adaptive filters in a bottom sheet on mobile',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(375, 800)),
+            child: const ThanksScaffold(
+              title: 'Invoices',
+              filters: [Text('Open'), Text('Overdue')],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('Open'), findsNothing);
-    expect(
-      IconTheme.of(
-        tester.element(find.byIcon(Icons.filter_list_rounded)),
-      ).size,
-      20,
-    );
-    await tester.tap(find.byIcon(Icons.filter_list_rounded));
-    await tester.pumpAndSettle();
+      expect(find.text('Open'), findsNothing);
+      expect(
+        IconTheme.of(tester.element(find.byIcon(Icons.filter_list_rounded)))
+            .size,
+        20,
+      );
+      await tester.tap(find.byIcon(Icons.filter_list_rounded));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Filters'), findsOneWidget);
-    expect(find.text('Open'), findsOneWidget);
-    expect(find.text('Overdue'), findsOneWidget);
-  });
+      expect(find.text('Filters'), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Overdue'), findsOneWidget);
+    },
+  );
 
   testWidgets('ThanksScaffold can leave body padding to a scroll view', (
     tester,
@@ -480,10 +474,7 @@ void main() {
       const MaterialApp(
         home: ThanksScaffold(
           title: 'Home',
-          actions: [
-            Icon(Icons.search),
-            Icon(Icons.more_vert),
-          ],
+          actions: [Icon(Icons.search), Icon(Icons.more_vert)],
           body: SizedBox(),
         ),
       ),
@@ -496,10 +487,7 @@ void main() {
       tester.getTopLeft(find.text('Home')).dy,
       ThanksSpacing.small + ThanksSpacing.buttonHeight,
     );
-    expect(
-      morePosition.dx - searchPosition.dx,
-      24 + ThanksSpacing.small,
-    );
+    expect(morePosition.dx - searchPosition.dx, 24 + ThanksSpacing.small);
   });
 
   testWidgets('ThanksScaffold shows menu and back navigation together', (
@@ -520,9 +508,8 @@ void main() {
               ),
             ),
           ],
-          onGenerateRoute: (_) => MaterialPageRoute<void>(
-            builder: (_) => const SizedBox(),
-          ),
+          onGenerateRoute: (_) =>
+              MaterialPageRoute<void>(builder: (_) => const SizedBox()),
         ),
       ),
     );
@@ -534,10 +521,7 @@ void main() {
       tester.getSize(find.byType(TextButton)).height,
       ThanksSpacing.buttonHeight,
     );
-    expect(
-      tester.getTopLeft(find.byType(TextButton)).dy,
-      ThanksSpacing.small,
-    );
+    expect(tester.getTopLeft(find.byType(TextButton)).dy, ThanksSpacing.small);
     expect(
       tester.getTopLeft(find.text('Details')).dy,
       ThanksSpacing.small + ThanksSpacing.buttonHeight,
@@ -564,9 +548,8 @@ void main() {
                 builder: (_) => const ThanksScaffold(title: 'Details'),
               ),
             ],
-            onGenerateRoute: (_) => MaterialPageRoute<void>(
-              builder: (_) => const SizedBox(),
-            ),
+            onGenerateRoute: (_) =>
+                MaterialPageRoute<void>(builder: (_) => const SizedBox()),
           ),
         ),
       ),
@@ -578,8 +561,9 @@ void main() {
     );
   });
 
-  testWidgets('ThanksScaffoldController opens the right drawer',
-      (tester) async {
+  testWidgets('ThanksScaffoldController opens the right drawer', (
+    tester,
+  ) async {
     final controller = ThanksScaffoldController();
     await tester.pumpWidget(
       MaterialApp(
@@ -597,137 +581,161 @@ void main() {
     expect(find.text('Actions'), findsOneWidget);
   });
 
-  testWidgets('ThanksCard renders child with default none variant and zero padding/margin',
-      (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: ThanksCard(
-            child: Text('Card Content'),
+  testWidgets(
+    'ThanksCard renders child with default none variant and zero padding/margin',
+    (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: ThanksCard(child: Text('Card Content'))),
+        ),
+      );
+
+      expect(find.text('Card Content'), findsOneWidget);
+      final container = tester.widget<Container>(find.byType(Container));
+      final decoration = container.decoration as BoxDecoration?;
+      expect(decoration?.color, Colors.transparent);
+      expect(decoration?.border, isNull);
+    },
+  );
+
+  testWidgets(
+    'ThanksCard renders outside header with title, subtitle, and actions',
+    (tester) async {
+      var actionClicked = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: Scaffold(
+            body: ThanksCard(
+              title: 'Card Title',
+              subtitle: 'Card Subtitle',
+              actions: [
+                IconButton(
+                  key: const Key('header-action'),
+                  icon: const Icon(Icons.more_horiz),
+                  onPressed: () => actionClicked = true,
+                ),
+              ],
+              headerPosition: ThanksCardHeaderPosition.outside,
+              variant: ThanksCardVariant.filledOutlined,
+              child: const Text('Body Content'),
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('Card Content'), findsOneWidget);
-    final container = tester.widget<Container>(find.byType(Container));
-    final decoration = container.decoration as BoxDecoration?;
-    expect(decoration?.color, Colors.transparent);
-    expect(decoration?.border, isNull);
-  });
+      expect(find.text('Card Title'), findsOneWidget);
+      expect(find.text('Card Subtitle'), findsOneWidget);
+      expect(find.byKey(const Key('header-action')), findsOneWidget);
+      expect(find.text('Body Content'), findsOneWidget);
 
-  testWidgets('ThanksCard renders outside header with title, subtitle, and actions',
-      (tester) async {
-    var actionClicked = false;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThanksTheme.light(),
-        home: Scaffold(
-          body: ThanksCard(
-            title: 'Card Title',
-            subtitle: 'Card Subtitle',
-            actions: [
-              IconButton(
-                key: const Key('header-action'),
-                icon: const Icon(Icons.more_horiz),
-                onPressed: () => actionClicked = true,
-              ),
-            ],
-            headerPosition: ThanksCardHeaderPosition.outside,
-            variant: ThanksCardVariant.filledOutlined,
-            child: const Text('Body Content'),
+      final titleOffset = tester.getTopLeft(find.text('Card Title'));
+      final bodyOffset = tester.getTopLeft(find.text('Body Content'));
+      expect(titleOffset.dy, lessThan(bodyOffset.dy));
+
+      await tester.tap(find.byKey(const Key('header-action')));
+      expect(actionClicked, isTrue);
+    },
+  );
+
+  testWidgets(
+    'ThanksCard renders inside header with title, subtitle, and divider',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const Scaffold(
+            body: ThanksCard(
+              title: 'Inside Title',
+              subtitle: 'Inside Subtitle',
+              headerPosition: ThanksCardHeaderPosition.inside,
+              variant: ThanksCardVariant.outlined,
+              showDivider: true,
+              child: Text('Inside Body'),
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('Card Title'), findsOneWidget);
-    expect(find.text('Card Subtitle'), findsOneWidget);
-    expect(find.byKey(const Key('header-action')), findsOneWidget);
-    expect(find.text('Body Content'), findsOneWidget);
+      expect(find.text('Inside Title'), findsOneWidget);
+      expect(find.text('Inside Subtitle'), findsOneWidget);
+      expect(find.text('Inside Body'), findsOneWidget);
+      expect(find.byType(Divider), findsOneWidget);
+    },
+  );
 
-    final titleOffset = tester.getTopLeft(find.text('Card Title'));
-    final bodyOffset = tester.getTopLeft(find.text('Body Content'));
-    expect(titleOffset.dy, lessThan(bodyOffset.dy));
-
-    await tester.tap(find.byKey(const Key('header-action')));
-    expect(actionClicked, isTrue);
-  });
-
-  testWidgets('ThanksCard renders inside header with title, subtitle, and divider',
-      (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThanksTheme.light(),
-        home: const Scaffold(
-          body: ThanksCard(
-            title: 'Inside Title',
-            subtitle: 'Inside Subtitle',
-            headerPosition: ThanksCardHeaderPosition.inside,
-            variant: ThanksCardVariant.outlined,
-            showDivider: true,
-            child: Text('Inside Body'),
+  testWidgets(
+    'ThanksCard supports filled, outlined, and filledOutlined variants',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const Scaffold(
+            body: Column(
+              children: [
+                ThanksCard(
+                  key: Key('card-filled'),
+                  variant: ThanksCardVariant.filled,
+                  child: Text('Filled'),
+                ),
+                ThanksCard(
+                  key: Key('card-outlined'),
+                  variant: ThanksCardVariant.outlined,
+                  child: Text('Outlined'),
+                ),
+                ThanksCard(
+                  key: Key('card-filled-outlined'),
+                  variant: ThanksCardVariant.filledOutlined,
+                  child: Text('Filled Outlined'),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('Inside Title'), findsOneWidget);
-    expect(find.text('Inside Subtitle'), findsOneWidget);
-    expect(find.text('Inside Body'), findsOneWidget);
-    expect(find.byType(Divider), findsOneWidget);
-  });
+      final filledContainer = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byKey(const Key('card-filled')),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      final filledDeco = filledContainer.decoration as BoxDecoration;
+      expect(filledDeco.color, ThanksColors.surface);
+      expect(filledDeco.border, isNull);
 
-  testWidgets('ThanksCard supports filled, outlined, and filledOutlined variants',
-      (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThanksTheme.light(),
-        home: const Scaffold(
-          body: Column(
-            children: [
-              ThanksCard(
-                key: Key('card-filled'),
-                variant: ThanksCardVariant.filled,
-                child: Text('Filled'),
-              ),
-              ThanksCard(
-                key: Key('card-outlined'),
-                variant: ThanksCardVariant.outlined,
-                child: Text('Outlined'),
-              ),
-              ThanksCard(
-                key: Key('card-filled-outlined'),
-                variant: ThanksCardVariant.filledOutlined,
-                child: Text('Filled Outlined'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+      final outlinedContainer = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byKey(const Key('card-outlined')),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      final outlinedDeco = outlinedContainer.decoration as BoxDecoration;
+      expect(outlinedDeco.color, Colors.transparent);
+      expect(outlinedDeco.border?.top.color, ThanksColors.border);
 
-    final filledContainer =
-        tester.widget<Container>(find.descendant(of: find.byKey(const Key('card-filled')), matching: find.byType(Container)).first);
-    final filledDeco = filledContainer.decoration as BoxDecoration;
-    expect(filledDeco.color, ThanksColors.surface);
-    expect(filledDeco.border, isNull);
+      final filledOutlinedContainer = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byKey(const Key('card-filled-outlined')),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      final filledOutlinedDeco =
+          filledOutlinedContainer.decoration as BoxDecoration;
+      expect(filledOutlinedDeco.color, ThanksColors.surface);
+      expect(filledOutlinedDeco.border?.top.color, ThanksColors.border);
+    },
+  );
 
-    final outlinedContainer =
-        tester.widget<Container>(find.descendant(of: find.byKey(const Key('card-outlined')), matching: find.byType(Container)).first);
-    final outlinedDeco = outlinedContainer.decoration as BoxDecoration;
-    expect(outlinedDeco.color, Colors.transparent);
-    expect(outlinedDeco.border?.top.color, ThanksColors.border);
-
-    final filledOutlinedContainer =
-        tester.widget<Container>(find.descendant(of: find.byKey(const Key('card-filled-outlined')), matching: find.byType(Container)).first);
-    final filledOutlinedDeco = filledOutlinedContainer.decoration as BoxDecoration;
-    expect(filledOutlinedDeco.color, ThanksColors.surface);
-    expect(filledOutlinedDeco.border?.top.color, ThanksColors.border);
-  });
-
-  testWidgets('ThanksCard applies spacing presets and custom margin/padding',
-      (tester) async {
+  testWidgets('ThanksCard applies spacing presets and custom margin/padding', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
@@ -748,8 +756,111 @@ void main() {
     expect(childOffset.dy, ThanksSpacing.medium + ThanksSpacing.small);
   });
 
-  testWidgets('ThanksCard handles tap events when onTap is provided',
-      (tester) async {
+  testWidgets('ThanksCard applies radius preset and custom border radius', (
+    tester,
+  ) async {
+    // Verify enum getters
+    expect(ThanksCardSpacing.none.radius, 0);
+    expect(ThanksCardSpacing.none.borderRadius, BorderRadius.zero);
+    expect(ThanksCardSpacing.small.radius, ThanksSpacing.radiusSmall);
+    expect(
+      ThanksCardSpacing.small.borderRadius,
+      BorderRadius.circular(ThanksSpacing.radiusSmall),
+    );
+    expect(ThanksCardSpacing.medium.radius, ThanksSpacing.radiusMedium);
+    expect(
+      ThanksCardSpacing.medium.borderRadius,
+      BorderRadius.circular(ThanksSpacing.radiusMedium),
+    );
+
+    // Verify default radius (medium -> 16px)
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ThanksCard(
+            key: Key('default-radius-card'),
+            variant: ThanksCardVariant.filled,
+            child: Text('Default Radius'),
+          ),
+        ),
+      ),
+    );
+
+    final defaultContainer = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(const Key('default-radius-card')),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    final defaultDeco = defaultContainer.decoration as BoxDecoration;
+    expect(
+      defaultDeco.borderRadius,
+      BorderRadius.circular(ThanksSpacing.radiusMedium),
+    );
+
+    // Verify small radius (8px)
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ThanksCard(
+            key: Key('small-radius-card'),
+            variant: ThanksCardVariant.filled,
+            radius: ThanksCardSpacing.small,
+            child: Text('Small Radius'),
+          ),
+        ),
+      ),
+    );
+
+    final smallContainer = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(const Key('small-radius-card')),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    final smallDeco = smallContainer.decoration as BoxDecoration;
+    expect(
+      smallDeco.borderRadius,
+      BorderRadius.circular(ThanksSpacing.radiusSmall),
+    );
+
+    // Verify customBorderRadius override
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ThanksCard(
+            key: Key('custom-radius-card'),
+            variant: ThanksCardVariant.filled,
+            radius: ThanksCardSpacing.small,
+            customBorderRadius: BorderRadius.all(Radius.circular(24)),
+            child: Text('Custom Radius'),
+          ),
+        ),
+      ),
+    );
+
+    final customContainer = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(const Key('custom-radius-card')),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    final customDeco = customContainer.decoration as BoxDecoration;
+    expect(
+      customDeco.borderRadius,
+      const BorderRadius.all(Radius.circular(24)),
+    );
+  });
+
+  testWidgets('ThanksCard handles tap events when onTap is provided', (
+    tester,
+  ) async {
     var tapped = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -769,8 +880,9 @@ void main() {
     expect(tapped, isTrue);
   });
 
-  testWidgets('ThanksCard supports nesting an inner card inside a main card',
-      (tester) async {
+  testWidgets('ThanksCard supports nesting an inner card inside a main card', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThanksTheme.light(),
@@ -801,4 +913,3 @@ void main() {
 
 String _label(int value) => '$value';
 void _noop(int? value) {}
-

@@ -35,6 +35,12 @@ Widget cardPlaygroundUseCase(BuildContext context) {
     initialOption: ThanksCardSpacing.medium,
     labelBuilder: (s) => s.name,
   );
+  final radius = context.knobs.object.dropdown<ThanksCardSpacing>(
+    label: 'Radius',
+    options: ThanksCardSpacing.values,
+    initialOption: ThanksCardSpacing.medium,
+    labelBuilder: (s) => s.name,
+  );
   final showDivider = context.knobs.boolean(
     label: 'Show Divider (Inside Header)',
     initialValue: true,
@@ -60,6 +66,7 @@ Widget cardPlaygroundUseCase(BuildContext context) {
           variant: variant,
           padding: padding,
           margin: margin,
+          radius: radius,
           showDivider: showDivider,
           onTap: isTappable ? () {} : null,
           actions: showActions

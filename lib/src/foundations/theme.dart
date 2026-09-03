@@ -184,7 +184,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
         color: ThanksColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ThanksSpacing.radiusLarge),
+          borderRadius: BorderRadius.circular(ThanksSpacing.radiusMedium),
           side: const BorderSide(color: ThanksColors.border),
         ),
         margin: EdgeInsets.zero,

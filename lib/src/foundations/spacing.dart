@@ -6,6 +6,7 @@ abstract final class ThanksSpacing {
   static const double medium = 16;
 
   static const double radiusSmall = small;
+  static const double radiusMedium = medium;
   static const double radiusLarge = medium;
   static const double radiusFull = 100;
 
