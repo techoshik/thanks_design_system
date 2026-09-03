@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:fit_it/fit_it.dart';
 import 'package:flutter/material.dart';
 
-import '../components/buttons.dart';
+import '../components/thanks_button.dart';
 import '../foundations/spacing.dart';
 
 /// Controls how [ThanksScaffold.filters] are presented.
@@ -95,9 +95,9 @@ class ThanksScaffold extends StatelessWidget {
     this.endDrawer,
     this.backgroundColor,
   }) : assert(
-          body == null || sliver == null,
-          'Provide either body or sliver, not both.',
-        );
+         body == null || sliver == null,
+         'Provide either body or sliver, not both.',
+       );
 
   final ThanksScaffoldController? controller;
   final PreferredSizeWidget? appBar;
@@ -145,7 +145,8 @@ class ThanksScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showFiltersInBottomSheet = _showFiltersInBottomSheet(context);
-    final hasBackButton = appBar == null &&
+    final hasBackButton =
+        appBar == null &&
         title != null &&
         showBackButton &&
         Navigator.of(context).canPop();
@@ -174,8 +175,10 @@ class ThanksScaffold extends StatelessWidget {
                 children: [
                   if (topBar != null)
                     Padding(
-                      padding:
-                          _sectionPadding(context, top: ThanksSpacing.small),
+                      padding: _sectionPadding(
+                        context,
+                        top: ThanksSpacing.small,
+                      ),
                       child: topBar,
                     ),
                   if (inlineFilters != null)
@@ -203,8 +206,10 @@ class ThanksScaffold extends StatelessWidget {
                 slivers: [
                   if (topBar != null)
                     SliverPadding(
-                      padding:
-                          _sectionPadding(context, top: ThanksSpacing.small),
+                      padding: _sectionPadding(
+                        context,
+                        top: ThanksSpacing.small,
+                      ),
                       sliver: SliverToBoxAdapter(child: topBar),
                     ),
                   if (inlineFilters != null)
@@ -249,7 +254,9 @@ class ThanksScaffold extends StatelessWidget {
 
   double _horizontalGutter(BuildContext context) {
     final size = FitSize.parse(MediaQuery.sizeOf(context).width);
-    return size.isTabletOrBelow ? ThanksSpacing.medium : ThanksSpacing.medium * 2;
+    return size.isTabletOrBelow
+        ? ThanksSpacing.medium
+        : ThanksSpacing.medium * 2;
   }
 
   bool _showFiltersInBottomSheet(BuildContext context) {
@@ -274,25 +281,24 @@ class ThanksScaffold extends StatelessWidget {
 
     return Builder(
       builder: (buttonContext) => _ThanksTopBar(
-          title: title!,
-          subtitle: subtitle,
-          actions: actions,
-          showBackButton: showBackButton,
-          backDestinationLabel: backDestinationLabel,
-          showMenuButton: hasDrawer,
-          onBackPressed:
-              onBackPressed ?? () => Navigator.of(context).maybePop(),
-          onMenuPressed: () {
-            if (controller != null) {
-              controller!.openDrawer();
-            } else {
-              Scaffold.of(buttonContext).openDrawer();
-            }
-          },
-          onFiltersPressed: showFiltersInBottomSheet
-              ? () => _showFiltersBottomSheet(buttonContext)
-              : null,
-        ),
+        title: title!,
+        subtitle: subtitle,
+        actions: actions,
+        showBackButton: showBackButton,
+        backDestinationLabel: backDestinationLabel,
+        showMenuButton: hasDrawer,
+        onBackPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
+        onMenuPressed: () {
+          if (controller != null) {
+            controller!.openDrawer();
+          } else {
+            Scaffold.of(buttonContext).openDrawer();
+          }
+        },
+        onFiltersPressed: showFiltersInBottomSheet
+            ? () => _showFiltersBottomSheet(buttonContext)
+            : null,
+      ),
     );
   }
 
@@ -300,10 +306,8 @@ class ThanksScaffold extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (sheetContext) => _ThanksFiltersBottomSheet(
-        filters: filters,
-        spacing: filterSpacing,
-      ),
+      builder: (sheetContext) =>
+          _ThanksFiltersBottomSheet(filters: filters, spacing: filterSpacing),
     );
   }
 }
@@ -334,65 +338,69 @@ class _ThanksTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final backButtonLabel =
-        backDestinationLabel == null ? 'Back' : 'Back to $backDestinationLabel';
+    final backButtonLabel = backDestinationLabel == null
+        ? 'Back'
+        : 'Back to $backDestinationLabel';
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (showBackButton)
-        Padding(
-          padding: EdgeInsetsGeometry.only(
-            left: showMenuButton
-                ? ThanksSpacing.buttonHeight + ThanksSpacing.small
-                : 0,
-          ),
-          child: ThanksButton(
-            label: backButtonLabel,
-            onPressed: onBackPressed,
-            variant: ThanksButtonVariant.text,
-            leadingIcon: const Icon(Icons.arrow_back),
-            style: ButtonStyle(
-              padding: const WidgetStatePropertyAll(
-                EdgeInsets.symmetric(horizontal: ThanksSpacing.small),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (showBackButton)
+          Padding(
+            padding: EdgeInsetsGeometry.only(
+              left: showMenuButton
+                  ? ThanksSpacing.buttonHeight + ThanksSpacing.small
+                  : 0,
+            ),
+            child: ThanksButton(
+              label: backButtonLabel,
+              onPressed: onBackPressed,
+              variant: ThanksButtonVariant.text,
+              leadingIcon: const Icon(Icons.arrow_back),
+              style: ButtonStyle(
+                padding: const WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: ThanksSpacing.small),
+                ),
+                textStyle: WidgetStatePropertyAll(textTheme.labelSmall),
               ),
-              textStyle: WidgetStatePropertyAll(textTheme.labelSmall),
             ),
-          ),
-        )
-      else
-        const SizedBox(height: ThanksSpacing.buttonHeight),
-      Row(
-        spacing: ThanksSpacing.small,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (showMenuButton)
-            ThanksButton.icon(
-              tooltip: 'Open menu',
-              icon: const Icon(Icons.menu_rounded),
-              onPressed: onMenuPressed,
-              variant: ThanksButtonVariant.text,
+          )
+        else
+          const SizedBox(height: ThanksSpacing.buttonHeight),
+        Row(
+          spacing: ThanksSpacing.small,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (showMenuButton)
+              ThanksButton.icon(
+                tooltip: 'Open menu',
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: onMenuPressed,
+                variant: ThanksButtonVariant.text,
+              ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: textTheme.titleLarge),
+                  if (subtitle != null)
+                    Text(subtitle!, style: textTheme.bodySmall),
+                ],
+              ),
             ),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: textTheme.titleLarge),
-                if (subtitle != null)
-                  Text(subtitle!, style: textTheme.bodySmall),
-              ],
-            ),
-          ),
-          ...actions,
-          if (onFiltersPressed != null)
-            ThanksButton.icon(
-              tooltip: 'Show filters',
-              variant: ThanksButtonVariant.text,
-              icon: const Icon(Icons.filter_list_rounded),
-              onPressed: onFiltersPressed,
-            ),
-        ],
-      )
-    ]);
+            ...actions,
+            if (onFiltersPressed != null)
+              ThanksButton.icon(
+                tooltip: 'Show filters',
+                variant: ThanksButtonVariant.text,
+                icon: const Icon(Icons.filter_list_rounded),
+                onPressed: onFiltersPressed,
+              ),
+          ],
+        ),
+      ],
+    );
   }
 }
 
