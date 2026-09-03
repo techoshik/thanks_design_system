@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:fit_it/fit_it.dart';
 import 'package:flutter/material.dart';
 
+export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
+
 import '../components/thanks_button.dart';
 import '../foundations/spacing.dart';
 
@@ -94,6 +96,8 @@ class ThanksScaffold extends StatelessWidget {
     this.drawer,
     this.endDrawer,
     this.backgroundColor,
+    this.maxWidthBody,
+    this.maxWidthPage,
   }) : assert(
          body == null || sliver == null,
          'Provide either body or sliver, not both.',
@@ -142,6 +146,12 @@ class ThanksScaffold extends StatelessWidget {
   final Widget? endDrawer;
   final Color? backgroundColor;
 
+  /// The maximum size constraint for the body content, using [FitContainer].
+  final FitSize? maxWidthBody;
+
+  /// The maximum size constraint for the entire page, using [FitContainer].
+  final FitSize? maxWidthPage;
+
   @override
   Widget build(BuildContext context) {
     final showFiltersInBottomSheet = _showFiltersInBottomSheet(context);
@@ -155,8 +165,14 @@ class ThanksScaffold extends StatelessWidget {
       showFiltersInBottomSheet: showFiltersInBottomSheet,
       showBackButton: hasBackButton,
     );
+    final effectiveBody = body != null && maxWidthBody != null
+        ? FitContainer(maxFitSize: maxWidthBody, child: body)
+        : body;
     final contentSliver =
-        sliver ?? (body == null ? null : SliverToBoxAdapter(child: body));
+        sliver ??
+        (effectiveBody == null
+            ? null
+            : SliverToBoxAdapter(child: effectiveBody));
     final inlineFilters = filters.isNotEmpty && !showFiltersInBottomSheet
         ? Wrap(
             spacing: filterSpacing,
@@ -165,68 +181,65 @@ class ThanksScaffold extends StatelessWidget {
           )
         : null;
 
+    final pageContent = pinAppBar
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (topBar != null)
+                Padding(
+                  padding: _sectionPadding(context, top: ThanksSpacing.small),
+                  child: topBar,
+                ),
+              if (inlineFilters != null)
+                Padding(
+                  padding: _sectionPadding(context),
+                  child: inlineFilters,
+                ),
+              Expanded(
+                child: contentSliver == null
+                    ? const SizedBox.shrink()
+                    : CustomScrollView(
+                        slivers: [
+                          SliverPadding(
+                            padding: applyBodyPadding
+                                ? _contentPadding(context)
+                                : EdgeInsets.zero,
+                            sliver: contentSliver,
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          )
+        : CustomScrollView(
+            slivers: [
+              if (topBar != null)
+                SliverPadding(
+                  padding: _sectionPadding(context, top: ThanksSpacing.small),
+                  sliver: SliverToBoxAdapter(child: topBar),
+                ),
+              if (inlineFilters != null)
+                SliverPadding(
+                  padding: _sectionPadding(context),
+                  sliver: SliverToBoxAdapter(child: inlineFilters),
+                ),
+              if (contentSliver != null)
+                SliverPadding(
+                  padding: applyBodyPadding
+                      ? _contentPadding(context)
+                      : EdgeInsets.zero,
+                  sliver: contentSliver,
+                ),
+            ],
+          );
+
+    final constrainedPage = maxWidthPage != null
+        ? FitContainer(maxFitSize: maxWidthPage, child: pageContent)
+        : pageContent;
+
     return Scaffold(
       key: controller?._scaffoldKey,
-      body: SafeArea(
-        bottom: false,
-        child: pinAppBar
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (topBar != null)
-                    Padding(
-                      padding: _sectionPadding(
-                        context,
-                        top: ThanksSpacing.small,
-                      ),
-                      child: topBar,
-                    ),
-                  if (inlineFilters != null)
-                    Padding(
-                      padding: _sectionPadding(context),
-                      child: inlineFilters,
-                    ),
-                  Expanded(
-                    child: contentSliver == null
-                        ? const SizedBox.shrink()
-                        : CustomScrollView(
-                            slivers: [
-                              SliverPadding(
-                                padding: applyBodyPadding
-                                    ? _contentPadding(context)
-                                    : EdgeInsets.zero,
-                                sliver: contentSliver,
-                              ),
-                            ],
-                          ),
-                  ),
-                ],
-              )
-            : CustomScrollView(
-                slivers: [
-                  if (topBar != null)
-                    SliverPadding(
-                      padding: _sectionPadding(
-                        context,
-                        top: ThanksSpacing.small,
-                      ),
-                      sliver: SliverToBoxAdapter(child: topBar),
-                    ),
-                  if (inlineFilters != null)
-                    SliverPadding(
-                      padding: _sectionPadding(context),
-                      sliver: SliverToBoxAdapter(child: inlineFilters),
-                    ),
-                  if (contentSliver != null)
-                    SliverPadding(
-                      padding: applyBodyPadding
-                          ? _contentPadding(context)
-                          : EdgeInsets.zero,
-                      sliver: contentSliver,
-                    ),
-                ],
-              ),
-      ),
+      body: SafeArea(bottom: false, child: constrainedPage),
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
       drawer: drawer,

@@ -582,6 +582,154 @@ void main() {
   });
 
   testWidgets(
+    'ThanksScaffold sets maximum width of page using FitContainer when maxWidthPage is provided',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ThanksScaffold(
+            title: 'Wide Page',
+            maxWidthPage: FitSize.tablet,
+            body: SizedBox(
+              key: Key('page-body'),
+              width: double.infinity,
+              height: 100,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(FitContainer), findsOneWidget);
+      final fitContainer = tester.widget<FitContainer>(
+        find.byType(FitContainer),
+      );
+      expect(fitContainer.maxFitSize, FitSize.tablet);
+
+      // Verify the page content is constrained to FitSize.tablet.maxWidth (800) width and centered within 1200px
+      final bodyWidth = tester
+          .getSize(find.byKey(const Key('page-body')))
+          .width;
+      expect(bodyWidth, lessThanOrEqualTo(FitSize.tablet.maxWidth));
+      final bodyRect = tester.getRect(find.byKey(const Key('page-body')));
+      expect(bodyRect.center.dx, closeTo(600, 1.0));
+    },
+  );
+
+  testWidgets(
+    'ThanksScaffold sets maximum width of body using FitContainer when maxWidthBody is provided',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ThanksScaffold(
+            title: 'Wide Title',
+            maxWidthBody: FitSize.tablet,
+            body: SizedBox(
+              key: Key('constrained-body'),
+              width: double.infinity,
+              height: 100,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(FitContainer), findsOneWidget);
+      final fitContainer = tester.widget<FitContainer>(
+        find.byType(FitContainer),
+      );
+      expect(fitContainer.maxFitSize, FitSize.tablet);
+
+      // Body is constrained to FitSize.tablet.maxWidth (800)
+      final bodyWidth = tester
+          .getSize(find.byKey(const Key('constrained-body')))
+          .width;
+      expect(bodyWidth, FitSize.tablet.maxWidth);
+      final bodyRect = tester.getRect(
+        find.byKey(const Key('constrained-body')),
+      );
+      expect(bodyRect.center.dx, closeTo(600, 1.0));
+    },
+  );
+
+  testWidgets(
+    'ThanksScaffold sets maximum width of both differently based on which value is provided',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1400, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ThanksScaffold(
+            title: 'Multi Width Scaffold',
+            maxWidthPage: FitSize.laptop,
+            maxWidthBody: FitSize.mobile,
+            body: SizedBox(
+              key: Key('dual-body'),
+              width: double.infinity,
+              height: 100,
+            ),
+          ),
+        ),
+      );
+
+      final fitContainers = tester
+          .widgetList<FitContainer>(find.byType(FitContainer))
+          .toList();
+      expect(fitContainers, hasLength(2));
+      // One FitContainer has maxFitSize laptop (page), one has mobile (body)
+      final sizes = fitContainers.map((c) => c.maxFitSize).toSet();
+      expect(sizes, containsAll([FitSize.laptop, FitSize.mobile]));
+
+      final bodyWidth = tester
+          .getSize(find.byKey(const Key('dual-body')))
+          .width;
+      expect(bodyWidth, FitSize.mobile.maxWidth);
+      final bodyRect = tester.getRect(find.byKey(const Key('dual-body')));
+      expect(bodyRect.center.dx, closeTo(700, 1.0));
+    },
+  );
+
+  testWidgets(
+    'ThanksScaffold applies maxWidthPage and maxWidthBody with pinAppBar enabled',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1400, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ThanksScaffold(
+            title: 'Pinned Top Bar',
+            pinAppBar: true,
+            maxWidthPage: FitSize.laptop,
+            maxWidthBody: FitSize.tablet,
+            body: SizedBox(
+              key: Key('pinned-body'),
+              width: double.infinity,
+              height: 100,
+            ),
+          ),
+        ),
+      );
+
+      final fitContainers = tester
+          .widgetList<FitContainer>(find.byType(FitContainer))
+          .toList();
+      expect(fitContainers, hasLength(2));
+      final sizes = fitContainers.map((c) => c.maxFitSize).toSet();
+      expect(sizes, containsAll([FitSize.laptop, FitSize.tablet]));
+
+      final bodyWidth = tester
+          .getSize(find.byKey(const Key('pinned-body')))
+          .width;
+      expect(bodyWidth, FitSize.tablet.maxWidth);
+    },
+  );
+
+  testWidgets(
     'ThanksCard renders child with default none variant and zero padding/margin',
     (tester) async {
       await tester.pumpWidget(
