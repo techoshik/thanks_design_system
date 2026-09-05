@@ -175,7 +175,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
           backgroundColor: const WidgetStatePropertyAll(ThanksColors.surface),
           surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
           elevation: const WidgetStatePropertyAll(4),
-          shadowColor: const WidgetStatePropertyAll(Color(0x33000000)),
+          shadowColor: WidgetStatePropertyAll(colorScheme.shadow),
         ),
       ),
       dividerTheme: const DividerThemeData(thickness: 0.5, space: 0),
@@ -249,13 +249,21 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       ),
       inputDecorationTheme: inputTheme,
       popupMenuTheme: PopupMenuThemeData(
-        shape: buttonShape,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ThanksSpacing.radiusMedium),
+          side: BorderSide(
+            color: colorScheme.outlineVariant,
+            width: 1,
+          ),
+        ),
         textStyle: buttonTextStyle,
         labelTextStyle: WidgetStatePropertyAll(buttonTextStyle),
         color: ThanksColors.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 3,
+        shadowColor: colorScheme.shadow,
         menuPadding: EdgeInsets.zero,
         enableFeedback: true,
-        surfaceTintColor: ThanksColors.surface,
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
         inputDecorationTheme: inputTheme,

@@ -17,6 +17,20 @@ void main() {
       theme.textTheme.bodyMedium?.fontFamily,
       contains(ThanksTypography.fontFamily),
     );
+    expect(theme.popupMenuTheme.color, ThanksColors.surface);
+    expect(theme.popupMenuTheme.surfaceTintColor, Colors.transparent);
+    expect(theme.popupMenuTheme.elevation, 3);
+    expect(
+      theme.popupMenuTheme.shadowColor,
+      theme.colorScheme.shadow,
+    );
+    final popupBorder =
+        theme.popupMenuTheme.shape as RoundedRectangleBorder;
+    expect(
+      popupBorder.borderRadius,
+      BorderRadius.circular(ThanksSpacing.radiusMedium),
+    );
+    expect(popupBorder.side.color, theme.colorScheme.outlineVariant);
   });
 
   testWidgets('plain and icon text fields share the 40px minimum height', (
