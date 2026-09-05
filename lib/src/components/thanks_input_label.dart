@@ -71,8 +71,8 @@ class ThanksInputLabel extends StatelessWidget {
       return Text(label!, style: style);
     }
 
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      TextSpan(
         style: style,
         children: [
           TextSpan(text: label),

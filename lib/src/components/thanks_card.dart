@@ -106,6 +106,8 @@ class ThanksCard extends StatelessWidget {
     this.customPadding,
     this.customMargin,
     this.customBorderRadius,
+    this.backgroundColor,
+    this.borderColor,
     this.showDivider = false,
     this.onTap,
   });
@@ -148,6 +150,12 @@ class ThanksCard extends StatelessWidget {
   /// Optional custom border radius for the card surface overriding [radius].
   final BorderRadiusGeometry? customBorderRadius;
 
+  /// Optional explicit background color overriding the variant background color.
+  final Color? backgroundColor;
+
+  /// Optional explicit border color overriding the variant border color.
+  final Color? borderColor;
+
   /// Optional callback invoked when the card is tapped.
   final VoidCallback? onTap;
 
@@ -165,7 +173,8 @@ class ThanksCard extends StatelessWidget {
     final theme = Theme.of(context);
     final thanksTheme = theme.extension<ThanksTheme>();
     final surfaceColor = thanksTheme?.surfaceElevated ?? ThanksColors.surface;
-    final borderColor = thanksTheme?.borderSubtle ?? ThanksColors.border;
+    final defaultBorderColor = thanksTheme?.borderSubtle ?? ThanksColors.border;
+    final effectiveBorderColor = borderColor ?? defaultBorderColor;
 
     final effectiveMargin = customMargin ?? margin.insets;
     final effectivePadding = customPadding ?? padding.insets;
@@ -187,7 +196,7 @@ class ThanksCard extends StatelessWidget {
           headerWidget,
           if (showDivider) ...[
             ThanksSpacing.spaceSmall,
-            Divider(color: borderColor, height: 1),
+            Divider(color: effectiveBorderColor, height: 1),
             ThanksSpacing.spaceSmall,
           ] else ...[
             ThanksSpacing.spaceSmall,
@@ -204,9 +213,11 @@ class ThanksCard extends StatelessWidget {
     final surface = _buildSurface(
       context: context,
       surfaceColor: surfaceColor,
-      borderColor: borderColor,
+      defaultBorderColor: defaultBorderColor,
       borderRadius: effectiveRadius,
       content: surfaceContent,
+      backgroundColor: backgroundColor,
+      borderColor: borderColor,
     );
 
     Widget rootWidget;
@@ -273,26 +284,37 @@ class ThanksCard extends StatelessWidget {
   Widget _buildSurface({
     required BuildContext context,
     required Color surfaceColor,
-    required Color borderColor,
+    required Color defaultBorderColor,
     required BorderRadiusGeometry borderRadius,
     required Widget content,
+    Color? backgroundColor,
+    Color? borderColor,
   }) {
-    final (backgroundColor, border) = switch (variant) {
-      ThanksCardVariant.none => (Colors.transparent, null),
-      ThanksCardVariant.filled => (surfaceColor, null),
+    final effectiveBorderColor = borderColor ?? defaultBorderColor;
+    final (defaultBackgroundColor, border) = switch (variant) {
+      ThanksCardVariant.none => (
+        Colors.transparent,
+        borderColor != null ? Border.all(color: borderColor) : null,
+      ),
+      ThanksCardVariant.filled => (
+        surfaceColor,
+        borderColor != null ? Border.all(color: borderColor) : null,
+      ),
       ThanksCardVariant.outlined => (
         Colors.transparent,
-        Border.all(color: borderColor),
+        Border.all(color: effectiveBorderColor),
       ),
       ThanksCardVariant.filledOutlined => (
         surfaceColor,
-        Border.all(color: borderColor),
+        Border.all(color: effectiveBorderColor),
       ),
     };
 
+    final effectiveBackgroundColor = backgroundColor ?? defaultBackgroundColor;
+
     if (onTap != null) {
       return Material(
-        color: backgroundColor,
+        color: effectiveBackgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius,
           side: border == null ? BorderSide.none : border.top,
@@ -308,7 +330,7 @@ class ThanksCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: effectiveBackgroundColor,
         border: border,
         borderRadius: borderRadius,
       ),

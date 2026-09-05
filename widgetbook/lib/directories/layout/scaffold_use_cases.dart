@@ -19,29 +19,28 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     label: 'Show Filters',
     initialValue: true,
   );
-  final isLoading = context.knobs.boolean(
-    label: 'Is Loading',
-    initialValue: false,
-  );
-  final isScrollable = context.knobs.boolean(
-    label: 'Is Scrollable',
-    initialValue: true,
-  );
-  final bottomPadding = context.knobs.doubleOrNull.input(
-    label: 'Bottom Padding',
-    initialValue: null,
-  );
   final maxWidthPage = context.knobs.objectOrNull.dropdown<FitSize>(
     label: 'Max Width Page',
     options: FitSize.values,
     initialOption: null,
     labelBuilder: (s) => s.name,
   );
-  final maxWidthBody = context.knobs.objectOrNull.dropdown<FitSize>(
-    label: 'Max Width Body',
-    options: FitSize.values,
+  final sectionEnableGutter = context.knobs.boolean(
+    label: 'Section Enable Gutter',
+    initialValue: true,
+  );
+  final sectionBgColor = context.knobs.objectOrNull.dropdown<Color>(
+    label: 'Section Background Color',
+    options: const [
+      Colors.transparent,
+      Colors.white,
+      ThanksColors.primary50,
+      ThanksColors.surface2,
+      Color(0xFFF1F5F9),
+      Color(0xFFE2E8F0),
+    ],
     initialOption: null,
-    labelBuilder: (s) => s.name,
+    labelBuilder: (c) => c.toARGB32().toRadixString(16).toUpperCase(),
   );
 
   return ThanksScaffold(
@@ -49,11 +48,7 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     subtitle: subtitle?.isEmpty ?? true ? null : subtitle,
     showBackButton: showBackButton,
     onBackPressed: showBackButton ? () {} : null,
-    isLoading: isLoading,
-    isScrollable: isScrollable,
-    bottomPadding: bottomPadding,
-    maxWidthPage: maxWidthPage,
-    maxWidthBody: maxWidthBody,
+    maxWidthHeader: maxWidthPage ?? FitSize.desktop,
     drawer: const Drawer(
       child: SafeArea(
         child: Column(
@@ -97,43 +92,49 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
             ),
           ]
         : const [],
-    body: Column(
-      children: [
-        ThanksCard(
-          title: 'Recent Invoices',
-          subtitle: 'Past 30 days',
-          variant: ThanksCardVariant.filledOutlined,
-          padding: ThanksCardSpacing.medium,
-          margin: ThanksCardSpacing.none,
-          headerPosition: ThanksCardHeaderPosition.outside,
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 40,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (_, index) => Material(
-              color: Colors.transparent,
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const CircleAvatar(
-                  backgroundColor: ThanksColors.primary50,
-                  child: Icon(
-                    Icons.receipt,
-                    color: ThanksColors.primary500,
-                    size: 20,
+    body: SingleChildScrollView(
+      child: Column(
+        children: [
+          ThanksSection(
+            enableGutter: sectionEnableGutter,
+            backgroundColor: sectionBgColor,
+            child: ThanksCard(
+              title: 'Recent Invoices',
+              subtitle: 'Past 30 days',
+              variant: ThanksCardVariant.filledOutlined,
+              padding: ThanksCardSpacing.medium,
+              margin: ThanksCardSpacing.none,
+              headerPosition: ThanksCardHeaderPosition.outside,
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 40,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (_, index) => Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const CircleAvatar(
+                      backgroundColor: ThanksColors.primary50,
+                      child: Icon(
+                        Icons.receipt,
+                        color: ThanksColors.primary500,
+                        size: 20,
+                      ),
+                    ),
+                    title: Text('Invoice #104${index + 1}'),
+                    subtitle: Text('Due in ${index + 2} days · Acme Corp'),
+                    trailing: Text(
+                      '\$${(index + 1) * 350}.00',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                title: Text('Invoice #104${index + 1}'),
-                subtitle: Text('Due in ${index + 2} days · Acme Corp'),
-                trailing: Text(
-                  '\$${(index + 1) * 350}.00',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -144,35 +145,39 @@ Widget scaffoldEmptyStateUseCase(BuildContext context) {
     subtitle: 'Track your incoming deliveries',
     showBackButton: true,
     onBackPressed: () {},
-    sliver: ThanksSliverEmptyState(
-      icon: const Icon(
-        Icons.inbox_outlined,
-        size: 56,
-        color: ThanksColors.textMuted,
-      ),
-      title: 'No Orders Yet',
-      subtitle:
-          'When you place orders, they will appear here with live tracking updates.',
-      action: ThanksButton(
-        label: 'Explore Catalog',
-        leadingIcon: const Icon(Icons.shopping_bag_outlined),
-        onPressed: () {},
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.inbox_outlined,
+            size: 56,
+            color: ThanksColors.textMuted,
+          ),
+          ThanksSpacing.spaceMedium,
+          Text('No Orders Yet', style: Theme.of(context).textTheme.titleMedium),
+          ThanksSpacing.spaceExtraSmall,
+          const Text(
+            'When you place orders, they will appear here with live tracking updates.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: ThanksColors.textSecondary),
+          ),
+          ThanksSpacing.spaceMedium,
+          ThanksButton(
+            label: 'Explore Catalog',
+            leadingIcon: const Icon(Icons.shopping_bag_outlined),
+            onPressed: () {},
+          ),
+        ],
       ),
     ),
   );
 }
 
 Widget scaffoldEditorUseCase(BuildContext context) {
-  final bottomPadding = context.knobs.doubleOrNull.input(
-    label: 'Bottom Padding',
-    initialValue: 0.0,
-  );
-
   return ThanksScaffold(
     title: 'Dynamic Form Editor',
     subtitle: 'Multi-column editor with independent panel scrollbars',
-    isScrollable: false,
-    bottomPadding: bottomPadding,
     actions: [
       ThanksButton(
         label: 'Preview',
@@ -223,7 +228,9 @@ Widget scaffoldEditorUseCase(BuildContext context) {
                 decoration: BoxDecoration(
                   color: ThanksColors.surface,
                   border: Border.all(color: ThanksColors.border),
-                  borderRadius: BorderRadius.circular(ThanksSpacing.radiusSmall),
+                  borderRadius: BorderRadius.circular(
+                    ThanksSpacing.radiusSmall,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,15 +264,30 @@ Widget scaffoldEditorUseCase(BuildContext context) {
               children: const [
                 Text('Field ID', style: TextStyle(fontWeight: FontWeight.w600)),
                 SizedBox(height: 4),
-                Text('field_passport_number', style: TextStyle(color: ThanksColors.textSecondary)),
+                Text(
+                  'field_passport_number',
+                  style: TextStyle(color: ThanksColors.textSecondary),
+                ),
                 Divider(height: 24),
-                Text('Label Text', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(
+                  'Label Text',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 SizedBox(height: 4),
-                Text('Passport / Travel Document Number', style: TextStyle(color: ThanksColors.textSecondary)),
+                Text(
+                  'Passport / Travel Document Number',
+                  style: TextStyle(color: ThanksColors.textSecondary),
+                ),
                 Divider(height: 24),
-                Text('Validation Rules', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(
+                  'Validation Rules',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 SizedBox(height: 4),
-                Text('• Required\n• Alphanumeric (A-Z, 0-9)\n• Min length: 6', style: TextStyle(color: ThanksColors.textSecondary)),
+                Text(
+                  '• Required\n• Alphanumeric (A-Z, 0-9)\n• Min length: 6',
+                  style: TextStyle(color: ThanksColors.textSecondary),
+                ),
               ],
             ),
           ),
@@ -274,4 +296,3 @@ Widget scaffoldEditorUseCase(BuildContext context) {
     ),
   );
 }
-

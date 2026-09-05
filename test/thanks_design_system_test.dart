@@ -272,41 +272,43 @@ void main() {
     expect(tester.getSize(find.byType(PillSelector<int>)).width, 320);
   });
 
-  testWidgets('ThanksScaffold applies its default page padding on mobile', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: MediaQuery(
-          data: MediaQueryData(size: Size(375, 800)),
-          child: ThanksScaffold(
-            body: SizedBox(key: Key('body'), width: 10, height: 10),
+  testWidgets(
+    'ThanksScaffold provides full-width body while ThanksSection applies gutter on mobile',
+    (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(size: Size(375, 800)),
+            child: ThanksScaffold(
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(key: Key('raw-body'), width: 10, height: 10),
+                  ThanksSection(
+                    child: SizedBox(
+                      key: Key('section-body'),
+                      width: 10,
+                      height: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(
-      tester.getTopLeft(find.byKey(const Key('body'))),
-      const Offset(ThanksSpacing.medium, ThanksSpacing.medium),
-    );
+      // Body is full-width (starts at 0) so scrollbars can pin to the right edge
+      expect(tester.getTopLeft(find.byKey(const Key('raw-body'))).dx, 0.0);
+      // ThanksSection inside body applies the responsive gutter (16px on mobile)
+      expect(
+        tester.getTopLeft(find.byKey(const Key('section-body'))).dx,
+        ThanksSpacing.medium,
+      );
+    },
+  );
 
-    final paddingWidget = tester.widget<SliverPadding>(
-      find.byType(SliverPadding).first,
-    );
-    expect(
-      paddingWidget.padding,
-      const EdgeInsets.fromLTRB(
-        ThanksSpacing.medium,
-        ThanksSpacing.medium,
-        ThanksSpacing.medium,
-        ThanksSpacing.fabClearance,
-      ),
-    );
-    expect(ThanksSpacing.fabClearance, 132.0);
-  });
-
-  testWidgets('ThanksScaffold keeps its shell and sliver content together', (
+  testWidgets('ThanksScaffold keeps its shell and content together', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -320,29 +322,32 @@ void main() {
       ),
     );
 
-    expect(find.byType(CustomScrollView), findsOneWidget);
-    expect(find.byType(SliverAppBar), findsNothing);
+    expect(find.byType(ListTile), findsOneWidget);
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Overdue'), findsOneWidget);
     expect(find.text('Invoice list'), findsOneWidget);
   });
 
-  testWidgets('ThanksScaffold app bar stays fixed while content scrolls', (
+  testWidgets('ThanksScaffold app bar stays fixed while body scrolls', (
     tester,
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: ThanksScaffold(
           title: 'Invoices',
-          body: SizedBox(height: 2000, child: Text('Invoice list')),
+          body: SingleChildScrollView(
+            child: SizedBox(height: 2000, child: Text('Invoice list')),
+          ),
         ),
       ),
     );
 
-    expect(find.byType(CustomScrollView), findsOneWidget);
     final titleOffsetBefore = tester.getTopLeft(find.text('Invoices'));
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(0, -400),
+    );
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Invoices')), titleOffsetBefore);
@@ -364,22 +369,22 @@ void main() {
       ),
     );
 
-    expect(find.byType(AppBar), findsOneWidget);
-    final paddings = tester.widgetList<SliverPadding>(
-      find.byType(SliverPadding),
-    );
-    const filterMargin = EdgeInsets.fromLTRB(
-      ThanksSpacing.medium,
-      ThanksSpacing.medium,
-      ThanksSpacing.medium,
-      ThanksSpacing.medium,
-    );
+    expect(find.byType(ListTile), findsOneWidget);
+    expect(find.text('Open'), findsOneWidget);
 
-    expect(paddings, hasLength(1));
-    expect(paddings.single.padding, filterMargin);
+    final filterSection = find.ancestor(
+      of: find.text('Open'),
+      matching: find.byType(ThanksSection),
+    );
+    expect(filterSection, findsOneWidget);
+
+    final sectionWidget = tester.widget<ThanksSection>(filterSection);
+    expect(sectionWidget.verticalPadding, ThanksSpacing.medium);
+    expect(sectionWidget.enableGutter, isTrue);
+    expect(sectionWidget.maxWidth, FitSize.desktop);
   });
 
-  testWidgets('ThanksScaffold doubles horizontal gutters above tablet', (
+  testWidgets('ThanksSection doubles horizontal gutters above tablet', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -389,18 +394,12 @@ void main() {
           child: ThanksScaffold(
             title: 'Invoices',
             filters: [Text('Open')],
-            body: SizedBox(key: Key('body')),
+            body: ThanksSection(child: SizedBox(key: Key('body'))),
           ),
         ),
       ),
     );
 
-    final paddings = tester.widgetList<SliverPadding>(
-      find.byType(SliverPadding),
-    );
-
-    expect(paddings.first.padding.resolve(TextDirection.ltr).left, 32);
-    expect(paddings.elementAt(1).padding.resolve(TextDirection.ltr).right, 32);
     expect(tester.getTopLeft(find.byKey(const Key('body'))).dx, 32);
   });
 
@@ -465,11 +464,14 @@ void main() {
     final controller = ThanksScaffoldController();
     await tester.pumpWidget(
       MaterialApp(
-        home: ThanksScaffold(
-          controller: controller,
-          title: 'Home',
-          drawer: const Drawer(child: Text('Navigation')),
-          body: const SizedBox(),
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(375, 800)),
+          child: ThanksScaffold(
+            controller: controller,
+            title: 'Home',
+            drawer: const Drawer(child: Text('Navigation')),
+            body: const SizedBox(),
+          ),
         ),
       ),
     );
@@ -499,7 +501,7 @@ void main() {
       ),
     );
 
-    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.byType(ListTile), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
     expect(find.byIcon(Icons.search), findsOneWidget);
     expect(find.byIcon(Icons.more_vert), findsOneWidget);
@@ -511,25 +513,59 @@ void main() {
   });
 
   testWidgets(
+    'ThanksScaffold renders default app bar using ListTile with titleLarge style',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const ThanksScaffold(
+            title: 'Dashboard',
+            subtitle: 'Overview of metrics',
+            body: SizedBox(),
+          ),
+        ),
+      );
+
+      final listTileFinder = find.byType(ListTile);
+      expect(listTileFinder, findsOneWidget);
+
+      final titleFinder = find.text('Dashboard');
+      final subtitleFinder = find.text('Overview of metrics');
+
+      expect(titleFinder, findsOneWidget);
+      expect(subtitleFinder, findsOneWidget);
+
+      final titleText = tester.widget<Text>(titleFinder);
+      final subtitleText = tester.widget<Text>(subtitleFinder);
+      final theme = Theme.of(tester.element(titleFinder));
+
+      expect(titleText.style, theme.textTheme.titleLarge);
+      expect(subtitleText.style?.color, theme.colorScheme.onSurfaceVariant);
+    },
+  );
+
+  testWidgets(
     'ThanksScaffold shows back button instead of menu button when route can pop',
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThanksTheme.light(),
-          home: Navigator(
-            onGenerateInitialRoutes: (_, __) => [
-              MaterialPageRoute<void>(builder: (_) => const SizedBox()),
-              MaterialPageRoute<void>(
-                builder: (_) => ThanksScaffold(
-                  title: 'Details',
-                  backDestinationLabel: 'Invoices',
-                  drawer: const Drawer(),
-                  body: const SizedBox(),
-                ),
-              ),
-            ],
-            onGenerateRoute: (_) =>
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(375, 800)),
+            child: Navigator(
+              onGenerateInitialRoutes: (_, __) => [
                 MaterialPageRoute<void>(builder: (_) => const SizedBox()),
+                MaterialPageRoute<void>(
+                  builder: (_) => ThanksScaffold(
+                    title: 'Details',
+                    drawer: const Drawer(),
+                    body: const SizedBox(),
+                  ),
+                ),
+              ],
+              onGenerateRoute: (_) =>
+                  MaterialPageRoute<void>(builder: (_) => const SizedBox()),
+            ),
           ),
         ),
       );
@@ -608,10 +644,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThanksTheme.light(),
-          home: const ThanksScaffold(
-            title: 'Aligned Title',
-            showBackButton: false,
-            body: Text('Aligned Body Content'),
+          home: const MediaQuery(
+            data: MediaQueryData(size: Size(375, 800)),
+            child: ThanksScaffold(
+              title: 'Aligned Title',
+              showBackButton: false,
+              body: ThanksSection(child: Text('Aligned Body Content')),
+            ),
           ),
         ),
       );
@@ -682,7 +721,7 @@ void main() {
         const MaterialApp(
           home: ThanksScaffold(
             title: 'Wide Page',
-            maxWidthPage: FitSize.tablet,
+            maxWidthHeader: FitSize.tablet,
             body: SizedBox(
               key: Key('page-body'),
               width: double.infinity,
@@ -700,9 +739,10 @@ void main() {
       }
 
       // Verify the app bar is constrained to FitSize.tablet.maxWidth (800) width and centered within 1200px
-      final appBarWidth = tester.getSize(find.byType(AppBar)).width;
+      final topBarFinder = find.byType(ListTile).first;
+      final appBarWidth = tester.getSize(topBarFinder).width;
       expect(appBarWidth, lessThanOrEqualTo(FitSize.tablet.maxWidth));
-      final appBarRect = tester.getRect(find.byType(AppBar));
+      final appBarRect = tester.getRect(topBarFinder);
       expect(appBarRect.center.dx, closeTo(600, 1.0));
 
       // Verify the page content is constrained to FitSize.tablet.maxWidth (800) width and centered within 1200px
@@ -725,7 +765,6 @@ void main() {
         const MaterialApp(
           home: ThanksScaffold(
             title: 'Wide Title',
-            maxWidthBody: FitSize.tablet,
             body: SizedBox(
               key: Key('constrained-body'),
               width: double.infinity,
@@ -735,10 +774,12 @@ void main() {
         ),
       );
 
-      expect(find.byType(FitContainer), findsOneWidget);
-      final fitContainer = tester.widget<FitContainer>(
-        find.byType(FitContainer),
+      final bodyFitContainerFinder = find.ancestor(
+        of: find.byKey(const Key('constrained-body')),
+        matching: find.byType(FitContainer),
       );
+      expect(bodyFitContainerFinder, findsOneWidget);
+      final fitContainer = tester.widget<FitContainer>(bodyFitContainerFinder);
       expect(fitContainer.maxFitSize, FitSize.tablet);
 
       // Body is constrained to FitSize.tablet.maxWidth (800)
@@ -763,8 +804,7 @@ void main() {
         const MaterialApp(
           home: ThanksScaffold(
             title: 'Multi Width Scaffold',
-            maxWidthPage: FitSize.laptop,
-            maxWidthBody: FitSize.mobile,
+            maxWidthHeader: FitSize.laptop,
             body: SizedBox(
               key: Key('dual-body'),
               width: double.infinity,
@@ -801,8 +841,7 @@ void main() {
       const MaterialApp(
         home: ThanksScaffold(
           title: 'Pinned Top Bar',
-          maxWidthPage: FitSize.laptop,
-          maxWidthBody: FitSize.tablet,
+          maxWidthHeader: FitSize.laptop,
           body: SizedBox(
             key: Key('pinned-body'),
             width: double.infinity,
@@ -835,8 +874,7 @@ void main() {
         const MaterialApp(
           home: ThanksScaffold(
             title: 'Clamped Body',
-            maxWidthPage: FitSize.mobile,
-            maxWidthBody: FitSize.desktop,
+            maxWidthHeader: FitSize.mobile,
             body: SizedBox(
               key: Key('clamped-body'),
               width: double.infinity,
@@ -1004,6 +1042,126 @@ void main() {
       expect(filledOutlinedDeco.border?.top.color, ThanksColors.border);
     },
   );
+
+  testWidgets('ThanksCard applies backgroundColor', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              const ThanksCard(
+                key: Key('card-bg-container'),
+                variant: ThanksCardVariant.outlined,
+                backgroundColor: Color(0xFF123456),
+                child: Text('Container BG'),
+              ),
+              ThanksCard(
+                key: const Key('card-bg-material'),
+                variant: ThanksCardVariant.filled,
+                backgroundColor: const Color(0xFF654321),
+                onTap: () {},
+                child: const Text('Material BG'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final container = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(const Key('card-bg-container')),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    expect(
+      (container.decoration as BoxDecoration).color,
+      const Color(0xFF123456),
+    );
+
+    final material = tester.widget<Material>(
+      find
+          .descendant(
+            of: find.byKey(const Key('card-bg-material')),
+            matching: find.byType(Material),
+          )
+          .first,
+    );
+    expect(material.color, const Color(0xFF654321));
+  });
+
+  testWidgets('ThanksCard applies borderColor', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              const ThanksCard(
+                key: Key('card-border-outlined'),
+                variant: ThanksCardVariant.outlined,
+                borderColor: Color(0xFF112233),
+                child: Text('Outlined Border'),
+              ),
+              const ThanksCard(
+                key: Key('card-border-filled'),
+                variant: ThanksCardVariant.filled,
+                borderColor: Color(0xFF445566),
+                child: Text('Filled Border'),
+              ),
+              ThanksCard(
+                key: const Key('card-border-material'),
+                variant: ThanksCardVariant.outlined,
+                borderColor: const Color(0xFF778899),
+                onTap: () {},
+                child: const Text('Material Border'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final container1 = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(const Key('card-border-outlined')),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    expect(
+      (container1.decoration as BoxDecoration).border?.top.color,
+      const Color(0xFF112233),
+    );
+
+    final container2 = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(const Key('card-border-filled')),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    expect(
+      (container2.decoration as BoxDecoration).border?.top.color,
+      const Color(0xFF445566),
+    );
+
+    final material = tester.widget<Material>(
+      find
+          .descendant(
+            of: find.byKey(const Key('card-border-material')),
+            matching: find.byType(Material),
+          )
+          .first,
+    );
+    expect(
+      (material.shape as RoundedRectangleBorder).side.color,
+      const Color(0xFF778899),
+    );
+  });
 
   testWidgets('ThanksCard applies spacing presets and custom margin/padding', (
     tester,
@@ -1257,190 +1415,85 @@ void main() {
     expect(find.byType(Icon), findsNothing);
   });
 
-  testWidgets(
-    'ThanksScaffold automatically displays loader when isLoading is true',
-    (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThanksTheme.light(),
-          home: const ThanksScaffold(
-            title: 'Scaffold Loading',
-            isLoading: true,
-            body: Text('Actual Content'),
-          ),
-        ),
-      );
-
-      expect(find.byType(ThanksSliverLoading), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('Actual Content'), findsNothing);
-    },
-  );
-
-  testWidgets('ThanksScaffold renders sliver when sliver is provided', (
+  testWidgets('ThanksScaffold supports multi-column expanded layouts in body', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(1200, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     await tester.pumpWidget(
       MaterialApp(
         theme: ThanksTheme.light(),
-        home: const ThanksScaffold(
-          title: 'Scaffold Sliver',
-          sliver: ThanksSliverEmptyState(title: 'Empty State in Scaffold'),
-        ),
-      ),
-    );
-
-    expect(find.text('Empty State in Scaffold'), findsOneWidget);
-  });
-
-  testWidgets('ThanksScaffold asserts when both body and sliver are provided', (
-    tester,
-  ) async {
-    expect(
-      () => ThanksScaffold(
-        body: const SizedBox(),
-        sliver: const SliverToBoxAdapter(child: SizedBox()),
-      ),
-      throwsAssertionError,
-    );
-  });
-
-  testWidgets(
-    'ThanksScaffold with isScrollable false disables outer scroll view and supports multi-column expanded layouts',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1200, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThanksTheme.light(),
-          home: MediaQuery(
-            data: const MediaQueryData(size: Size(1200, 800)),
-            child: ThanksScaffold(
-              title: 'Dynamic Form Editor',
-              isScrollable: false,
-              body: Row(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      key: const Key('left-column'),
-                      itemCount: 20,
-                      itemBuilder: (_, i) => Text('Palette Item $i'),
-                    ),
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(1200, 800)),
+          child: ThanksScaffold(
+            title: 'Dynamic Form Editor',
+            body: Row(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    key: const Key('left-column'),
+                    itemCount: 20,
+                    itemBuilder: (_, i) => Text('Palette Item $i'),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: ListView.builder(
-                      key: const Key('center-column'),
-                      itemCount: 20,
-                      itemBuilder: (_, i) => Text('Canvas Component $i'),
-                    ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: ListView.builder(
+                    key: const Key('center-column'),
+                    itemCount: 20,
+                    itemBuilder: (_, i) => Text('Canvas Component $i'),
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      key: const Key('right-column'),
-                      itemCount: 20,
-                      itemBuilder: (_, i) => Text('Inspector Field $i'),
-                    ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    key: const Key('right-column'),
+                    itemCount: 20,
+                    itemBuilder: (_, i) => Text('Inspector Field $i'),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      // The outer page does not contain a CustomScrollView
-      expect(find.byType(CustomScrollView), findsNothing);
+    // The outer page does not contain a CustomScrollView
+    expect(find.byType(CustomScrollView), findsNothing);
 
-      // All three columns render without unbounded height errors
-      expect(find.byKey(const Key('left-column')), findsOneWidget);
-      expect(find.byKey(const Key('center-column')), findsOneWidget);
-      expect(find.byKey(const Key('right-column')), findsOneWidget);
-      expect(find.text('Palette Item 0'), findsOneWidget);
-      expect(find.text('Canvas Component 0'), findsOneWidget);
-      expect(find.text('Inspector Field 0'), findsOneWidget);
+    // All three columns render without unbounded height errors
+    expect(find.byKey(const Key('left-column')), findsOneWidget);
+    expect(find.byKey(const Key('center-column')), findsOneWidget);
+    expect(find.byKey(const Key('right-column')), findsOneWidget);
+    expect(find.text('Palette Item 0'), findsOneWidget);
+    expect(find.text('Canvas Component 0'), findsOneWidget);
+    expect(find.text('Inspector Field 0'), findsOneWidget);
 
-      // Default bottom padding when isScrollable is false is 0.0
-      final bodyPadding = tester.widget<Padding>(
-        find
-            .ancestor(of: find.byType(Row), matching: find.byType(Padding))
-            .first,
-      );
-      expect(
-        bodyPadding.padding,
-        const EdgeInsets.fromLTRB(
-          ThanksSpacing.medium * 2, // gutter for desktop (> tablet)
-          ThanksSpacing.medium,
-          ThanksSpacing.medium * 2,
-          0.0,
-        ),
-      );
-    },
-  );
+    // Default body has zero padding, so multi-column layouts and scrollbars reach screen edges
+    final bodyPadding = tester.widget<Padding>(
+      find.ancestor(of: find.byType(Row), matching: find.byType(Padding)).first,
+    );
+    expect(bodyPadding.padding, EdgeInsets.zero);
+  });
 
-  testWidgets(
-    'ThanksScaffold respects custom bottomPadding on both scrollable and non-scrollable pages',
-    (tester) async {
-      // Non-scrollable with custom bottom padding
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ThanksScaffold(
-            isScrollable: false,
-            bottomPadding: 20.0,
-            body: SizedBox(key: Key('box-body'), height: 50),
-          ),
-        ),
-      );
+  testWidgets('ThanksScaffold respects custom bottomPadding', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(body: SizedBox(key: Key('box-body'), height: 50)),
+      ),
+    );
 
-      final nonScrollablePadding = tester.widget<Padding>(
-        find
-            .ancestor(
-              of: find.byKey(const Key('box-body')),
-              matching: find.byType(Padding),
-            )
-            .first,
-      );
-      expect((nonScrollablePadding.padding as EdgeInsets).bottom, 20.0);
-
-      // Scrollable with custom bottom padding
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ThanksScaffold(
-            isScrollable: true,
-            bottomPadding: 24.0,
-            body: SizedBox(key: Key('box-body-2'), height: 50),
-          ),
-        ),
-      );
-
-      final scrollablePadding = tester.widget<SliverPadding>(
-        find.byType(SliverPadding).first,
-      );
-      expect((scrollablePadding.padding as EdgeInsets).bottom, 24.0);
-    },
-  );
-
-  testWidgets(
-    'ThanksScaffold with isScrollable false uses NeverScrollableScrollPhysics for slivers',
-    (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThanksTheme.light(),
-          home: const ThanksScaffold(
-            isScrollable: false,
-            sliver: ThanksSliverEmptyState(title: 'Non-scrollable Empty State'),
-          ),
-        ),
-      );
-
-      final customScrollView = tester.widget<CustomScrollView>(
-        find.byType(CustomScrollView),
-      );
-      expect(customScrollView.physics, isA<NeverScrollableScrollPhysics>());
-      expect(find.text('Non-scrollable Empty State'), findsOneWidget);
-    },
-  );
+    final padding = tester.widget<Padding>(
+      find
+          .ancestor(
+            of: find.byKey(const Key('box-body')),
+            matching: find.byType(Padding),
+          )
+          .first,
+    );
+    expect((padding.padding as EdgeInsets).bottom, 20.0);
+  });
 
   testWidgets(
     'ThanksSection renders title, subtitle, and child with titleMedium',
@@ -1508,6 +1561,45 @@ void main() {
     expect(find.text('Col 1'), findsOneWidget);
     expect(find.text('Col 2'), findsOneWidget);
   });
+
+  testWidgets(
+    'ThanksScaffold wraps app bar and inline filters in ThanksSection',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const ThanksScaffold(
+            title: 'Test Title',
+            filterDisplayMode: ThanksFilterDisplayMode.inline,
+            filters: [Text('Filter 1')],
+            body: Text('Page Body'),
+          ),
+        ),
+      );
+
+      // Verify that ThanksSection is present for both app bar and filters
+      final sections = find.byType(ThanksSection);
+      expect(sections, findsAtLeast(2));
+
+      // Verify top bar ListTile is descendant of a ThanksSection
+      expect(
+        find.descendant(
+          of: find.byType(ThanksSection),
+          matching: find.byType(ListTile),
+        ),
+        findsAtLeast(1),
+      );
+
+      // Verify filters Wrap is descendant of a ThanksSection
+      expect(
+        find.descendant(
+          of: find.byType(ThanksSection),
+          matching: find.byType(Wrap),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 }
 
 String _label(int value) => '$value';

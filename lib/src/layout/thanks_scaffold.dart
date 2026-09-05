@@ -1,12 +1,11 @@
-import 'package:fit_it/fit_it.dart';
 import 'package:flutter/material.dart';
 
 export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
 
 import '../components/thanks_button.dart';
-import '../components/thanks_sliver_loading.dart';
 import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
+import 'thanks_section.dart';
 
 /// Controls how [ThanksScaffold.filters] are presented.
 enum ThanksFilterDisplayMode {
@@ -78,24 +77,15 @@ class ThanksScaffold extends StatelessWidget {
     this.filters = const [],
     this.filterDisplayMode = ThanksFilterDisplayMode.adaptive,
     this.showBackButton = true,
-    this.backDestinationLabel,
     this.onBackPressed,
-    this.isLoading = false,
-    this.isScrollable = true,
-    this.bottomPadding,
     this.body,
-    this.sliver,
     this.floatingActionButton,
     this.bottomNavigationBar,
     this.drawer,
     this.endDrawer,
     this.backgroundColor,
-    this.maxWidthPage,
-    this.maxWidthBody,
-  }) : assert(
-         body == null || sliver == null,
-         'Cannot provide both body and sliver.',
-       );
+    this.maxWidthHeader = FitSize.desktop,
+  });
 
   final ThanksScaffoldController? controller;
   final String? title;
@@ -112,44 +102,10 @@ class ThanksScaffold extends StatelessWidget {
 
   final bool showBackButton;
 
-  /// Human-readable name of the page reached by the back action.
-  ///
-  /// When set to `Invoices`, the button tooltip becomes `Back to Invoices`.
-  final String? backDestinationLabel;
   final VoidCallback? onBackPressed;
 
-  /// Whether the page is currently in a loading state.
-  ///
-  /// When true, [ThanksSliverLoading] is automatically displayed in place of
-  /// [body] or [sliver].
-  final bool isLoading;
-
-  /// Whether the outer page is scrollable.
-  ///
-  /// Defaults to `true`. When `false`, the outer page content does not scroll
-  /// and displays no outer scrollbars. If [body] is provided, it is laid out
-  /// with bounded constraints, enabling multi-column editors or panel layouts
-  /// to host their own internal scrollbars without overflow or page-level
-  /// scrolling.
-  final bool isScrollable;
-
-  /// Custom bottom padding for the page content.
-  ///
-  /// When not specified, defaults to [ThanksSpacing.fabClearance] (132.0) when
-  /// [isScrollable] is `true` (providing clearance for floating action buttons),
-  /// or `0.0` when [isScrollable] is `false`.
-  final double? bottomPadding;
-
-  /// The standard box widget to display as the primary page content.
-  ///
-  /// Cannot be provided if [sliver] is also provided.
+  /// The primary page content widget.
   final Widget? body;
-
-  /// A custom sliver widget to display as the primary page content.
-  ///
-  /// Useful for custom scrolling layouts, [SliverList], or states such as
-  /// [ThanksSliverEmptyState]. Cannot be provided if [body] is also provided.
-  final Widget? sliver;
 
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
@@ -158,142 +114,125 @@ class ThanksScaffold extends StatelessWidget {
   final Color? backgroundColor;
 
   /// The maximum size constraint for the entire page, using [FitContainer].
-  final FitSize? maxWidthPage;
-
-  /// The maximum size constraint for the body content, using [FitContainer].
-  final FitSize? maxWidthBody;
+  final FitSize maxWidthHeader;
 
   @override
   Widget build(BuildContext context) {
     final showFiltersInBottomSheet = _showFiltersInBottomSheet(context);
+
     final hasBackButton =
         title != null &&
         showBackButton &&
         (onBackPressed != null || Navigator.of(context).canPop());
-    final effectiveAppBar = _buildAppBar(
-      context,
-      showFiltersInBottomSheet: showFiltersInBottomSheet,
-      hasBackButton: hasBackButton,
-    );
 
-    final effectiveMaxWidthBody =
-        (maxWidthBody != null &&
-            maxWidthPage != null &&
-            maxWidthBody!.maxWidth > maxWidthPage!.maxWidth)
-        ? maxWidthPage
-        : maxWidthBody;
+    Widget? header;
+    if (title != null) {
+      final hasDrawer = drawer != null;
+      const double leadingSize = ThanksSpacing.inputHeight;
 
-    final effectiveBody = body != null && effectiveMaxWidthBody != null
-        ? FitContainer(maxFitSize: effectiveMaxWidthBody, child: body)
-        : body;
-    final Widget? contentSliver;
-    if (isLoading) {
-      contentSliver = const ThanksSliverLoading();
-    } else if (sliver != null) {
-      contentSliver = sliver;
-    } else if (effectiveBody != null) {
-      contentSliver = SliverToBoxAdapter(child: effectiveBody);
-    } else {
-      contentSliver = null;
+      final leadingButtonStyle = IconButton.styleFrom(
+        shape: const StadiumBorder(),
+        backgroundColor: ThanksColors.surface,
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        fixedSize: const Size.square(leadingSize),
+        minimumSize: const Size.square(leadingSize),
+        padding: EdgeInsets.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      );
+
+      Widget? leading;
+      if (hasBackButton) {
+        leading = IconButton.filledTonal(
+          tooltip: 'Back',
+          icon: const Icon(Icons.arrow_back),
+          style: leadingButtonStyle,
+          onPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
+        );
+      } else if (hasDrawer) {
+        leading = Builder(
+          builder: (buttonContext) => IconButton.filledTonal(
+            tooltip: 'Open menu',
+            icon: const Icon(Icons.menu_rounded),
+            style: leadingButtonStyle,
+            onPressed: () {
+              if (controller != null) {
+                controller!.openDrawer();
+              } else {
+                Scaffold.of(buttonContext).openDrawer();
+              }
+            },
+          ),
+        );
+      }
+
+      final effectiveActions = [
+        ...actions,
+        if (showFiltersInBottomSheet)
+          Builder(
+            builder: (buttonContext) => IconButton(
+              tooltip: 'Show filters',
+              icon: const Icon(Icons.filter_list_rounded),
+              onPressed: () => _showFiltersBottomSheet(buttonContext),
+            ),
+          ),
+      ];
+
+      header = ThanksSection(
+        maxWidth: maxWidthHeader,
+        backgroundColor: backgroundColor,
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: leading,
+          minLeadingWidth: leadingSize + ThanksSpacing.medium,
+          title: Text(title!, style: Theme.of(context).textTheme.titleLarge),
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle!,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                )
+              : null,
+          trailing: effectiveActions.isNotEmpty
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: ThanksSpacing.small,
+                  children: effectiveActions,
+                )
+              : null,
+        ),
+      );
     }
+
     final inlineFilters = filters.isNotEmpty && !showFiltersInBottomSheet
-        ? Wrap(
-            spacing: ThanksSpacing.medium,
-            runSpacing: ThanksSpacing.medium,
-            children: filters,
+        ? ThanksSection(
+            maxWidth: maxWidthHeader,
+            child: Wrap(
+              spacing: ThanksSpacing.medium,
+              runSpacing: ThanksSpacing.medium,
+              children: filters,
+            ),
           )
         : null;
 
-    final effectiveBottomPadding =
-        bottomPadding ?? (isScrollable ? ThanksSpacing.fabClearance : 0.0);
-
-    final Widget pageContent;
-    if (!isScrollable && sliver == null && !isLoading) {
-      pageContent = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (inlineFilters != null)
-            Padding(
-              padding: _sectionPadding(
-                context,
-                bottom: effectiveBody != null ? 0 : effectiveBottomPadding,
-              ),
-              child: inlineFilters,
-            ),
-          if (effectiveBody != null)
-            Expanded(
-              child: Padding(
-                padding: _sectionPadding(
-                  context,
-                  top: ThanksSpacing.medium,
-                  bottom: effectiveBottomPadding,
-                ),
-                child: effectiveBody,
-              ),
-            ),
-        ],
-      );
-    } else {
-      final scrollPhysics =
-          isScrollable ? null : const NeverScrollableScrollPhysics();
-      final scrollView = CustomScrollView(
-        physics: scrollPhysics,
-        slivers: [
-          if (inlineFilters != null)
-            SliverPadding(
-              padding: _sectionPadding(context),
-              sliver: SliverToBoxAdapter(child: inlineFilters),
-            ),
-          if (contentSliver != null)
-            SliverPadding(
-              padding: _sectionPadding(
-                context,
-                bottom: effectiveBottomPadding,
-              ),
-              sliver: contentSliver,
-            ),
-        ],
-      );
-      pageContent = isScrollable
-          ? scrollView
-          : ScrollConfiguration(
-              behavior: ScrollConfiguration.of(context).copyWith(
-                scrollbars: false,
-              ),
-              child: scrollView,
-            );
-    }
-
-    final constrainedPage = maxWidthPage != null
-        ? FitContainer(maxFitSize: maxWidthPage, child: pageContent)
-        : pageContent;
-
     return Scaffold(
       key: controller?._scaffoldKey,
-      appBar: effectiveAppBar,
-      body: SafeArea(bottom: false, child: constrainedPage),
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
       drawer: drawer,
       endDrawer: endDrawer,
       backgroundColor: backgroundColor,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ?header,
+            ?inlineFilters,
+            Expanded(child: body ?? const SizedBox.shrink()),
+          ],
+        ),
+      ),
     );
-  }
-
-  EdgeInsets _sectionPadding(
-    BuildContext context, {
-    double top = ThanksSpacing.medium,
-    double bottom = ThanksSpacing.medium,
-  }) {
-    final gutter = _horizontalGutter(context);
-    return EdgeInsets.fromLTRB(gutter, top, gutter, bottom);
-  }
-
-  double _horizontalGutter(BuildContext context) {
-    final size = FitSize.parse(MediaQuery.sizeOf(context).width);
-    return size.isTabletOrBelow
-        ? ThanksSpacing.medium
-        : ThanksSpacing.medium * 2;
   }
 
   bool _showFiltersInBottomSheet(BuildContext context) {
@@ -307,118 +246,6 @@ class ThanksScaffold extends StatelessWidget {
     };
   }
 
-  PreferredSizeWidget? _buildAppBar(
-    BuildContext context, {
-    required bool showFiltersInBottomSheet,
-    required bool hasBackButton,
-  }) {
-    final rawAppBar = _createDefaultAppBar(
-      context,
-      showFiltersInBottomSheet: showFiltersInBottomSheet,
-      hasBackButton: hasBackButton,
-    );
-
-    if (rawAppBar == null) return null;
-
-    return _ThanksAppBarWrapper(
-      appBar: rawAppBar,
-      maxWidthPage: maxWidthPage,
-      horizontalGutter: _horizontalGutter(context),
-    );
-  }
-
-  PreferredSizeWidget? _createDefaultAppBar(
-    BuildContext context, {
-    required bool showFiltersInBottomSheet,
-    required bool hasBackButton,
-  }) {
-    if (title == null) return null;
-
-    final hasDrawer = drawer != null;
-    final backTooltip = backDestinationLabel == null
-        ? 'Back'
-        : 'Back to $backDestinationLabel';
-
-    const double leadingSize = ThanksSpacing.inputHeight;
-
-    final leadingButtonStyle = IconButton.styleFrom(
-      shape: const StadiumBorder(),
-      backgroundColor: ThanksColors.surface,
-      foregroundColor: Theme.of(context).colorScheme.primary,
-      fixedSize: const Size.square(leadingSize),
-      minimumSize: const Size.square(leadingSize),
-      padding: EdgeInsets.zero,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    );
-
-    Widget? leading;
-    if (hasBackButton) {
-      leading = Align(
-        alignment: Alignment.centerLeft,
-        child: IconButton.filledTonal(
-          tooltip: backTooltip,
-          icon: const Icon(Icons.arrow_back),
-          style: leadingButtonStyle,
-          onPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
-        ),
-      );
-    } else if (hasDrawer) {
-      leading = Builder(
-        builder: (buttonContext) => Align(
-          alignment: Alignment.centerLeft,
-          child: IconButton.filledTonal(
-            tooltip: 'Open menu',
-            icon: const Icon(Icons.menu_rounded),
-            style: leadingButtonStyle,
-            onPressed: () {
-              if (controller != null) {
-                controller!.openDrawer();
-              } else {
-                Scaffold.of(buttonContext).openDrawer();
-              }
-            },
-          ),
-        ),
-      );
-    }
-
-    final effectiveActions = [
-      ...actions,
-      if (showFiltersInBottomSheet)
-        Builder(
-          builder: (buttonContext) => IconButton(
-            tooltip: 'Show filters',
-            icon: const Icon(Icons.filter_list_rounded),
-            onPressed: () => _showFiltersBottomSheet(buttonContext),
-          ),
-        ),
-    ];
-
-    Widget titleWidget = Text(title!);
-    if (subtitle != null) {
-      titleWidget = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          titleWidget,
-          Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
-        ],
-      );
-    }
-
-    return AppBar(
-      automaticallyImplyLeading: false,
-      leading: leading,
-      leadingWidth: leading == null ? null : leadingSize,
-      titleSpacing: leading == null ? 0 : null,
-      centerTitle: false,
-      title: titleWidget,
-      backgroundColor: backgroundColor,
-      actionsPadding: EdgeInsets.zero,
-      actions: [Row(spacing: ThanksSpacing.small, children: effectiveActions)],
-    );
-  }
-
   void _showFiltersBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
@@ -428,40 +255,6 @@ class ThanksScaffold extends StatelessWidget {
         spacing: ThanksSpacing.medium,
       ),
     );
-  }
-}
-
-class _ThanksAppBarWrapper extends StatelessWidget
-    implements PreferredSizeWidget {
-  const _ThanksAppBarWrapper({
-    required this.appBar,
-    this.maxWidthPage,
-    required this.horizontalGutter,
-  });
-
-  final PreferredSizeWidget appBar;
-  final FitSize? maxWidthPage;
-  final double horizontalGutter;
-
-  @override
-  Size get preferredSize =>
-      Size.fromHeight(appBar.preferredSize.height + ThanksSpacing.medium * 2);
-
-  @override
-  Widget build(BuildContext context) {
-    Widget content = Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: ThanksSpacing.medium,
-        horizontal: horizontalGutter,
-      ),
-      child: appBar,
-    );
-
-    if (maxWidthPage != null) {
-      content = FitContainer(maxFitSize: maxWidthPage, child: content);
-    }
-
-    return SafeArea(bottom: false, child: content);
   }
 }
 

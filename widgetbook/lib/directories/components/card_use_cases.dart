@@ -54,6 +54,44 @@ Widget cardPlaygroundUseCase(BuildContext context) {
     label: 'Is Tappable (onTap)',
     initialValue: false,
   );
+  final backgroundColor = context.knobs.objectOrNull.dropdown<Color>(
+    label: 'Background Color',
+    options: const [
+      Colors.white,
+      Color(0xFFF8FAFC),
+      Color(0xFFEFF6FF),
+      Color(0xFFFEF3C7),
+      Color(0xFFFEE2E2),
+    ],
+    initialOption: null,
+    labelBuilder: (c) => switch (c) {
+      Colors.white => 'White (#FFFFFF)',
+      const Color(0xFFF8FAFC) => 'Slate 50 (#F8FAFC)',
+      const Color(0xFFEFF6FF) => 'Blue 50 (#EFF6FF)',
+      const Color(0xFFFEF3C7) => 'Amber 100 (#FEF3C7)',
+      const Color(0xFFFEE2E2) => 'Red 100 (#FEE2E2)',
+      _ => 'None (Default)',
+    },
+  );
+  final borderColor = context.knobs.objectOrNull.dropdown<Color>(
+    label: 'Border Color',
+    options: const [
+      Colors.red,
+      Colors.blue,
+      Color(0xFFE2E8F0),
+      Color(0xFFCBD5E1),
+      Color(0xFF94A3B8),
+    ],
+    initialOption: null,
+    labelBuilder: (c) => switch (c) {
+      Colors.red => 'Red (#F44336)',
+      Colors.blue => 'Blue (#2196F3)',
+      const Color(0xFFE2E8F0) => 'Slate 200 (#E2E8F0)',
+      const Color(0xFFCBD5E1) => 'Slate 300 (#CBD5E1)',
+      const Color(0xFF94A3B8) => 'Slate 400 (#94A3B8)',
+      _ => 'None (Default)',
+    },
+  );
 
   return Scaffold(
     backgroundColor: ThanksColors.pageBackground,
@@ -69,6 +107,8 @@ Widget cardPlaygroundUseCase(BuildContext context) {
           margin: margin,
           radius: radius,
           showDivider: showDivider,
+          backgroundColor: backgroundColor,
+          borderColor: borderColor,
           onTap: isTappable ? () {} : null,
           actions: showActions
               ? [
