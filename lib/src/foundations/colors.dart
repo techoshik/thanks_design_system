@@ -11,7 +11,7 @@ abstract final class ThanksColors {
   static const primary800 = Color(0xFF0D2278);
   static const primary950 = Color(0xFF060F44);
 
-  static const pageBackground = Color(0xFFF7F8FA);
+  static const pageBackground = Color.fromARGB(255, 245, 245, 245);
   static const border = Color(0xFFE2DFD8);
   static const borderStrong = Color(0xFFC8C4BB);
 
