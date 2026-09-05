@@ -464,6 +464,12 @@ void main() {
     );
 
     expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
+    final menuButtonFinder = find.byType(IconButton);
+    expect(
+      tester.getSize(menuButtonFinder),
+      const Size.square(ThanksSpacing.inputHeight),
+    );
+    expect(tester.getTopLeft(menuButtonFinder).dx, ThanksSpacing.medium);
     await tester.tap(find.byIcon(Icons.menu_rounded));
     await tester.pumpAndSettle();
     expect(find.text('Navigation'), findsOneWidget);
@@ -519,8 +525,14 @@ void main() {
 
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
       expect(find.byIcon(Icons.menu_rounded), findsNothing);
+      final backButtonFinder = find.byType(IconButton).first;
       expect(
-        tester.widget<IconButton>(find.byType(IconButton).first).tooltip,
+        tester.getSize(backButtonFinder),
+        const Size.square(ThanksSpacing.inputHeight),
+      );
+      expect(tester.getTopLeft(backButtonFinder).dx, ThanksSpacing.medium);
+      expect(
+        tester.widget<IconButton>(backButtonFinder).tooltip,
         'Back to Invoices',
       );
 

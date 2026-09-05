@@ -5,6 +5,7 @@ export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
 
 import '../components/thanks_button.dart';
 import '../components/thanks_sliver_loading.dart';
+import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
 
 /// Controls how [ThanksScaffold.filters] are presented.
@@ -278,31 +279,45 @@ class ThanksScaffold extends StatelessWidget {
         ? 'Back'
         : 'Back to $backDestinationLabel';
 
+    const double leadingSize = ThanksSpacing.inputHeight;
+
+    final leadingButtonStyle = IconButton.styleFrom(
+      shape: const StadiumBorder(),
+      backgroundColor: ThanksColors.surface,
+      foregroundColor: Theme.of(context).colorScheme.primary,
+      fixedSize: const Size.square(leadingSize),
+      minimumSize: const Size.square(leadingSize),
+      padding: EdgeInsets.zero,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+
     Widget? leading;
     if (hasBackButton) {
-      leading = Builder(
-        builder: (context) {
-          return IconButton.filledTonal(
-            tooltip: backTooltip,
-            icon: const Icon(Icons.arrow_back),
-            style: IconButton.styleFrom(shape: StadiumBorder()),
-            onPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
-          );
-        },
+      leading = Align(
+        alignment: Alignment.centerLeft,
+        child: IconButton.filledTonal(
+          tooltip: backTooltip,
+          icon: const Icon(Icons.arrow_back),
+          style: leadingButtonStyle,
+          onPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
+        ),
       );
     } else if (hasDrawer) {
       leading = Builder(
-        builder: (buttonContext) => IconButton.filledTonal(
-          tooltip: 'Open menu',
-          icon: const Icon(Icons.menu_rounded),
-          style: IconButton.styleFrom(shape: StadiumBorder()),
-          onPressed: () {
-            if (controller != null) {
-              controller!.openDrawer();
-            } else {
-              Scaffold.of(buttonContext).openDrawer();
-            }
-          },
+        builder: (buttonContext) => Align(
+          alignment: Alignment.centerLeft,
+          child: IconButton.filledTonal(
+            tooltip: 'Open menu',
+            icon: const Icon(Icons.menu_rounded),
+            style: leadingButtonStyle,
+            onPressed: () {
+              if (controller != null) {
+                controller!.openDrawer();
+              } else {
+                Scaffold.of(buttonContext).openDrawer();
+              }
+            },
+          ),
         ),
       );
     }
@@ -334,6 +349,7 @@ class ThanksScaffold extends StatelessWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       leading: leading,
+      leadingWidth: leading == null ? null : leadingSize,
       titleSpacing: leading == null ? 0 : null,
       centerTitle: false,
       title: titleWidget,
