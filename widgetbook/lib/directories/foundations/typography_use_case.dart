@@ -34,7 +34,9 @@ Widget typographyUseCase(BuildContext context) {
           ThanksSpacing.spaceSmall,
           Text(
             'The production type scale provided by thanks_design_system.',
-            style: textTheme.bodyMedium?.copyWith(color: ThanksColors.textSecondary),
+            style: textTheme.bodyMedium?.copyWith(
+              color: ThanksColors.textSecondary,
+            ),
           ),
           ThanksSpacing.spaceMedium,
           for (final (name, spec, style) in styles) ...[
@@ -55,8 +57,20 @@ Widget typographyUseCase(BuildContext context) {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                        Text(spec, style: const TextStyle(color: ThanksColors.textMuted, fontSize: 11)),
+                        Text(
+                          name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                        Text(
+                          spec,
+                          style: const TextStyle(
+                            color: ThanksColors.textMuted,
+                            fontSize: 11,
+                          ),
+                        ),
                       ],
                     ),
                   ),

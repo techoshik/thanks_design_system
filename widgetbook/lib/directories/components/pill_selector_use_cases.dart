@@ -3,10 +3,7 @@ import 'package:thanks_design_system/thanks_design_system.dart';
 import 'package:widgetbook/widgetbook.dart';
 
 Widget pillSelectorPlaygroundUseCase(BuildContext context) {
-  final isDense = context.knobs.boolean(
-    label: 'Is Dense',
-    initialValue: false,
-  );
+  final isDense = context.knobs.boolean(label: 'Is Dense', initialValue: false);
   final isExpanded = context.knobs.boolean(
     label: 'Is Expanded',
     initialValue: false,
@@ -36,7 +33,8 @@ class _InteractivePillSelector extends StatefulWidget {
   final bool isExpanded;
 
   @override
-  State<_InteractivePillSelector> createState() => _InteractivePillSelectorState();
+  State<_InteractivePillSelector> createState() =>
+      _InteractivePillSelectorState();
 }
 
 class _InteractivePillSelectorState extends State<_InteractivePillSelector> {
@@ -70,7 +68,10 @@ class _InteractivePillSelectorState extends State<_InteractivePillSelector> {
           ),
         ),
         ThanksSpacing.spaceMedium,
-        Text('Selected filter: $selected', style: const TextStyle(color: ThanksColors.textSecondary)),
+        Text(
+          'Selected filter: $selected',
+          style: const TextStyle(color: ThanksColors.textSecondary),
+        ),
       ],
     );
   }

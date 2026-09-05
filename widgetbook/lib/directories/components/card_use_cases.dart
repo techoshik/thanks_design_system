@@ -11,12 +11,13 @@ Widget cardPlaygroundUseCase(BuildContext context) {
     label: 'Subtitle',
     initialValue: 'View and manage your recent billing activity',
   );
-  final headerPosition = context.knobs.object.dropdown<ThanksCardHeaderPosition>(
-    label: 'Header Position',
-    options: ThanksCardHeaderPosition.values,
-    initialOption: ThanksCardHeaderPosition.outside,
-    labelBuilder: (p) => p.name,
-  );
+  final headerPosition = context.knobs.object
+      .dropdown<ThanksCardHeaderPosition>(
+        label: 'Header Position',
+        options: ThanksCardHeaderPosition.values,
+        initialOption: ThanksCardHeaderPosition.outside,
+        labelBuilder: (p) => p.name,
+      );
   final variant = context.knobs.object.dropdown<ThanksCardVariant>(
     label: 'Variant',
     options: ThanksCardVariant.values,
@@ -88,15 +89,21 @@ Widget cardPlaygroundUseCase(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Primary card content goes here. This area adapts to any layout or widgets.'),
+              const Text(
+                'Primary card content goes here. This area adapts to any layout or widgets.',
+              ),
               ThanksSpacing.spaceMedium,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Outstanding Balance', style: TextStyle(color: ThanksColors.textSecondary)),
+                  const Text(
+                    'Outstanding Balance',
+                    style: TextStyle(color: ThanksColors.textSecondary),
+                  ),
                   Text(
                     '\$1,240.00',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: ThanksColors.primary500),
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(color: ThanksColors.primary500),
                   ),
                 ],
               ),
@@ -131,11 +138,20 @@ Widget cardSectionOutsideUseCase(BuildContext context) {
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Name: Alex Morgan', style: TextStyle(fontWeight: FontWeight.w600)),
+              Text(
+                'Name: Alex Morgan',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               SizedBox(height: ThanksSpacing.small),
-              Text('Email: alex.morgan@example.com', style: TextStyle(color: ThanksColors.textSecondary)),
+              Text(
+                'Email: alex.morgan@example.com',
+                style: TextStyle(color: ThanksColors.textSecondary),
+              ),
               SizedBox(height: ThanksSpacing.small),
-              Text('Location: San Francisco, CA', style: TextStyle(color: ThanksColors.textSecondary)),
+              Text(
+                'Location: San Francisco, CA',
+                style: TextStyle(color: ThanksColors.textSecondary),
+              ),
             ],
           ),
         ),
@@ -171,12 +187,15 @@ Widget cardMetricInsideUseCase(BuildContext context) {
               Text(
                 '\$48,250',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: ThanksColors.primary500,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: ThanksColors.primary500,
+                ),
               ),
               ThanksSpacing.spaceSmall,
-              const Text('Target for Q3: \$50,000', style: TextStyle(fontSize: 12, color: ThanksColors.textMuted)),
+              const Text(
+                'Target for Q3: \$50,000',
+                style: TextStyle(fontSize: 12, color: ThanksColors.textMuted),
+              ),
             ],
           ),
         ),
@@ -215,7 +234,9 @@ Widget cardNestedUseCase(BuildContext context) {
                     onPressed: () {},
                   ),
                 ],
-                child: const Text('Includes unlimited seats and dedicated 24/7 SLA support.'),
+                child: const Text(
+                  'Includes unlimited seats and dedicated 24/7 SLA support.',
+                ),
               ),
               ThanksSpacing.spaceMedium,
               ThanksCard(

@@ -11,10 +11,6 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     label: 'Subtitle',
     initialValue: 'Manage open balances and tax receipts',
   );
-  final pinAppBar = context.knobs.boolean(
-    label: 'Pin App Bar',
-    initialValue: false,
-  );
   final showBackButton = context.knobs.boolean(
     label: 'Show Back Button',
     initialValue: false,
@@ -23,18 +19,40 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     label: 'Show Filters',
     initialValue: true,
   );
+  final isLoading = context.knobs.boolean(
+    label: 'Is Loading',
+    initialValue: false,
+  );
+  final maxWidthPage = context.knobs.objectOrNull.dropdown<FitSize>(
+    label: 'Max Width Page',
+    options: FitSize.values,
+    initialOption: null,
+    labelBuilder: (s) => s.name,
+  );
+  final maxWidthBody = context.knobs.objectOrNull.dropdown<FitSize>(
+    label: 'Max Width Body',
+    options: FitSize.values,
+    initialOption: null,
+    labelBuilder: (s) => s.name,
+  );
 
   return ThanksScaffold(
     title: title.isEmpty ? null : title,
     subtitle: subtitle?.isEmpty ?? true ? null : subtitle,
-    pinAppBar: pinAppBar,
     showBackButton: showBackButton,
+    onBackPressed: showBackButton ? () {} : null,
+    isLoading: isLoading,
+    maxWidthPage: maxWidthPage,
+    maxWidthBody: maxWidthBody,
     drawer: const Drawer(
       child: SafeArea(
         child: Column(
           children: [
             ListTile(leading: Icon(Icons.dashboard), title: Text('Dashboard')),
-            ListTile(leading: Icon(Icons.receipt_long), title: Text('Invoices')),
+            ListTile(
+              leading: Icon(Icons.receipt_long),
+              title: Text('Invoices'),
+            ),
             ListTile(leading: Icon(Icons.settings), title: Text('Settings')),
           ],
         ),
@@ -81,19 +99,26 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
           child: ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: 4,
+            itemCount: 40,
             separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (_, index) => ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const CircleAvatar(
-                backgroundColor: ThanksColors.primary50,
-                child: Icon(Icons.receipt, color: ThanksColors.primary500, size: 20),
-              ),
-              title: Text('Invoice #104${index + 1}'),
-              subtitle: Text('Due in ${index + 2} days · Acme Corp'),
-              trailing: Text(
-                '\$${(index + 1) * 350}.00',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+            itemBuilder: (_, index) => Material(
+              color: Colors.transparent,
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const CircleAvatar(
+                  backgroundColor: ThanksColors.primary50,
+                  child: Icon(
+                    Icons.receipt,
+                    color: ThanksColors.primary500,
+                    size: 20,
+                  ),
+                ),
+                title: Text('Invoice #104${index + 1}'),
+                subtitle: Text('Due in ${index + 2} days · Acme Corp'),
+                trailing: Text(
+                  '\$${(index + 1) * 350}.00',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ),
@@ -102,3 +127,28 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     ),
   );
 }
+
+Widget scaffoldEmptyStateUseCase(BuildContext context) {
+  return ThanksScaffold(
+    title: 'Orders & Receipts',
+    subtitle: 'Track your incoming deliveries',
+    showBackButton: true,
+    onBackPressed: () {},
+    sliver: ThanksSliverEmptyState(
+      icon: const Icon(
+        Icons.inbox_outlined,
+        size: 56,
+        color: ThanksColors.textMuted,
+      ),
+      title: 'No Orders Yet',
+      subtitle:
+          'When you place orders, they will appear here with live tracking updates.',
+      action: ThanksButton(
+        label: 'Explore Catalog',
+        leadingIcon: const Icon(Icons.shopping_bag_outlined),
+        onPressed: () {},
+      ),
+    ),
+  );
+}
+

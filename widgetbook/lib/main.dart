@@ -5,6 +5,7 @@ import 'package:widgetbook/widgetbook.dart';
 import 'directories/components/button_use_cases.dart';
 import 'directories/components/card_use_cases.dart';
 import 'directories/components/pill_selector_use_cases.dart';
+import 'directories/components/sliver_state_use_cases.dart';
 import 'directories/foundations/colors_use_case.dart';
 import 'directories/foundations/spacing_use_case.dart';
 import 'directories/foundations/typography_use_case.dart';
@@ -99,6 +100,24 @@ class ThanksWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'ThanksSliverLoading',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground (Centered Spinner)',
+                  builder: sliverLoadingPlaygroundUseCase,
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'ThanksSliverEmptyState',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground (Icon, Title, Subtitle, Action)',
+                  builder: sliverEmptyStatePlaygroundUseCase,
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -110,6 +129,10 @@ class ThanksWidgetbookApp extends StatelessWidget {
                 WidgetbookUseCase(
                   name: 'Playground (Drawer & Filters)',
                   builder: scaffoldPlaygroundUseCase,
+                ),
+                WidgetbookUseCase(
+                  name: 'Empty State (Sliver)',
+                  builder: scaffoldEmptyStateUseCase,
                 ),
               ],
             ),
@@ -124,15 +147,10 @@ class ThanksWidgetbookApp extends StatelessWidget {
               data: ThanksTheme.light(),
             ),
           ],
-          themeBuilder: (context, theme, child) => Theme(
-            data: theme,
-            child: child,
-          ),
+          themeBuilder: (context, theme, child) =>
+              Theme(data: theme, child: child),
         ),
-        TextScaleAddon(
-          min: 1.0,
-          max: 2.0,
-        ),
+        TextScaleAddon(min: 1.0, max: 2.0),
       ],
     );
   }

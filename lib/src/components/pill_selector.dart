@@ -39,9 +39,7 @@ class PillSelector<T> extends StatelessWidget {
       height: pillHeight,
       child: Card(
         shape: StadiumBorder(
-          side: BorderSide(
-            color: borderColor ?? colorScheme.outlineVariant,
-          ),
+          side: BorderSide(color: borderColor ?? colorScheme.outlineVariant),
         ),
         child: Padding(
           padding: isDense ? EdgeInsets.zero : const EdgeInsets.all(3),
@@ -81,9 +79,7 @@ class PillSelector<T> extends StatelessWidget {
                                   const SizedBox(width: 6),
                                 Text(
                                   labelBuilder(option),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
+                                  style: Theme.of(context).textTheme.titleSmall
                                       ?.copyWith(
                                         color: isSelected
                                             ? colorScheme.onPrimary
@@ -105,12 +101,12 @@ class PillSelector<T> extends StatelessWidget {
                       selectedColor: colorScheme.primary,
                       backgroundColor: colorScheme.surfaceContainer,
                       checkmarkColor: colorScheme.onPrimary,
-                      labelStyle:
-                          Theme.of(context).textTheme.titleSmall?.copyWith(
-                                color: isSelected
-                                    ? colorScheme.onPrimary
-                                    : colorScheme.onSurface,
-                              ),
+                      labelStyle: Theme.of(context).textTheme.titleSmall
+                          ?.copyWith(
+                            color: isSelected
+                                ? colorScheme.onPrimary
+                                : colorScheme.onSurface,
+                          ),
                       side: BorderSide.none,
                     );
             }).toList(),

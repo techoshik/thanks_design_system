@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 /// Standard dimensions used throughout Thanks applications.
 abstract final class ThanksSpacing {
-  static const double small = 8;
-  static const double medium = 16;
+  static const double small = 8.0;
+  static const double medium = 16.0;
 
   static const double radiusSmall = small;
   static const double radiusMedium = medium;
@@ -19,7 +19,7 @@ abstract final class ThanksSpacing {
   static const double viewHeightMinimum = 304;
   static const double formWidthMinimum = 300;
   static const double formWidthMaximum = 450;
-  static const double fabClearance = 100;
+  static const double fabClearance = 132;
 
   static const inputContentPadding = EdgeInsets.symmetric(
     horizontal: medium,
