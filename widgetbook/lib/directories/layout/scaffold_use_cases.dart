@@ -23,6 +23,14 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     label: 'Is Loading',
     initialValue: false,
   );
+  final isScrollable = context.knobs.boolean(
+    label: 'Is Scrollable',
+    initialValue: true,
+  );
+  final bottomPadding = context.knobs.doubleOrNull.input(
+    label: 'Bottom Padding',
+    initialValue: null,
+  );
   final maxWidthPage = context.knobs.objectOrNull.dropdown<FitSize>(
     label: 'Max Width Page',
     options: FitSize.values,
@@ -42,6 +50,8 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     showBackButton: showBackButton,
     onBackPressed: showBackButton ? () {} : null,
     isLoading: isLoading,
+    isScrollable: isScrollable,
+    bottomPadding: bottomPadding,
     maxWidthPage: maxWidthPage,
     maxWidthBody: maxWidthBody,
     drawer: const Drawer(
@@ -148,6 +158,119 @@ Widget scaffoldEmptyStateUseCase(BuildContext context) {
         leadingIcon: const Icon(Icons.shopping_bag_outlined),
         onPressed: () {},
       ),
+    ),
+  );
+}
+
+Widget scaffoldEditorUseCase(BuildContext context) {
+  final bottomPadding = context.knobs.doubleOrNull.input(
+    label: 'Bottom Padding',
+    initialValue: 0.0,
+  );
+
+  return ThanksScaffold(
+    title: 'Dynamic Form Editor',
+    subtitle: 'Multi-column editor with independent panel scrollbars',
+    isScrollable: false,
+    bottomPadding: bottomPadding,
+    actions: [
+      ThanksButton(
+        label: 'Preview',
+        variant: ThanksButtonVariant.outlined,
+        onPressed: () {},
+      ),
+      ThanksButton(
+        label: 'Save Form',
+        leadingIcon: const Icon(Icons.check),
+        onPressed: () {},
+      ),
+    ],
+    body: Row(
+      spacing: ThanksSpacing.medium,
+      children: [
+        // Left Column: Components Palette
+        Expanded(
+          flex: 1,
+          child: ThanksCard(
+            title: 'Components',
+            subtitle: 'Drag or click to add',
+            variant: ThanksCardVariant.filledOutlined,
+            child: ListView.separated(
+              itemCount: 15,
+              separatorBuilder: (_, __) => const Divider(height: 1),
+              itemBuilder: (_, index) => ListTile(
+                leading: const Icon(Icons.add_circle_outline, size: 20),
+                title: Text('Field #${index + 1}'),
+                subtitle: Text(index.isEven ? 'Text Input' : 'Dropdown'),
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+        // Central Column: Details of added components
+        Expanded(
+          flex: 2,
+          child: ThanksCard(
+            title: 'Form Canvas',
+            subtitle: 'Components on this form',
+            variant: ThanksCardVariant.filledOutlined,
+            child: ListView.separated(
+              itemCount: 20,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: ThanksSpacing.small),
+              itemBuilder: (_, index) => Container(
+                padding: ThanksSpacing.insetMedium,
+                decoration: BoxDecoration(
+                  color: ThanksColors.surface,
+                  border: Border.all(color: ThanksColors.border),
+                  borderRadius: BorderRadius.circular(ThanksSpacing.radiusSmall),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Component ${index + 1}: ${index.isEven ? "Personal Information" : "Travel History"}',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Independent scrolling section without outer page scrollbars.',
+                      style: TextStyle(
+                        color: ThanksColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        // Right Column: Details of selected field
+        Expanded(
+          flex: 1,
+          child: ThanksCard(
+            title: 'Field Details',
+            subtitle: 'Selected field inspector',
+            variant: ThanksCardVariant.filledOutlined,
+            child: ListView(
+              children: const [
+                Text('Field ID', style: TextStyle(fontWeight: FontWeight.w600)),
+                SizedBox(height: 4),
+                Text('field_passport_number', style: TextStyle(color: ThanksColors.textSecondary)),
+                Divider(height: 24),
+                Text('Label Text', style: TextStyle(fontWeight: FontWeight.w600)),
+                SizedBox(height: 4),
+                Text('Passport / Travel Document Number', style: TextStyle(color: ThanksColors.textSecondary)),
+                Divider(height: 24),
+                Text('Validation Rules', style: TextStyle(fontWeight: FontWeight.w600)),
+                SizedBox(height: 4),
+                Text('• Required\n• Alphanumeric (A-Z, 0-9)\n• Min length: 6', style: TextStyle(color: ThanksColors.textSecondary)),
+              ],
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }

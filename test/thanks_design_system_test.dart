@@ -1294,6 +1294,145 @@ void main() {
       throwsAssertionError,
     );
   });
+
+  testWidgets(
+    'ThanksScaffold with isScrollable false disables outer scroll view and supports multi-column expanded layouts',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(1200, 800)),
+            child: ThanksScaffold(
+              title: 'Dynamic Form Editor',
+              isScrollable: false,
+              body: Row(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      key: const Key('left-column'),
+                      itemCount: 20,
+                      itemBuilder: (_, i) => Text('Palette Item $i'),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: ListView.builder(
+                      key: const Key('center-column'),
+                      itemCount: 20,
+                      itemBuilder: (_, i) => Text('Canvas Component $i'),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      key: const Key('right-column'),
+                      itemCount: 20,
+                      itemBuilder: (_, i) => Text('Inspector Field $i'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // The outer page does not contain a CustomScrollView
+      expect(find.byType(CustomScrollView), findsNothing);
+
+      // All three columns render without unbounded height errors
+      expect(find.byKey(const Key('left-column')), findsOneWidget);
+      expect(find.byKey(const Key('center-column')), findsOneWidget);
+      expect(find.byKey(const Key('right-column')), findsOneWidget);
+      expect(find.text('Palette Item 0'), findsOneWidget);
+      expect(find.text('Canvas Component 0'), findsOneWidget);
+      expect(find.text('Inspector Field 0'), findsOneWidget);
+
+      // Default bottom padding when isScrollable is false is 0.0
+      final bodyPadding = tester.widget<Padding>(
+        find.ancestor(
+          of: find.byType(Row),
+          matching: find.byType(Padding),
+        ).first,
+      );
+      expect(bodyPadding.padding, const EdgeInsets.fromLTRB(
+        ThanksSpacing.medium * 2, // gutter for desktop (> tablet)
+        ThanksSpacing.medium,
+        ThanksSpacing.medium * 2,
+        0.0,
+      ));
+    },
+  );
+
+  testWidgets(
+    'ThanksScaffold respects custom bottomPadding on both scrollable and non-scrollable pages',
+    (tester) async {
+      // Non-scrollable with custom bottom padding
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ThanksScaffold(
+            isScrollable: false,
+            bottomPadding: 20.0,
+            body: SizedBox(key: Key('box-body'), height: 50),
+          ),
+        ),
+      );
+
+      final nonScrollablePadding = tester.widget<Padding>(
+        find.ancestor(
+          of: find.byKey(const Key('box-body')),
+          matching: find.byType(Padding),
+        ).first,
+      );
+      expect(
+        (nonScrollablePadding.padding as EdgeInsets).bottom,
+        20.0,
+      );
+
+      // Scrollable with custom bottom padding
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ThanksScaffold(
+            isScrollable: true,
+            bottomPadding: 24.0,
+            body: SizedBox(key: Key('box-body-2'), height: 50),
+          ),
+        ),
+      );
+
+      final scrollablePadding = tester.widget<SliverPadding>(
+        find.byType(SliverPadding).first,
+      );
+      expect(
+        (scrollablePadding.padding as EdgeInsets).bottom,
+        24.0,
+      );
+    },
+  );
+
+  testWidgets(
+    'ThanksScaffold with isScrollable false uses NeverScrollableScrollPhysics for slivers',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const ThanksScaffold(
+            isScrollable: false,
+            sliver: ThanksSliverEmptyState(title: 'Non-scrollable Empty State'),
+          ),
+        ),
+      );
+
+      final customScrollView = tester.widget<CustomScrollView>(
+        find.byType(CustomScrollView),
+      );
+      expect(customScrollView.physics, isA<NeverScrollableScrollPhysics>());
+      expect(find.text('Non-scrollable Empty State'), findsOneWidget);
+    },
+  );
 }
 
 String _label(int value) => '$value';

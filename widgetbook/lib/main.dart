@@ -134,6 +134,10 @@ class ThanksWidgetbookApp extends StatelessWidget {
                   name: 'Empty State (Sliver)',
                   builder: scaffoldEmptyStateUseCase,
                 ),
+                WidgetbookUseCase(
+                  name: 'Multi-Column Editor (Non-Scrollable)',
+                  builder: scaffoldEditorUseCase,
+                ),
               ],
             ),
           ],

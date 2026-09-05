@@ -81,6 +81,8 @@ class ThanksScaffold extends StatelessWidget {
     this.backDestinationLabel,
     this.onBackPressed,
     this.isLoading = false,
+    this.isScrollable = true,
+    this.bottomPadding,
     this.body,
     this.sliver,
     this.floatingActionButton,
@@ -121,6 +123,22 @@ class ThanksScaffold extends StatelessWidget {
   /// When true, [ThanksSliverLoading] is automatically displayed in place of
   /// [body] or [sliver].
   final bool isLoading;
+
+  /// Whether the outer page is scrollable.
+  ///
+  /// Defaults to `true`. When `false`, the outer page content does not scroll
+  /// and displays no outer scrollbars. If [body] is provided, it is laid out
+  /// with bounded constraints, enabling multi-column editors or panel layouts
+  /// to host their own internal scrollbars without overflow or page-level
+  /// scrolling.
+  final bool isScrollable;
+
+  /// Custom bottom padding for the page content.
+  ///
+  /// When not specified, defaults to [ThanksSpacing.fabClearance] (132.0) when
+  /// [isScrollable] is `true` (providing clearance for floating action buttons),
+  /// or `0.0` when [isScrollable] is `false`.
+  final double? bottomPadding;
 
   /// The standard box widget to display as the primary page content.
   ///
@@ -186,23 +204,65 @@ class ThanksScaffold extends StatelessWidget {
           )
         : null;
 
-    final pageContent = CustomScrollView(
-      slivers: [
-        if (inlineFilters != null)
-          SliverPadding(
-            padding: _sectionPadding(context),
-            sliver: SliverToBoxAdapter(child: inlineFilters),
-          ),
-        if (contentSliver != null)
-          SliverPadding(
-            padding: _sectionPadding(
-              context,
-              bottom: ThanksSpacing.fabClearance,
+    final effectiveBottomPadding =
+        bottomPadding ?? (isScrollable ? ThanksSpacing.fabClearance : 0.0);
+
+    final Widget pageContent;
+    if (!isScrollable && sliver == null && !isLoading) {
+      pageContent = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (inlineFilters != null)
+            Padding(
+              padding: _sectionPadding(
+                context,
+                bottom: effectiveBody != null ? 0 : effectiveBottomPadding,
+              ),
+              child: inlineFilters,
             ),
-            sliver: contentSliver,
-          ),
-      ],
-    );
+          if (effectiveBody != null)
+            Expanded(
+              child: Padding(
+                padding: _sectionPadding(
+                  context,
+                  top: ThanksSpacing.medium,
+                  bottom: effectiveBottomPadding,
+                ),
+                child: effectiveBody,
+              ),
+            ),
+        ],
+      );
+    } else {
+      final scrollPhysics =
+          isScrollable ? null : const NeverScrollableScrollPhysics();
+      final scrollView = CustomScrollView(
+        physics: scrollPhysics,
+        slivers: [
+          if (inlineFilters != null)
+            SliverPadding(
+              padding: _sectionPadding(context),
+              sliver: SliverToBoxAdapter(child: inlineFilters),
+            ),
+          if (contentSliver != null)
+            SliverPadding(
+              padding: _sectionPadding(
+                context,
+                bottom: effectiveBottomPadding,
+              ),
+              sliver: contentSliver,
+            ),
+        ],
+      );
+      pageContent = isScrollable
+          ? scrollView
+          : ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(
+                scrollbars: false,
+              ),
+              child: scrollView,
+            );
+    }
 
     final constrainedPage = maxWidthPage != null
         ? FitContainer(maxFitSize: maxWidthPage, child: pageContent)
