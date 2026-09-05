@@ -21,12 +21,8 @@ void main() {
     expect(theme.popupMenuTheme.color, ThanksColors.surface);
     expect(theme.popupMenuTheme.surfaceTintColor, Colors.transparent);
     expect(theme.popupMenuTheme.elevation, 3);
-    expect(
-      theme.popupMenuTheme.shadowColor,
-      theme.colorScheme.shadow,
-    );
-    final popupBorder =
-        theme.popupMenuTheme.shape as RoundedRectangleBorder;
+    expect(theme.popupMenuTheme.shadowColor, theme.colorScheme.shadow);
+    final popupBorder = theme.popupMenuTheme.shape as RoundedRectangleBorder;
     expect(
       popupBorder.borderRadius,
       BorderRadius.circular(ThanksSpacing.radiusMedium),
@@ -795,40 +791,39 @@ void main() {
     },
   );
 
-  testWidgets(
-    'ThanksScaffold applies maxWidthPage and maxWidthBody',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1400, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets('ThanksScaffold applies maxWidthPage and maxWidthBody', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1400, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ThanksScaffold(
-            title: 'Pinned Top Bar',
-            maxWidthPage: FitSize.laptop,
-            maxWidthBody: FitSize.tablet,
-            body: SizedBox(
-              key: Key('pinned-body'),
-              width: double.infinity,
-              height: 100,
-            ),
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          title: 'Pinned Top Bar',
+          maxWidthPage: FitSize.laptop,
+          maxWidthBody: FitSize.tablet,
+          body: SizedBox(
+            key: Key('pinned-body'),
+            width: double.infinity,
+            height: 100,
           ),
         ),
-      );
+      ),
+    );
 
-      final fitContainers = tester
-          .widgetList<FitContainer>(find.byType(FitContainer))
-          .toList();
-      expect(fitContainers, hasLength(3));
-      final sizes = fitContainers.map((c) => c.maxFitSize).toSet();
-      expect(sizes, containsAll([FitSize.laptop, FitSize.tablet]));
+    final fitContainers = tester
+        .widgetList<FitContainer>(find.byType(FitContainer))
+        .toList();
+    expect(fitContainers, hasLength(3));
+    final sizes = fitContainers.map((c) => c.maxFitSize).toSet();
+    expect(sizes, containsAll([FitSize.laptop, FitSize.tablet]));
 
-      final bodyWidth = tester
-          .getSize(find.byKey(const Key('pinned-body')))
-          .width;
-      expect(bodyWidth, FitSize.tablet.maxWidth);
-    },
-  );
+    final bodyWidth = tester
+        .getSize(find.byKey(const Key('pinned-body')))
+        .width;
+    expect(bodyWidth, FitSize.tablet.maxWidth);
+  });
 
   testWidgets(
     'ThanksScaffold clamps maxWidthBody so it does not exceed maxWidthPage',
@@ -1210,39 +1205,40 @@ void main() {
     expect(() => ThanksSliverEmptyState(), throwsAssertionError);
   });
 
-  testWidgets('ThanksSliverEmptyState renders icon, title, subtitle, and action', (
-    tester,
-  ) async {
-    var actionPressed = false;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThanksTheme.light(),
-        home: Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              ThanksSliverEmptyState(
-                icon: const Icon(Icons.inbox),
-                title: 'No Orders Yet',
-                subtitle: 'Items you buy will appear here.',
-                action: ThanksButton(
-                  label: 'Start Shopping',
-                  onPressed: () => actionPressed = true,
+  testWidgets(
+    'ThanksSliverEmptyState renders icon, title, subtitle, and action',
+    (tester) async {
+      var actionPressed = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                ThanksSliverEmptyState(
+                  icon: const Icon(Icons.inbox),
+                  title: 'No Orders Yet',
+                  subtitle: 'Items you buy will appear here.',
+                  action: ThanksButton(
+                    label: 'Start Shopping',
+                    onPressed: () => actionPressed = true,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.byIcon(Icons.inbox), findsOneWidget);
-    expect(find.text('No Orders Yet'), findsOneWidget);
-    expect(find.text('Items you buy will appear here.'), findsOneWidget);
-    expect(find.text('Start Shopping'), findsOneWidget);
+      expect(find.byIcon(Icons.inbox), findsOneWidget);
+      expect(find.text('No Orders Yet'), findsOneWidget);
+      expect(find.text('Items you buy will appear here.'), findsOneWidget);
+      expect(find.text('Start Shopping'), findsOneWidget);
 
-    await tester.tap(find.text('Start Shopping'));
-    expect(actionPressed, isTrue);
-  });
+      await tester.tap(find.text('Start Shopping'));
+      expect(actionPressed, isTrue);
+    },
+  );
 
   testWidgets('ThanksSliverEmptyState renders partial configurations', (
     tester,
@@ -1251,9 +1247,7 @@ void main() {
       const MaterialApp(
         home: Scaffold(
           body: CustomScrollView(
-            slivers: [
-              ThanksSliverEmptyState(title: 'Only Title'),
-            ],
+            slivers: [ThanksSliverEmptyState(title: 'Only Title')],
           ),
         ),
       ),
@@ -1263,24 +1257,25 @@ void main() {
     expect(find.byType(Icon), findsNothing);
   });
 
-  testWidgets('ThanksScaffold automatically displays loader when isLoading is true', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThanksTheme.light(),
-        home: const ThanksScaffold(
-          title: 'Scaffold Loading',
-          isLoading: true,
-          body: Text('Actual Content'),
+  testWidgets(
+    'ThanksScaffold automatically displays loader when isLoading is true',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const ThanksScaffold(
+            title: 'Scaffold Loading',
+            isLoading: true,
+            body: Text('Actual Content'),
+          ),
         ),
-      ),
-    );
+      );
 
-    expect(find.byType(ThanksSliverLoading), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    expect(find.text('Actual Content'), findsNothing);
-  });
+      expect(find.byType(ThanksSliverLoading), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.text('Actual Content'), findsNothing);
+    },
+  );
 
   testWidgets('ThanksScaffold renders sliver when sliver is provided', (
     tester,
@@ -1368,17 +1363,19 @@ void main() {
 
       // Default bottom padding when isScrollable is false is 0.0
       final bodyPadding = tester.widget<Padding>(
-        find.ancestor(
-          of: find.byType(Row),
-          matching: find.byType(Padding),
-        ).first,
+        find
+            .ancestor(of: find.byType(Row), matching: find.byType(Padding))
+            .first,
       );
-      expect(bodyPadding.padding, const EdgeInsets.fromLTRB(
-        ThanksSpacing.medium * 2, // gutter for desktop (> tablet)
-        ThanksSpacing.medium,
-        ThanksSpacing.medium * 2,
-        0.0,
-      ));
+      expect(
+        bodyPadding.padding,
+        const EdgeInsets.fromLTRB(
+          ThanksSpacing.medium * 2, // gutter for desktop (> tablet)
+          ThanksSpacing.medium,
+          ThanksSpacing.medium * 2,
+          0.0,
+        ),
+      );
     },
   );
 
@@ -1397,15 +1394,14 @@ void main() {
       );
 
       final nonScrollablePadding = tester.widget<Padding>(
-        find.ancestor(
-          of: find.byKey(const Key('box-body')),
-          matching: find.byType(Padding),
-        ).first,
+        find
+            .ancestor(
+              of: find.byKey(const Key('box-body')),
+              matching: find.byType(Padding),
+            )
+            .first,
       );
-      expect(
-        (nonScrollablePadding.padding as EdgeInsets).bottom,
-        20.0,
-      );
+      expect((nonScrollablePadding.padding as EdgeInsets).bottom, 20.0);
 
       // Scrollable with custom bottom padding
       await tester.pumpWidget(
@@ -1421,10 +1417,7 @@ void main() {
       final scrollablePadding = tester.widget<SliverPadding>(
         find.byType(SliverPadding).first,
       );
-      expect(
-        (scrollablePadding.padding as EdgeInsets).bottom,
-        24.0,
-      );
+      expect((scrollablePadding.padding as EdgeInsets).bottom, 24.0);
     },
   );
 
@@ -1448,6 +1441,73 @@ void main() {
       expect(find.text('Non-scrollable Empty State'), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'ThanksSection renders title, subtitle, and child with titleMedium',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const Scaffold(
+            body: ThanksSection(
+              title: 'Test Section',
+              subtitle: 'Section Subtitle',
+              child: Text('Child Widget'),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Test Section'), findsOneWidget);
+      expect(find.text('Section Subtitle'), findsOneWidget);
+      expect(find.text('Child Widget'), findsOneWidget);
+    },
+  );
+
+  testWidgets('ThanksInputLabel renders label text and wraps child', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: const Scaffold(
+          body: Column(
+            children: [
+              ThanksInputLabel(
+                label: 'Full Name',
+                isRequired: true,
+                child: TextField(),
+              ),
+              ThanksInputLabel(label: 'Email Address', child: TextField()),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.textContaining('Full Name'), findsOneWidget);
+    expect(find.text('Email Address'), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2));
+  });
+
+  testWidgets('ThanksGrid renders column children', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: const Scaffold(
+          body: ThanksGrid(
+            children: [
+              ThanksGridItem(mobile: 12, desktop: 6, child: Text('Col 1')),
+              ThanksGridItem(mobile: 12, desktop: 6, child: Text('Col 2')),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Col 1'), findsOneWidget);
+    expect(find.text('Col 2'), findsOneWidget);
+  });
 }
 
 String _label(int value) => '$value';

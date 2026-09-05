@@ -10,14 +10,17 @@ Widget spacingUseCase(BuildContext context) {
   final radii = <(String, String, double)>[
     ('Radius Small', 'ThanksSpacing.radiusSmall', ThanksSpacing.radiusSmall),
     ('Radius Medium', 'ThanksSpacing.radiusMedium', ThanksSpacing.radiusMedium),
-    ('Radius Large', 'ThanksSpacing.radiusLarge', ThanksSpacing.radiusLarge),
     ('Radius Full', 'ThanksSpacing.radiusFull', ThanksSpacing.radiusFull),
   ];
 
   final componentDimensions = <(String, String, double)>[
     ('Button Height', 'ThanksSpacing.buttonHeight', ThanksSpacing.buttonHeight),
     ('Input Height', 'ThanksSpacing.inputHeight', ThanksSpacing.inputHeight),
-    ('App Bar Height', 'ThanksSpacing.appBarHeight', ThanksSpacing.appBarHeight),
+    (
+      'App Bar Height',
+      'ThanksSpacing.appBarHeight',
+      ThanksSpacing.appBarHeight,
+    ),
     ('FAB Clearance', 'ThanksSpacing.fabClearance', ThanksSpacing.fabClearance),
   ];
 
@@ -166,7 +169,6 @@ Widget spacingUseCase(BuildContext context) {
                     ],
                   ),
                 ),
-
             ],
           ),
           const SizedBox(height: ThanksSpacing.medium * 1.5),

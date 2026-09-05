@@ -6,10 +6,8 @@ abstract final class ThanksSpacing {
   static const double small = 8.0;
   static const double medium = 16.0;
 
-  static const double radiusExtraSmall = extraSmall;
   static const double radiusSmall = small;
   static const double radiusMedium = medium;
-  static const double radiusLarge = medium;
   static const double radiusFull = 100;
 
   static const double appBarHeight = 64;
