@@ -2,9 +2,11 @@ import 'package:flutter/widgets.dart';
 
 /// Standard dimensions used throughout Thanks applications.
 abstract final class ThanksSpacing {
+  static const double extraSmall = 4.0;
   static const double small = 8.0;
   static const double medium = 16.0;
 
+  static const double radiusExtraSmall = extraSmall;
   static const double radiusSmall = small;
   static const double radiusMedium = medium;
   static const double radiusLarge = medium;
@@ -27,9 +29,11 @@ abstract final class ThanksSpacing {
   );
   static const dialogConstraints = BoxConstraints(minWidth: 350, maxWidth: 600);
 
+  static const spaceExtraSmall = SizedBox.square(dimension: extraSmall);
   static const spaceSmall = SizedBox.square(dimension: small);
   static const spaceMedium = SizedBox.square(dimension: medium);
 
+  static const insetExtraSmall = EdgeInsets.all(extraSmall);
   static const insetSmall = EdgeInsets.all(small);
   static const insetSmallWithLeftMedium = EdgeInsets.fromLTRB(
     medium,
@@ -41,6 +45,9 @@ abstract final class ThanksSpacing {
   static final insetMediumTop0 = insetMedium.copyWith(top: 0);
   static final insetMediumBottom0 = insetMedium.copyWith(bottom: 0);
 
+  static const insetExtraSmallHorizontal = EdgeInsets.symmetric(
+    horizontal: extraSmall,
+  );
   static const insetSmallHorizontal = EdgeInsets.symmetric(horizontal: small);
   static const insetMediumHorizontal = EdgeInsets.symmetric(horizontal: medium);
   static const insetMediumVertical = EdgeInsets.symmetric(vertical: medium);

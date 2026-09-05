@@ -12,6 +12,7 @@ void main() {
     expect(ThanksSpacing.inputHeight, 40);
     expect(ThanksSpacing.buttonHeight, 32);
     expect(theme.iconTheme.size, 20);
+    expect(ThanksSpacing.extraSmall, 4);
     expect(ThanksSpacing.radiusSmall, 8);
     expect(
       theme.textTheme.bodyMedium?.fontFamily,
