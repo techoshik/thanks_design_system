@@ -140,10 +140,12 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       hintStyle: textTheme.bodyMedium?.copyWith(color: ThanksColors.textMuted),
       errorStyle: textTheme.labelSmall?.copyWith(color: ThanksColors.danger),
       prefixIconConstraints: const BoxConstraints(
-        minWidth: ThanksSpacing.inputHeight,
+        minWidth: kMinInteractiveDimension,
+        minHeight: ThanksSpacing.inputHeight,
         maxHeight: ThanksSpacing.inputHeight,
       ),
       suffixIconConstraints: const BoxConstraints(
+        minWidth: kMinInteractiveDimension,
         minHeight: ThanksSpacing.inputHeight,
         maxHeight: ThanksSpacing.inputHeight,
       ),

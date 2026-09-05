@@ -28,6 +28,12 @@ void main() {
       BorderRadius.circular(ThanksSpacing.radiusMedium),
     );
     expect(popupBorder.side.color, theme.colorScheme.outlineVariant);
+    expect(theme.inputDecorationTheme.suffixIconConstraints?.minWidth, kMinInteractiveDimension);
+    expect(theme.inputDecorationTheme.suffixIconConstraints?.minHeight, ThanksSpacing.inputHeight);
+    expect(theme.inputDecorationTheme.suffixIconConstraints?.maxHeight, ThanksSpacing.inputHeight);
+    expect(theme.inputDecorationTheme.prefixIconConstraints?.minWidth, kMinInteractiveDimension);
+    expect(theme.inputDecorationTheme.prefixIconConstraints?.minHeight, ThanksSpacing.inputHeight);
+    expect(theme.inputDecorationTheme.prefixIconConstraints?.maxHeight, ThanksSpacing.inputHeight);
   });
 
   testWidgets('plain and icon text fields share the 40px minimum height', (
@@ -56,6 +62,63 @@ void main() {
     expect(plainHeight, greaterThanOrEqualTo(ThanksSpacing.inputHeight));
     expect(iconHeight, plainHeight);
   });
+
+  testWidgets(
+    'suffixIcon aligns symmetrically with DropdownButtonFormField icon',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 600));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      const dropdownKey = Key('test_dropdown');
+      const inputKey = Key('test_input');
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: ThanksSpacing.medium),
+              child: Column(
+                children: [
+                  DropdownButtonFormField<String>(
+                    key: dropdownKey,
+                    initialValue: 'item1',
+                    items: const [
+                      DropdownMenuItem(value: 'item1', child: Text('Item 1')),
+                    ],
+                    onChanged: null,
+                  ),
+                  const SizedBox(height: ThanksSpacing.medium),
+                  const TextField(
+                    key: inputKey,
+                    decoration: InputDecoration(
+                      suffixIcon: Icon(Icons.calendar_month_outlined),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final dropdownIcon = find.byIcon(Icons.arrow_drop_down);
+      final calendarIcon = find.byIcon(Icons.calendar_month_outlined);
+
+      final dropdownIconRect = tester.getRect(dropdownIcon);
+      final calendarIconRect = tester.getRect(calendarIcon);
+
+      // The suffix icon container must be centered in line with the dropdown icon.
+      expect(calendarIconRect.center.dx, closeTo(dropdownIconRect.center.dx, 1.0));
+
+      // The painted glyph (RichText inside Icon) must be inset from the right border.
+      final calendarGlyph = find.descendant(of: calendarIcon, matching: find.byType(RichText));
+      final calendarGlyphRect = tester.getRect(calendarGlyph);
+      final inputRect = tester.getRect(find.byKey(inputKey));
+      expect(calendarGlyphRect.right, lessThan(inputRect.right - ThanksSpacing.small));
+    },
+  );
 
   testWidgets('ThanksButton supports variants, colors, icons, and loading', (
     tester,
