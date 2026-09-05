@@ -579,6 +579,28 @@ void main() {
     },
   );
 
+  testWidgets(
+    'ThanksScaffold aligns title with content when there are no leading icons',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const ThanksScaffold(
+            title: 'Aligned Title',
+            showBackButton: false,
+            body: Text('Aligned Body Content'),
+          ),
+        ),
+      );
+
+      final titleOffset = tester.getTopLeft(find.text('Aligned Title'));
+      final bodyOffset = tester.getTopLeft(find.text('Aligned Body Content'));
+
+      expect(titleOffset.dx, bodyOffset.dx);
+      expect(titleOffset.dx, ThanksSpacing.medium);
+    },
+  );
+
   testWidgets('ThanksScaffold keeps its back button below the top safe area', (
     tester,
   ) async {

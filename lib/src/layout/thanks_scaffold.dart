@@ -334,6 +334,8 @@ class ThanksScaffold extends StatelessWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       leading: leading,
+      titleSpacing: leading == null ? 0 : null,
+      centerTitle: false,
       title: titleWidget,
       backgroundColor: backgroundColor,
       actionsPadding: EdgeInsets.zero,
