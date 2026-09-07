@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../foundations/spacing.dart';
 
 /// A compact, accessible choice control for two or more mutually exclusive options.
-class PillSelector<T> extends StatelessWidget {
-  const PillSelector({
+class ThanksPillSelector<T> extends StatelessWidget {
+  const ThanksPillSelector({
     super.key,
     required this.options,
     required this.labelBuilder,

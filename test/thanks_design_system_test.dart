@@ -320,7 +320,7 @@ void main() {
         home: Scaffold(
           body: SizedBox(
             width: 320,
-            child: PillSelector<int>(
+            child: ThanksPillSelector<int>(
               options: const [1, 2, 3],
               labelBuilder: _label,
               selected: 1,
@@ -332,7 +332,7 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.byType(PillSelector<int>)).width, 320);
+    expect(tester.getSize(find.byType(ThanksPillSelector<int>)).width, 320);
   });
 
   testWidgets(

@@ -47,7 +47,7 @@ class _InteractivePillSelectorState extends State<_InteractivePillSelector> {
       children: [
         SizedBox(
           width: widget.isExpanded ? 400 : null,
-          child: PillSelector<String>(
+          child: ThanksPillSelector<String>(
             options: const ['All', 'Unpaid', 'Overdue', 'Archived'],
             selected: selected,
             onChanged: (val) {

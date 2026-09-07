@@ -1,7 +1,7 @@
 /// A shared design system for Thanks Flutter applications.
 library;
 
-export 'src/components/pill_selector.dart';
+export 'src/components/thanks_pill_selector.dart';
 export 'src/components/thanks_button.dart';
 export 'src/components/thanks_card.dart';
 export 'src/components/thanks_dialog.dart';

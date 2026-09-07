@@ -4,7 +4,7 @@ import 'package:widgetbook/widgetbook.dart';
 
 import 'directories/components/button_use_cases.dart';
 import 'directories/components/card_use_cases.dart';
-import 'directories/components/pill_selector_use_cases.dart';
+import 'directories/components/thanks_pill_selector_use_cases.dart';
 import 'directories/components/sliver_state_use_cases.dart';
 import 'directories/foundations/colors_use_case.dart';
 import 'directories/foundations/spacing_use_case.dart';
@@ -92,7 +92,7 @@ class ThanksWidgetbookApp extends StatelessWidget {
               ],
             ),
             WidgetbookComponent(
-              name: 'PillSelector',
+              name: 'ThanksPillSelector',
               useCases: [
                 WidgetbookUseCase(
                   name: 'Interactive Playground',
