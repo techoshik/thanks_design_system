@@ -2,7 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
 
+void _noopPopupMenuSelected(String value) {}
+
 void main() {
+  testWidgets('ThanksPopupMenuButton clips its popup to the theme shape', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: Scaffold(
+          body: ThanksPopupMenuButton<String>(
+            tooltip: 'More actions',
+            onSelected: _noopPopupMenuSelected,
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'action', child: Text('Action')),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final popupButton = tester.widget<PopupMenuButton<String>>(
+      find.byType(ThanksPopupMenuButton<String>),
+    );
+    expect(popupButton.clipBehavior, Clip.antiAlias);
+    expect(
+      Theme.of(tester.element(find.byType(ThanksPopupMenuButton<String>)))
+          .popupMenuTheme
+          .shape,
+      isA<RoundedRectangleBorder>(),
+    );
+  });
+
   test('default theme uses production foundations', () {
     final theme = ThanksTheme.light();
 
@@ -28,12 +60,30 @@ void main() {
       BorderRadius.circular(ThanksSpacing.radiusMedium),
     );
     expect(popupBorder.side.color, theme.colorScheme.outlineVariant);
-    expect(theme.inputDecorationTheme.suffixIconConstraints?.minWidth, kMinInteractiveDimension);
-    expect(theme.inputDecorationTheme.suffixIconConstraints?.minHeight, ThanksSpacing.inputHeight);
-    expect(theme.inputDecorationTheme.suffixIconConstraints?.maxHeight, ThanksSpacing.inputHeight);
-    expect(theme.inputDecorationTheme.prefixIconConstraints?.minWidth, kMinInteractiveDimension);
-    expect(theme.inputDecorationTheme.prefixIconConstraints?.minHeight, ThanksSpacing.inputHeight);
-    expect(theme.inputDecorationTheme.prefixIconConstraints?.maxHeight, ThanksSpacing.inputHeight);
+    expect(
+      theme.inputDecorationTheme.suffixIconConstraints?.minWidth,
+      kMinInteractiveDimension,
+    );
+    expect(
+      theme.inputDecorationTheme.suffixIconConstraints?.minHeight,
+      ThanksSpacing.inputHeight,
+    );
+    expect(
+      theme.inputDecorationTheme.suffixIconConstraints?.maxHeight,
+      ThanksSpacing.inputHeight,
+    );
+    expect(
+      theme.inputDecorationTheme.prefixIconConstraints?.minWidth,
+      kMinInteractiveDimension,
+    );
+    expect(
+      theme.inputDecorationTheme.prefixIconConstraints?.minHeight,
+      ThanksSpacing.inputHeight,
+    );
+    expect(
+      theme.inputDecorationTheme.prefixIconConstraints?.maxHeight,
+      ThanksSpacing.inputHeight,
+    );
   });
 
   testWidgets('plain and icon text fields share the 40px minimum height', (
@@ -77,7 +127,9 @@ void main() {
           theme: ThanksTheme.light(),
           home: Scaffold(
             body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: ThanksSpacing.medium),
+              padding: const EdgeInsets.symmetric(
+                horizontal: ThanksSpacing.medium,
+              ),
               child: Column(
                 children: [
                   DropdownButtonFormField<String>(
@@ -110,13 +162,22 @@ void main() {
       final calendarIconRect = tester.getRect(calendarIcon);
 
       // The suffix icon container must be centered in line with the dropdown icon.
-      expect(calendarIconRect.center.dx, closeTo(dropdownIconRect.center.dx, 1.0));
+      expect(
+        calendarIconRect.center.dx,
+        closeTo(dropdownIconRect.center.dx, 1.0),
+      );
 
       // The painted glyph (RichText inside Icon) must be inset from the right border.
-      final calendarGlyph = find.descendant(of: calendarIcon, matching: find.byType(RichText));
+      final calendarGlyph = find.descendant(
+        of: calendarIcon,
+        matching: find.byType(RichText),
+      );
       final calendarGlyphRect = tester.getRect(calendarGlyph);
       final inputRect = tester.getRect(find.byKey(inputKey));
-      expect(calendarGlyphRect.right, lessThan(inputRect.right - ThanksSpacing.small));
+      expect(
+        calendarGlyphRect.right,
+        lessThan(inputRect.right - ThanksSpacing.small),
+      );
     },
   );
 

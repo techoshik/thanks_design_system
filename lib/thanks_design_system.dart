@@ -9,6 +9,7 @@ export 'src/components/thanks_input_label.dart';
 export 'src/components/thanks_sliver_empty_state.dart';
 export 'src/components/thanks_sliver_loading.dart';
 export 'src/components/thanks_message_view.dart';
+export 'src/components/thanks_popup_menu_button.dart';
 export 'src/components/thanks_status_badge.dart';
 export 'src/components/thanks_toast.dart';
 export 'src/foundations/colors.dart';
