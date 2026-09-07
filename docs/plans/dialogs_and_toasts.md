@@ -129,6 +129,21 @@
    - A short dialog does not occupy a large portion of the viewport.
    - The default width cap uses `FitSize.mobile`.
 
+8. **Remove empty dialog action space** — Verified.
+
+   ### Outcome
+
+   - Dialogs without actions do not render an empty action section.
+
+   ### Actions
+
+   1. Pass no actions or action padding when the action list is empty.
+   2. Add a widget test for the no-action dialog configuration.
+
+   ### Verification
+
+   - An action-free dialog has no action list or action padding.
+
 ## Scope
 
 - Include context-driven dialogs, confirmations, bottom sheets, and toasts.

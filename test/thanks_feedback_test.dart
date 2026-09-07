@@ -97,6 +97,32 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('dialog without actions has no action section padding', (
+    tester,
+  ) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      buildApp(
+        Builder(
+          builder: (buildContext) {
+            context = buildContext;
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+
+    ThanksDialog.show<void>(context: context, message: 'Read-only message');
+    await tester.pumpAndSettle();
+
+    final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+    expect(dialog.actions, isNull);
+    expect(dialog.actionsPadding, isNull);
+
+    Navigator.of(context).pop();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('confirmation returns the selected result', (tester) async {
     late BuildContext context;
     await tester.pumpWidget(

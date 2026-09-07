@@ -71,6 +71,12 @@ abstract final class ThanksDialog {
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
         final body = content ?? (message == null ? null : Text(message));
+        final actionWidgets = actions.isEmpty
+            ? null
+            : [
+                for (final action in actions)
+                  _DialogActionButton(action: action, context: dialogContext),
+              ];
 
         return Shortcuts(
           shortcuts: {
@@ -103,11 +109,10 @@ abstract final class ThanksDialog {
                     ),
               contentPadding: contentPadding ?? ThanksSpacing.insetMedium,
               content: body,
-              actionsPadding: ThanksSpacing.insetMedium,
-              actions: [
-                for (final action in actions)
-                  _DialogActionButton(action: action, context: dialogContext),
-              ],
+              actionsPadding: actionWidgets == null
+                  ? null
+                  : ThanksSpacing.insetMedium,
+              actions: actionWidgets,
             ),
           ),
         );
