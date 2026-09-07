@@ -97,6 +97,43 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('custom content is card-wrapped without wrapping title or actions',
+      (tester) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      buildApp(
+        Builder(
+          builder: (buildContext) {
+            context = buildContext;
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+
+    ThanksDialog.show<void>(
+      context: context,
+      title: 'Details',
+      content: const Text('Main information'),
+      actions: [
+        ThanksDialogAction.primary(
+          label: 'Done',
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+    expect(dialog.title, isA<Text>());
+    expect(dialog.content, isA<ThanksCard>());
+    expect(dialog.actions, hasLength(1));
+    expect(find.text('Main information'), findsOneWidget);
+
+    Navigator.of(context).pop();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('dialog without actions has no action section padding', (
     tester,
   ) async {

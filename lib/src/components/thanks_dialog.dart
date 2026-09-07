@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../foundations/spacing.dart';
+import 'thanks_card.dart';
 
 /// The visual treatment used by a [ThanksDialogAction].
 enum ThanksDialogActionStyle { text, outlined, filled }
@@ -94,7 +95,14 @@ abstract final class ThanksDialog {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
-        final body = content ?? (message == null ? null : Text(message));
+        final body = content == null
+            ? (message == null ? null : Text(message))
+            : ThanksCard(
+                variant: ThanksCardVariant.filledOutlined,
+                padding: ThanksCardSpacing.medium,
+                margin: ThanksCardSpacing.none,
+                child: content,
+              );
         final actionWidgets = actions.isEmpty
             ? null
             : [
