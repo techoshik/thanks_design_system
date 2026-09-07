@@ -76,7 +76,7 @@ class ThanksSection extends StatelessWidget {
                 : null,
             trailing: trailing,
           ),
-          ThanksSpacing.spaceSmall,
+          ThanksSpacing.spaceExtraSmall,
         ],
         child,
       ],
