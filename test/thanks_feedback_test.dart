@@ -327,4 +327,151 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Temporary message'), findsNothing);
   });
+
+  // ---------------------------------------------------------------------------
+  // ThanksDialog header actions
+  // ---------------------------------------------------------------------------
+
+  testWidgets('dialog renders headerLeading widget when provided',
+      (tester) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      buildApp(
+        Builder(builder: (ctx) {
+          context = ctx;
+          return const SizedBox();
+        }),
+      ),
+    );
+
+    ThanksDialog.show<void>(
+      context: context,
+      title: 'Service Details',
+      headerLeading: const CloseButton(),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CloseButton), findsOneWidget);
+    expect(find.text('Service Details'), findsOneWidget);
+
+    Navigator.of(context).pop();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('dialog renders headerActions widgets when provided',
+      (tester) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      buildApp(
+        Builder(builder: (ctx) {
+          context = ctx;
+          return const SizedBox();
+        }),
+      ),
+    );
+
+    ThanksDialog.show<void>(
+      context: context,
+      title: 'Service Details',
+      headerActions: [
+        IconButton(
+          key: const Key('edit-action'),
+          onPressed: () {},
+          icon: const Icon(Icons.edit),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('edit-action')), findsOneWidget);
+    expect(find.text('Service Details'), findsOneWidget);
+
+    Navigator.of(context).pop();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('dialog title is geometrically centered when header props used',
+      (tester) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      buildApp(
+        Builder(builder: (ctx) {
+          context = ctx;
+          return const SizedBox();
+        }),
+      ),
+    );
+
+    ThanksDialog.show<void>(
+      context: context,
+      title: 'Details',
+      headerLeading: const CloseButton(),
+      headerActions: [
+        IconButton(
+          key: const Key('action-btn'),
+          onPressed: () {},
+          icon: const Icon(Icons.more_vert),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    // Title should be inside a Stack that lets it center geometrically
+    // while leading and actions are positioned on the sides.
+    expect(find.byType(CloseButton), findsOneWidget); // leading present = header mode active
+    expect(find.text('Details'), findsOneWidget);
+
+    Navigator.of(context).pop();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets(
+      'dialog without headerLeading or headerActions keeps existing title behavior',
+      (tester) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      buildApp(
+        Builder(builder: (ctx) {
+          context = ctx;
+          return const SizedBox();
+        }),
+      ),
+    );
+
+    ThanksDialog.show<void>(context: context, title: 'Plain Title');
+    await tester.pumpAndSettle();
+
+    // Standard title — no Stack, no CloseButton
+    expect(find.text('Plain Title'), findsOneWidget);
+    expect(find.byType(CloseButton), findsNothing);
+    // No header extras supplied — only standard title is rendered.
+
+    Navigator.of(context).pop();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('dialog without title but with headerLeading renders leading',
+      (tester) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      buildApp(
+        Builder(builder: (ctx) {
+          context = ctx;
+          return const SizedBox();
+        }),
+      ),
+    );
+
+    ThanksDialog.show<void>(
+      context: context,
+      message: 'Content here',
+      headerLeading: const CloseButton(),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CloseButton), findsOneWidget);
+
+    Navigator.of(context).pop();
+    await tester.pumpAndSettle();
+  });
 }

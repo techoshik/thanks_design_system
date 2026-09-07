@@ -49,6 +49,25 @@ class ThanksDialogAction {
 /// Context-driven dialogs and confirmation prompts for Thanks applications.
 abstract final class ThanksDialog {
   /// Shows a themed dialog with an optional message or custom [content].
+  ///
+  /// **Header actions**: supply [headerLeading] and/or [headerActions] to show
+  /// a structured header with a geometrically centered [title], a leading
+  /// widget (e.g. a [CloseButton]) pinned to the left, and trailing action
+  /// widgets pinned to the right. The standard [title] text position and
+  /// default [titlePadding] are unchanged when neither header property is
+  /// supplied.
+  ///
+  /// ```dart
+  /// ThanksDialog.show<void>(
+  ///   context: context,
+  ///   title: 'Service Details',
+  ///   headerLeading: CloseButton(onPressed: () => Navigator.pop(context)),
+  ///   headerActions: [
+  ///     IconButton(icon: const Icon(Icons.edit), onPressed: _onEdit),
+  ///   ],
+  ///   content: ServiceDetailContent(service: service),
+  /// );
+  /// ```
   static Future<T?> show<T>({
     required BuildContext context,
     String? title,
@@ -60,11 +79,16 @@ abstract final class ThanksDialog {
     EdgeInsetsGeometry? contentPadding,
     FitSize maxFitSize = FitSize.mobile,
     TextAlign titleTextAlign = TextAlign.center,
+    // Header action props — backlog: ThanksDialog header actions (2026-09-07)
+    Widget? headerLeading,
+    List<Widget> headerActions = const [],
   }) {
     assert(
       message == null || content == null,
       'Use message or content, not both.',
     );
+
+    final hasHeaderExtras = headerLeading != null || headerActions.isNotEmpty;
 
     return showDialog<T>(
       context: context,
@@ -77,6 +101,33 @@ abstract final class ThanksDialog {
                 for (final action in actions)
                   _DialogActionButton(action: action, context: dialogContext),
               ];
+
+        // Build the title widget. When headerLeading or headerActions are
+        // supplied we render a Stack-based header so the title text is
+        // geometrically centered regardless of side widget widths.
+        final Widget? titleWidget;
+        final EdgeInsetsGeometry? titlePadding;
+
+        if (hasHeaderExtras) {
+          titleWidget = _DialogHeaderTitle(
+            title: title,
+            leading: headerLeading,
+            actions: headerActions,
+            titleTextAlign: titleTextAlign,
+          );
+          // We manage all internal padding in _DialogHeaderTitle.
+          titlePadding = EdgeInsets.zero;
+        } else if (title != null) {
+          titleWidget = Text(
+            title,
+            textAlign: titleTextAlign,
+            style: Theme.of(dialogContext).textTheme.titleLarge,
+          );
+          titlePadding = null; // AlertDialog default
+        } else {
+          titleWidget = null;
+          titlePadding = null;
+        }
 
         return Shortcuts(
           shortcuts: {
@@ -100,13 +151,8 @@ abstract final class ThanksDialog {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(ThanksSpacing.radiusMedium),
               ),
-              title: title == null
-                  ? null
-                  : Text(
-                      title,
-                      textAlign: titleTextAlign,
-                      style: Theme.of(dialogContext).textTheme.titleLarge,
-                    ),
+              title: titleWidget,
+              titlePadding: titlePadding,
               contentPadding: contentPadding ?? ThanksSpacing.insetMedium,
               content: body,
               actionsPadding: actionWidgets == null
@@ -195,6 +241,68 @@ abstract final class ThanksDialog {
         minChildSize: minSize,
         maxChildSize: maxSize,
         builder: (_, _) => child,
+      ),
+    );
+  }
+}
+
+/// A structured dialog header that geometrically centers [title] while
+/// pinning [leading] to the left and [actions] to the right.
+///
+/// Uses a [Stack] with [Align] children (not [Positioned]) so the widget is
+/// compatible with [AlertDialog]'s internal [Column] layout which does not
+/// accept [Positioned] as a direct descendant.
+class _DialogHeaderTitle extends StatelessWidget {
+  const _DialogHeaderTitle({
+    this.title,
+    this.leading,
+    this.actions = const [],
+    this.titleTextAlign = TextAlign.center,
+  });
+
+  final String? title;
+  final Widget? leading;
+  final List<Widget> actions;
+  final TextAlign titleTextAlign;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: ThanksSpacing.insetSmall,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Title centered over the full row. A horizontal padding reserve
+          // prevents the text from sliding under the side widgets.
+          if (title != null)
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 48),
+                child: Text(
+                  title!,
+                  textAlign: TextAlign.center,
+                  style: textTheme.titleLarge,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          // Leading widget aligned to the start of the row.
+          if (leading != null)
+            Align(alignment: Alignment.centerLeft, child: leading!),
+          // Trailing action widgets aligned to the end of the row.
+          if (actions.isNotEmpty)
+            Align(
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: actions,
+              ),
+            ),
+        ],
       ),
     );
   }
