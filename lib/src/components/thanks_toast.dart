@@ -4,26 +4,25 @@ import 'package:flutter/material.dart';
 
 import '../foundations/spacing.dart';
 import '../foundations/theme.dart';
+import '../navigation/thanks_navigator.dart';
 
 /// The semantic treatment used by [ThanksToast].
 enum ThanksToastType { success, error, info }
 
 /// Top-centered transient feedback for Thanks applications.
 ///
-/// A toast uses the root [Overlay], allowing it to appear above the current
-/// route instead of in the low-priority bottom snackbar area.
+/// A toast uses the root [Overlay], resolving the overlay exclusively
+/// through [ThanksNavigator.navigatorKey] without requiring any [BuildContext].
 abstract final class ThanksToast {
   static OverlayEntry? _entry;
   static Timer? _dismissTimer;
 
   /// Shows a success toast.
   static void success(
-    BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 3),
     EdgeInsets margin = const EdgeInsets.fromLTRB(16, 24, 16, 0),
   }) => show(
-    context,
     message,
     type: ThanksToastType.success,
     duration: duration,
@@ -32,12 +31,10 @@ abstract final class ThanksToast {
 
   /// Shows an error toast.
   static void error(
-    BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 3),
     EdgeInsets margin = const EdgeInsets.fromLTRB(16, 24, 16, 0),
   }) => show(
-    context,
     message,
     type: ThanksToastType.error,
     duration: duration,
@@ -46,12 +43,10 @@ abstract final class ThanksToast {
 
   /// Shows an informational toast.
   static void info(
-    BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 3),
     EdgeInsets margin = const EdgeInsets.fromLTRB(16, 24, 16, 0),
   }) => show(
-    context,
     message,
     type: ThanksToastType.info,
     duration: duration,
@@ -60,13 +55,21 @@ abstract final class ThanksToast {
 
   /// Shows a toast using the requested semantic [type].
   static void show(
-    BuildContext context,
     String message, {
     ThanksToastType type = ThanksToastType.info,
     Duration duration = const Duration(seconds: 3),
     EdgeInsets margin = const EdgeInsets.fromLTRB(16, 24, 16, 0),
   }) {
-    final overlay = Overlay.of(context, rootOverlay: true);
+    final navContext = ThanksNavigator.currentContext;
+    final overlay = ThanksNavigator.navigatorKey.currentState?.overlay ??
+        (navContext != null
+            ? Overlay.maybeOf(navContext, rootOverlay: true)
+            : null);
+
+    if (overlay == null) {
+      return;
+    }
+
     dismiss();
     _entry = OverlayEntry(
       builder: (context) => _ToastView(

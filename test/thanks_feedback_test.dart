@@ -8,6 +8,7 @@ void main() {
   tearDown(ThanksToast.dismiss);
 
   Widget buildApp(Widget child) => MaterialApp(
+    navigatorKey: ThanksNavigator.navigatorKey,
     theme: ThanksTheme.light(),
     home: Scaffold(body: Center(child: child)),
   );
@@ -35,20 +36,10 @@ void main() {
   });
 
   testWidgets('dialog action closes the dialog', (tester) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
     final future = ThanksDialog.show<void>(
-      context: context,
+      
       title: 'Discard changes?',
       message: 'Your updates will not be saved.',
       actions: const [
@@ -74,51 +65,31 @@ void main() {
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 800));
     addTearDown(() => tester.binding.setSurfaceSize(null));
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
-    ThanksDialog.show<void>(context: context, message: 'Short message');
+    ThanksDialog.show<void>( message: 'Short message');
     await tester.pumpAndSettle();
 
     final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
     expect(dialog.constraints?.maxWidth, FitSize.mobile.maxWidth);
     expect(find.text('Short message'), findsOneWidget);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('custom content is card-wrapped without wrapping title or actions',
       (tester) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
     ThanksDialog.show<void>(
-      context: context,
+      
       title: 'Details',
       content: const Text('Main information'),
       actions: [
         ThanksDialogAction.primary(
           label: 'Done',
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => ThanksNavigator.pop(),
         ),
       ],
     );
@@ -130,51 +101,31 @@ void main() {
     expect(dialog.actions, hasLength(1));
     expect(find.text('Main information'), findsOneWidget);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('dialog without actions has no action section padding', (
     tester,
   ) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
-    ThanksDialog.show<void>(context: context, message: 'Read-only message');
+    ThanksDialog.show<void>( message: 'Read-only message');
     await tester.pumpAndSettle();
 
     final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
     expect(dialog.actions, isNull);
     expect(dialog.actionsPadding, isNull);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('confirmation returns the selected result', (tester) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
     final future = ThanksDialog.confirm(
-      context: context,
+      
       title: 'Delete item?',
       message: 'This cannot be undone.',
       confirmLabel: 'Delete',
@@ -188,20 +139,10 @@ void main() {
   });
 
   testWidgets('notice shows one acknowledgement action', (tester) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
     final future = ThanksDialog.notice(
-      context: context,
+      
       title: 'Payment complete',
       message: 'Your receipt is ready.',
     );
@@ -217,26 +158,16 @@ void main() {
   });
 
   testWidgets('Escape only dismisses a dismissible dialog', (tester) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
-    ThanksDialog.show<void>(context: context, message: 'Dismissible');
+    ThanksDialog.show<void>( message: 'Dismissible');
     await tester.pumpAndSettle();
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
     expect(find.byType(AlertDialog), findsNothing);
 
     ThanksDialog.show<void>(
-      context: context,
+      
       message: 'Must stay open',
       barrierDismissible: false,
     );
@@ -245,26 +176,20 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Must stay open'), findsOneWidget);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('Enter activates an autofocus primary action', (tester) async {
-    late BuildContext context;
     var activated = false;
     await tester.pumpWidget(
       buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
+        const SizedBox(),
       ),
     );
 
     ThanksDialog.show<void>(
-      context: context,
+      
       message: 'Save your changes?',
       actions: [
         ThanksDialogAction.primary(
@@ -278,28 +203,18 @@ void main() {
     await tester.pump();
 
     expect(activated, isTrue);
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('toast appears top-centered with its configured margin', (
     tester,
   ) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
     ThanksToast.success(
-      context,
       'Saved successfully',
+      
       margin: const EdgeInsets.only(top: 32),
     );
     await tester.pump();
@@ -316,21 +231,11 @@ void main() {
   });
 
   testWidgets('a new toast replaces the visible toast', (tester) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
-    ThanksToast.info(context, 'First message');
+    ThanksToast.info('First message', );
     await tester.pump();
-    ThanksToast.error(context, 'Second message');
+    ThanksToast.error('Second message', );
     await tester.pump();
 
     expect(find.text('First message'), findsNothing);
@@ -341,21 +246,11 @@ void main() {
   });
 
   testWidgets('toast dismisses after its configured duration', (tester) async {
-    late BuildContext context;
-    await tester.pumpWidget(
-      buildApp(
-        Builder(
-          builder: (buildContext) {
-            context = buildContext;
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(buildApp(const SizedBox()));
 
     ThanksToast.info(
-      context,
       'Temporary message',
+      
       duration: const Duration(seconds: 1),
     );
     await tester.pump();
@@ -365,24 +260,87 @@ void main() {
     expect(find.text('Temporary message'), findsNothing);
   });
 
+  testWidgets('toast shows without explicit context using ThanksNavigator', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        navigatorKey: ThanksNavigator.navigatorKey,
+        theme: ThanksTheme.light(),
+        home: const Scaffold(body: SizedBox()),
+      ),
+    );
+
+    ThanksToast.success('Context-free toast');
+    await tester.pump();
+
+    expect(find.text('Context-free toast'), findsOneWidget);
+    ThanksToast.dismiss();
+    await tester.pump();
+  });
+
+
   // ---------------------------------------------------------------------------
+
+  testWidgets('dialog shows and closes without explicit context using ThanksNavigator', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        navigatorKey: ThanksNavigator.navigatorKey,
+        theme: ThanksTheme.light(),
+        home: const Scaffold(body: SizedBox()),
+      ),
+    );
+
+    ThanksDialog.notice(
+      title: 'Context-free Notice',
+      message: 'This was shown without passing context.',
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Context-free Notice'), findsOneWidget);
+    expect(find.text('This was shown without passing context.'), findsOneWidget);
+
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Context-free Notice'), findsNothing);
+  });
+
+  testWidgets('confirmation dialog operates without explicit context using ThanksNavigator', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        navigatorKey: ThanksNavigator.navigatorKey,
+        theme: ThanksTheme.light(),
+        home: const Scaffold(body: SizedBox()),
+      ),
+    );
+
+    bool? result;
+    ThanksDialog.confirm(
+      title: 'Context-free Confirm',
+      message: 'Are you sure?',
+    ).then((val) => result = val);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Context-free Confirm'), findsOneWidget);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+
+    expect(result, isTrue);
+    expect(find.text('Context-free Confirm'), findsNothing);
+  });
+
   // ThanksDialog header actions
   // ---------------------------------------------------------------------------
 
   testWidgets('dialog renders headerLeading widget when provided',
       (tester) async {
-    late BuildContext context;
     await tester.pumpWidget(
       buildApp(
-        Builder(builder: (ctx) {
-          context = ctx;
-          return const SizedBox();
-        }),
+        const SizedBox(),
       ),
     );
 
     ThanksDialog.show<void>(
-      context: context,
+      
       title: 'Service Details',
       headerLeading: const CloseButton(),
     );
@@ -391,24 +349,20 @@ void main() {
     expect(find.byType(CloseButton), findsOneWidget);
     expect(find.text('Service Details'), findsOneWidget);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('dialog renders headerActions widgets when provided',
       (tester) async {
-    late BuildContext context;
     await tester.pumpWidget(
       buildApp(
-        Builder(builder: (ctx) {
-          context = ctx;
-          return const SizedBox();
-        }),
+        const SizedBox(),
       ),
     );
 
     ThanksDialog.show<void>(
-      context: context,
+      
       title: 'Service Details',
       headerActions: [
         IconButton(
@@ -423,24 +377,20 @@ void main() {
     expect(find.byKey(const Key('edit-action')), findsOneWidget);
     expect(find.text('Service Details'), findsOneWidget);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('dialog title is geometrically centered when header props used',
       (tester) async {
-    late BuildContext context;
     await tester.pumpWidget(
       buildApp(
-        Builder(builder: (ctx) {
-          context = ctx;
-          return const SizedBox();
-        }),
+        const SizedBox(),
       ),
     );
 
     ThanksDialog.show<void>(
-      context: context,
+      
       title: 'Details',
       headerLeading: const CloseButton(),
       headerActions: [
@@ -458,24 +408,20 @@ void main() {
     expect(find.byType(CloseButton), findsOneWidget); // leading present = header mode active
     expect(find.text('Details'), findsOneWidget);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets(
       'dialog without headerLeading or headerActions keeps existing title behavior',
       (tester) async {
-    late BuildContext context;
     await tester.pumpWidget(
       buildApp(
-        Builder(builder: (ctx) {
-          context = ctx;
-          return const SizedBox();
-        }),
+        const SizedBox(),
       ),
     );
 
-    ThanksDialog.show<void>(context: context, title: 'Plain Title');
+    ThanksDialog.show<void>( title: 'Plain Title');
     await tester.pumpAndSettle();
 
     // Standard title — no Stack, no CloseButton
@@ -483,24 +429,20 @@ void main() {
     expect(find.byType(CloseButton), findsNothing);
     // No header extras supplied — only standard title is rendered.
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 
   testWidgets('dialog without title but with headerLeading renders leading',
       (tester) async {
-    late BuildContext context;
     await tester.pumpWidget(
       buildApp(
-        Builder(builder: (ctx) {
-          context = ctx;
-          return const SizedBox();
-        }),
+        const SizedBox(),
       ),
     );
 
     ThanksDialog.show<void>(
-      context: context,
+      
       message: 'Content here',
       headerLeading: const CloseButton(),
     );
@@ -508,7 +450,7 @@ void main() {
 
     expect(find.byType(CloseButton), findsOneWidget);
 
-    Navigator.of(context).pop();
+    ThanksNavigator.pop();
     await tester.pumpAndSettle();
   });
 }

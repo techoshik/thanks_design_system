@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../foundations/spacing.dart';
+import '../navigation/thanks_navigator.dart';
 import 'thanks_card.dart';
 
 /// The visual treatment used by a [ThanksDialogAction].
@@ -47,22 +48,21 @@ class ThanksDialogAction {
   final bool isDestructive;
 }
 
-/// Context-driven dialogs and confirmation prompts for Thanks applications.
+/// Global, context-free dialogs and confirmation prompts for Thanks applications.
+///
+/// Resolves the presentation context exclusively through [ThanksNavigator.currentContext].
 abstract final class ThanksDialog {
   /// Shows a themed dialog with an optional message or custom [content].
   ///
   /// **Header actions**: supply [headerLeading] and/or [headerActions] to show
   /// a structured header with a geometrically centered [title], a leading
   /// widget (e.g. a [CloseButton]) pinned to the left, and trailing action
-  /// widgets pinned to the right. The standard [title] text position and
-  /// default [titlePadding] are unchanged when neither header property is
-  /// supplied.
+  /// widgets pinned to the right.
   ///
   /// ```dart
   /// ThanksDialog.show<void>(
-  ///   context: context,
   ///   title: 'Service Details',
-  ///   headerLeading: CloseButton(onPressed: () => Navigator.pop(context)),
+  ///   headerLeading: CloseButton(onPressed: () => ThanksNavigator.pop()),
   ///   headerActions: [
   ///     IconButton(icon: const Icon(Icons.edit), onPressed: _onEdit),
   ///   ],
@@ -70,7 +70,6 @@ abstract final class ThanksDialog {
   /// );
   /// ```
   static Future<T?> show<T>({
-    required BuildContext context,
     String? title,
     String? message,
     Widget? content,
@@ -80,7 +79,6 @@ abstract final class ThanksDialog {
     EdgeInsetsGeometry? contentPadding,
     FitSize maxFitSize = FitSize.mobile,
     TextAlign titleTextAlign = TextAlign.center,
-    // Header action props — backlog: ThanksDialog header actions (2026-09-07)
     Widget? headerLeading,
     List<Widget> headerActions = const [],
   }) {
@@ -88,6 +86,15 @@ abstract final class ThanksDialog {
       message == null || content == null,
       'Use message or content, not both.',
     );
+
+    final context = ThanksNavigator.currentContext;
+    if (context == null) {
+      assert(
+        false,
+        'ThanksDialog requires a configured ThanksNavigator with an active context.',
+      );
+      return Future<T?>.value(null);
+    }
 
     final hasHeaderExtras = headerLeading != null || headerActions.isNotEmpty;
 
@@ -107,7 +114,7 @@ abstract final class ThanksDialog {
             ? null
             : [
                 for (final action in actions)
-                  _DialogActionButton(action: action, context: dialogContext),
+                  _DialogActionButton(action: action),
               ];
 
         // Build the title widget. When headerLeading or headerActions are
@@ -146,7 +153,10 @@ abstract final class ThanksDialog {
           child: Actions(
             actions: {
               _DismissDialogIntent: CallbackAction<_DismissDialogIntent>(
-                onInvoke: (_) => Navigator.of(dialogContext).maybePop(),
+                onInvoke: (_) {
+                  ThanksNavigator.pop();
+                  return null;
+                },
               ),
               _IgnoreDialogDismissIntent:
                   CallbackAction<_IgnoreDialogDismissIntent>(
@@ -174,9 +184,8 @@ abstract final class ThanksDialog {
     );
   }
 
-  /// Shows a standard two-action confirmation dialog.
+  /// Shows a standard two-action confirmation dialog without requiring context.
   static Future<bool> confirm({
-    required BuildContext context,
     String? title,
     required String message,
     String confirmLabel = 'Confirm',
@@ -185,60 +194,64 @@ abstract final class ThanksDialog {
     bool barrierDismissible = true,
   }) async {
     final result = await show<bool>(
-      context: context,
       title: title,
       message: message,
       barrierDismissible: barrierDismissible,
       actions: [
         ThanksDialogAction.secondary(
           label: cancelLabel,
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: () => ThanksNavigator.pop(false),
         ),
         if (isDestructive)
           ThanksDialogAction.primaryDestructive(
             label: confirmLabel,
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => ThanksNavigator.pop(true),
           )
         else
           ThanksDialogAction.primary(
             label: confirmLabel,
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => ThanksNavigator.pop(true),
           ),
       ],
     );
     return result ?? false;
   }
 
-  /// Shows a single-action dialog for an acknowledgement message.
+  /// Shows a single-action dialog for an acknowledgement message without requiring context.
   static Future<void> notice({
-    required BuildContext context,
     String? title,
     required String message,
     String acknowledgeLabel = 'OK',
     bool barrierDismissible = true,
   }) {
     return show<void>(
-      context: context,
       title: title,
       message: message,
       barrierDismissible: barrierDismissible,
       actions: [
         ThanksDialogAction.primary(
           label: acknowledgeLabel,
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => ThanksNavigator.pop(),
         ),
       ],
     );
   }
 
-  /// Shows a draggable modal bottom sheet containing [child].
+  /// Shows a draggable modal bottom sheet containing [child] without requiring context.
   static Future<T?> showBottomSheet<T>({
-    required BuildContext context,
     required Widget child,
     double initialSize = 0.7,
     double minSize = 0.4,
     double maxSize = 0.95,
   }) {
+    final context = ThanksNavigator.currentContext;
+    if (context == null) {
+      assert(
+        false,
+        'ThanksDialog requires a configured ThanksNavigator with an active context.',
+      );
+      return Future<T?>.value(null);
+    }
     return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: true,
@@ -256,10 +269,6 @@ abstract final class ThanksDialog {
 
 /// A structured dialog header that geometrically centers [title] while
 /// pinning [leading] to the left and [actions] to the right.
-///
-/// Uses a [Stack] with [Align] children (not [Positioned]) so the widget is
-/// compatible with [AlertDialog]'s internal [Column] layout which does not
-/// accept [Positioned] as a direct descendant.
 class _DialogHeaderTitle extends StatelessWidget {
   const _DialogHeaderTitle({
     this.title,
@@ -282,8 +291,6 @@ class _DialogHeaderTitle extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Title centered over the full row. A horizontal padding reserve
-          // prevents the text from sliding under the side widgets.
           if (title != null)
             Align(
               alignment: Alignment.center,
@@ -298,10 +305,8 @@ class _DialogHeaderTitle extends StatelessWidget {
                 ),
               ),
             ),
-          // Leading widget aligned to the start of the row.
           if (leading != null)
             Align(alignment: Alignment.centerLeft, child: leading!),
-          // Trailing action widgets aligned to the end of the row.
           if (actions.isNotEmpty)
             Align(
               alignment: Alignment.centerRight,
@@ -325,10 +330,9 @@ class _IgnoreDialogDismissIntent extends Intent {
 }
 
 class _DialogActionButton extends StatelessWidget {
-  const _DialogActionButton({required this.action, required this.context});
+  const _DialogActionButton({required this.action});
 
   final ThanksDialogAction action;
-  final BuildContext context;
 
   @override
   Widget build(BuildContext buildContext) {
@@ -336,7 +340,7 @@ class _DialogActionButton extends StatelessWidget {
     final foreground = action.isDestructive ? colorScheme.onError : null;
     final background = action.isDestructive ? colorScheme.error : null;
     final child = Text(action.label);
-    final onPressed = action.onPressed ?? () => Navigator.of(context).pop();
+    final onPressed = action.onPressed ?? ThanksNavigator.pop;
 
     return switch (action.style) {
       ThanksDialogActionStyle.text => TextButton(
