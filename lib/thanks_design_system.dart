@@ -6,6 +6,7 @@ export 'src/components/thanks_button.dart';
 export 'src/components/thanks_card.dart';
 export 'src/components/thanks_disclosure_card.dart';
 export 'src/components/thanks_dialog.dart';
+export 'src/components/thanks_image_view.dart';
 export 'src/components/thanks_input_label.dart';
 export 'src/components/thanks_sliver_empty_state.dart';
 export 'src/components/thanks_sliver_loading.dart';
