@@ -27,13 +27,13 @@ Widget spacingUseCase(BuildContext context) {
   final layoutDimensions = <(String, String, double)>[
     (
       'Nav Drawer Width',
-      'ThanksSpacing.navigationDrawerWidth',
-      ThanksSpacing.navigationDrawerWidth,
+      'ThanksSpacing.navigationDrawerWidthLeft',
+      ThanksSpacing.navigationDrawerWidthLeft,
     ),
     (
       'Right Drawer Width',
-      'ThanksSpacing.rightNavigationDrawerWidth',
-      ThanksSpacing.rightNavigationDrawerWidth,
+      'ThanksSpacing.navigationDrawerWidthRight',
+      ThanksSpacing.navigationDrawerWidthRight,
     ),
     (
       'View Height Min',

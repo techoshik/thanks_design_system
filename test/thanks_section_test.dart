@@ -63,7 +63,7 @@ void main() {
       );
     });
 
-    testWidgets('defaults to FitSize.desktop maxWidth and enableGutter true', (
+    testWidgets('defaults to workspace content width and enables gutters', (
       tester,
     ) async {
       await tester.binding.setSurfaceSize(const Size(1600, 800));
@@ -80,7 +80,7 @@ void main() {
       );
 
       final section = tester.widget<ThanksSection>(find.byType(ThanksSection));
-      expect(section.maxWidth, FitSize.desktop);
+      expect(section.maxWidth, ThanksSpacing.contentWidthWorkspace);
       expect(section.enableGutter, isTrue);
 
       final fitContainer = tester.widget<FitContainer>(
@@ -119,10 +119,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: ThanksSection(
-              maxWidth: null,
-              child: Text('Unconstrained'),
-            ),
+            body: ThanksSection(maxWidth: null, child: Text('Unconstrained')),
           ),
         ),
       );
@@ -162,9 +159,7 @@ void main() {
         final containerFinder = find.descendant(
           of: find.byType(ThanksSection),
           matching: find.byWidgetPredicate(
-            (widget) =>
-                widget is Container &&
-                widget.color == testColor,
+            (widget) => widget is Container && widget.color == testColor,
           ),
         );
         expect(containerFinder, findsOneWidget);

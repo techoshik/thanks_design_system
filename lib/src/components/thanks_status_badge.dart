@@ -128,11 +128,10 @@ class ThanksStatusBadge extends StatelessWidget {
   /// Resolves the padding preset for [size].
   EdgeInsets get _padding => switch (size) {
     ThanksBadgeSize.small => const EdgeInsets.symmetric(
-      vertical: ThanksSpacing.extraSmall,
       horizontal: ThanksSpacing.small,
     ),
     ThanksBadgeSize.medium => const EdgeInsets.symmetric(
-      vertical: ThanksSpacing.small,
+      vertical: ThanksSpacing.extraSmall,
       horizontal: ThanksSpacing.medium,
     ),
   };

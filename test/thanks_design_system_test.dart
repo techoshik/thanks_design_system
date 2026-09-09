@@ -452,6 +452,25 @@ void main() {
     expect(find.text('Invoice list'), findsOneWidget);
   });
 
+  testWidgets('ThanksScaffold leaves page headers unconstrained by default', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1600, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(title: 'Workspace', body: SizedBox(height: 100)),
+      ),
+    );
+
+    final header = tester.widget<ThanksSection>(
+      find.byType(ThanksSection).first,
+    );
+    expect(header.maxWidth, isNull);
+    expect(header.enableGutter, isTrue);
+  });
+
   testWidgets('ThanksScaffold app bar stays fixed while body scrolls', (
     tester,
   ) async {
@@ -505,7 +524,7 @@ void main() {
     final sectionWidget = tester.widget<ThanksSection>(filterSection);
     expect(sectionWidget.verticalPadding, ThanksSpacing.medium);
     expect(sectionWidget.enableGutter, isTrue);
-    expect(sectionWidget.maxWidth, FitSize.desktop);
+    expect(sectionWidget.maxWidth, isNull);
   });
 
   testWidgets('ThanksSection doubles horizontal gutters above tablet', (
@@ -702,10 +721,7 @@ void main() {
         const Size.square(ThanksSpacing.inputHeight),
       );
       expect(tester.getTopLeft(backButtonFinder).dx, ThanksSpacing.medium);
-      expect(
-        tester.widget<IconButton>(backButtonFinder).tooltip,
-        'Back to Invoices',
-      );
+      expect(tester.widget<IconButton>(backButtonFinder).tooltip, 'Back');
 
       await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
@@ -835,127 +851,56 @@ void main() {
     expect(find.text('Actions'), findsOneWidget);
   });
 
-  testWidgets(
-    'ThanksScaffold sets maximum width of page using FitContainer when maxWidthPage is provided',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1200, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets('ThanksScaffold leaves its header unconstrained', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(1200, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ThanksScaffold(
-            title: 'Wide Page',
-            maxWidthHeader: FitSize.tablet,
-            body: SizedBox(
-              key: Key('page-body'),
-              width: double.infinity,
-              height: 100,
-            ),
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          title: 'Wide Page',
+          body: SizedBox(key: Key('page-body'), height: 100),
+        ),
+      ),
+    );
+
+    final headerSection = find.ancestor(
+      of: find.byType(ListTile).first,
+      matching: find.byType(ThanksSection),
+    );
+    expect(tester.widget<ThanksSection>(headerSection).maxWidth, isNull);
+    expect(find.byType(FitContainer), findsNothing);
+  });
+
+  testWidgets('ThanksScaffold leaves its body unconstrained by default', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1200, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          title: 'Wide Title',
+          body: SizedBox(
+            key: Key('unconstrained-body'),
+            width: double.infinity,
+            height: 100,
           ),
         ),
-      );
+      ),
+    );
 
-      expect(find.byType(FitContainer), findsNWidgets(2));
-      for (final container in tester.widgetList<FitContainer>(
-        find.byType(FitContainer),
-      )) {
-        expect(container.maxFitSize, FitSize.tablet);
-      }
-
-      // Verify the app bar is constrained to FitSize.tablet.maxWidth (800) width and centered within 1200px
-      final topBarFinder = find.byType(ListTile).first;
-      final appBarWidth = tester.getSize(topBarFinder).width;
-      expect(appBarWidth, lessThanOrEqualTo(FitSize.tablet.maxWidth));
-      final appBarRect = tester.getRect(topBarFinder);
-      expect(appBarRect.center.dx, closeTo(600, 1.0));
-
-      // Verify the page content is constrained to FitSize.tablet.maxWidth (800) width and centered within 1200px
-      final bodyWidth = tester
-          .getSize(find.byKey(const Key('page-body')))
-          .width;
-      expect(bodyWidth, lessThanOrEqualTo(FitSize.tablet.maxWidth));
-      final bodyRect = tester.getRect(find.byKey(const Key('page-body')));
-      expect(bodyRect.center.dx, closeTo(600, 1.0));
-    },
-  );
-
-  testWidgets(
-    'ThanksScaffold sets maximum width of body using FitContainer when maxWidthBody is provided',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1200, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ThanksScaffold(
-            title: 'Wide Title',
-            body: SizedBox(
-              key: Key('constrained-body'),
-              width: double.infinity,
-              height: 100,
-            ),
-          ),
-        ),
-      );
-
-      final bodyFitContainerFinder = find.ancestor(
-        of: find.byKey(const Key('constrained-body')),
+    expect(
+      find.ancestor(
+        of: find.byKey(const Key('unconstrained-body')),
         matching: find.byType(FitContainer),
-      );
-      expect(bodyFitContainerFinder, findsOneWidget);
-      final fitContainer = tester.widget<FitContainer>(bodyFitContainerFinder);
-      expect(fitContainer.maxFitSize, FitSize.tablet);
+      ),
+      findsNothing,
+    );
+  });
 
-      // Body is constrained to FitSize.tablet.maxWidth (800)
-      final bodyWidth = tester
-          .getSize(find.byKey(const Key('constrained-body')))
-          .width;
-      expect(bodyWidth, FitSize.tablet.maxWidth);
-      final bodyRect = tester.getRect(
-        find.byKey(const Key('constrained-body')),
-      );
-      expect(bodyRect.center.dx, closeTo(600, 1.0));
-    },
-  );
-
-  testWidgets(
-    'ThanksScaffold sets maximum width of both differently based on which value is provided',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1400, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ThanksScaffold(
-            title: 'Multi Width Scaffold',
-            maxWidthHeader: FitSize.laptop,
-            body: SizedBox(
-              key: Key('dual-body'),
-              width: double.infinity,
-              height: 100,
-            ),
-          ),
-        ),
-      );
-
-      final fitContainers = tester
-          .widgetList<FitContainer>(find.byType(FitContainer))
-          .toList();
-      expect(fitContainers, hasLength(3));
-      // App bar and page have maxFitSize laptop, body has mobile
-      final sizes = fitContainers.map((c) => c.maxFitSize).toSet();
-      expect(sizes, containsAll([FitSize.laptop, FitSize.mobile]));
-
-      final bodyWidth = tester
-          .getSize(find.byKey(const Key('dual-body')))
-          .width;
-      expect(bodyWidth, FitSize.mobile.maxWidth);
-      final bodyRect = tester.getRect(find.byKey(const Key('dual-body')));
-      expect(bodyRect.center.dx, closeTo(700, 1.0));
-    },
-  );
-
-  testWidgets('ThanksScaffold applies maxWidthPage and maxWidthBody', (
+  testWidgets('ThanksSection applies the form content-width token', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1400, 800));
@@ -964,56 +909,63 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         home: ThanksScaffold(
-          title: 'Pinned Top Bar',
-          maxWidthHeader: FitSize.laptop,
-          body: SizedBox(
-            key: Key('pinned-body'),
-            width: double.infinity,
-            height: 100,
-          ),
-        ),
-      ),
-    );
-
-    final fitContainers = tester
-        .widgetList<FitContainer>(find.byType(FitContainer))
-        .toList();
-    expect(fitContainers, hasLength(3));
-    final sizes = fitContainers.map((c) => c.maxFitSize).toSet();
-    expect(sizes, containsAll([FitSize.laptop, FitSize.tablet]));
-
-    final bodyWidth = tester
-        .getSize(find.byKey(const Key('pinned-body')))
-        .width;
-    expect(bodyWidth, FitSize.tablet.maxWidth);
-  });
-
-  testWidgets(
-    'ThanksScaffold clamps maxWidthBody so it does not exceed maxWidthPage',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1400, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ThanksScaffold(
-            title: 'Clamped Body',
-            maxWidthHeader: FitSize.mobile,
-            body: SizedBox(
-              key: Key('clamped-body'),
+          title: 'Service Editor',
+          body: ThanksSection(
+            maxWidth: ThanksSpacing.contentWidthForm,
+            child: SizedBox(
+              key: Key('form-body'),
               width: double.infinity,
               height: 100,
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      final bodyWidth = tester
-          .getSize(find.byKey(const Key('clamped-body')))
-          .width;
-      expect(bodyWidth, lessThanOrEqualTo(FitSize.mobile.maxWidth));
-    },
-  );
+    final container = tester.widget<FitContainer>(find.byType(FitContainer));
+    expect(container.maxFitSize, ThanksSpacing.contentWidthForm);
+    expect(
+      tester.getSize(find.byKey(const Key('form-body'))).width,
+      lessThanOrEqualTo(ThanksSpacing.contentWidthForm.maxWidth),
+    );
+  });
+
+  testWidgets('ThanksSection defaults to the workspace content-width token', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          title: 'Services',
+          body: ThanksSection(
+            child: SizedBox(key: Key('workspace-body'), height: 100),
+          ),
+        ),
+      ),
+    );
+
+    final container = tester.widget<FitContainer>(find.byType(FitContainer));
+    expect(container.maxFitSize, ThanksSpacing.contentWidthWorkspace);
+  });
+
+  testWidgets('ThanksSection can opt out of content-width constraints', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ThanksScaffold(
+          title: 'Form Builder',
+          body: ThanksSection(
+            maxWidth: null,
+            enableGutter: false,
+            child: SizedBox(key: Key('fluid-body'), height: 100),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(FitContainer), findsNothing);
+  });
 
   testWidgets(
     'ThanksCard renders child with default none variant and zero padding/margin',
@@ -1601,7 +1553,9 @@ void main() {
     expect(bodyPadding.padding, EdgeInsets.zero);
   });
 
-  testWidgets('ThanksScaffold respects custom bottomPadding', (tester) async {
+  testWidgets('ThanksScaffold leaves body spacing to page content', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: ThanksScaffold(body: SizedBox(key: Key('box-body'), height: 50)),
@@ -1616,7 +1570,7 @@ void main() {
           )
           .first,
     );
-    expect((padding.padding as EdgeInsets).bottom, 20.0);
+    expect((padding.padding as EdgeInsets).bottom, 0.0);
   });
 
   testWidgets(

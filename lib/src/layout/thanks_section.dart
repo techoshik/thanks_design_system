@@ -16,7 +16,7 @@ class ThanksSection extends StatelessWidget {
     this.trailing,
     required this.child,
     this.verticalPadding = ThanksSpacing.medium,
-    this.maxWidth = FitSize.desktop,
+    this.maxWidth = ThanksSpacing.contentWidthWorkspace,
     this.enableGutter = true,
     this.backgroundColor,
   });
@@ -41,8 +41,8 @@ class ThanksSection extends StatelessWidget {
 
   /// The maximum size constraint for the section content, using [FitContainer].
   ///
-  /// Defaults to [FitSize.desktop]. Pass `null` to allow content to expand
-  /// unconstrained horizontally.
+  /// Defaults to [ThanksSpacing.contentWidthWorkspace]. Pass `null` to allow content
+  /// to expand unconstrained horizontally.
   final FitSize? maxWidth;
 
   /// Whether to apply horizontal responsive gutter padding to the content.

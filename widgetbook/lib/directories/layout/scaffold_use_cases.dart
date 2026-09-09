@@ -19,12 +19,7 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     label: 'Show Filters',
     initialValue: true,
   );
-  final maxWidthPage = context.knobs.objectOrNull.dropdown<FitSize>(
-    label: 'Max Width Page',
-    options: FitSize.values,
-    initialOption: null,
-    labelBuilder: (s) => s.name,
-  );
+
   final sectionEnableGutter = context.knobs.boolean(
     label: 'Section Enable Gutter',
     initialValue: true,
@@ -48,7 +43,7 @@ Widget scaffoldPlaygroundUseCase(BuildContext context) {
     subtitle: subtitle?.isEmpty ?? true ? null : subtitle,
     showBackButton: showBackButton,
     onBackPressed: showBackButton ? () {} : null,
-    maxWidthHeader: maxWidthPage ?? FitSize.desktop,
+
     drawer: const Drawer(
       child: SafeArea(
         child: Column(

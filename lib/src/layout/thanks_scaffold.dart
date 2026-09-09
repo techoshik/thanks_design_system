@@ -84,7 +84,6 @@ class ThanksScaffold extends StatelessWidget {
     this.drawer,
     this.endDrawer,
     this.backgroundColor,
-    this.maxWidthHeader = FitSize.desktop,
   });
 
   final ThanksScaffoldController? controller;
@@ -112,9 +111,6 @@ class ThanksScaffold extends StatelessWidget {
   final Widget? drawer;
   final Widget? endDrawer;
   final Color? backgroundColor;
-
-  /// The maximum size constraint for the entire page, using [FitContainer].
-  final FitSize maxWidthHeader;
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +174,7 @@ class ThanksScaffold extends StatelessWidget {
       ];
 
       header = ThanksSection(
-        maxWidth: maxWidthHeader,
+        maxWidth: null,
         backgroundColor: backgroundColor,
         child: ListTile(
           contentPadding: EdgeInsets.zero,
@@ -206,7 +202,7 @@ class ThanksScaffold extends StatelessWidget {
 
     final inlineFilters = filters.isNotEmpty && !showFiltersInBottomSheet
         ? ThanksSection(
-            maxWidth: maxWidthHeader,
+            maxWidth: null,
             child: Wrap(
               spacing: ThanksSpacing.medium,
               runSpacing: ThanksSpacing.medium,

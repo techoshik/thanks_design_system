@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:fit_it/fit_it.dart';
 
 /// Standard dimensions used throughout Thanks applications.
 abstract final class ThanksSpacing {
@@ -14,12 +15,20 @@ abstract final class ThanksSpacing {
   static const double inputHeight = 40;
   static const double buttonHeight = inputHeight - 8;
 
-  static const double navigationDrawerWidth = 260;
-  static const double rightNavigationDrawerWidth = 344;
+  static const double navigationDrawerWidthLeft = 260;
+  static const double navigationDrawerWidthRight = 360;
   static const double viewHeightMinimum = 304;
   static const double formWidthMinimum = 300;
   static const double formWidthMaximum = 450;
   static const double fabClearance = 132;
+
+  /// Centered maximum width for forms, editors, and focused detail content.
+  static const FitSize contentWidthForm = FitSize.tablet;
+
+  /// Centered maximum width for operational lists and workspace content.
+  static const FitSize contentWidthWorkspace = FitSize.desktop;
+
+  static const double inputFieldWidthFilter = 240;
 
   static const inputContentPadding = EdgeInsets.symmetric(
     horizontal: medium,
