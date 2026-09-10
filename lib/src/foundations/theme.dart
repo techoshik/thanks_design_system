@@ -90,6 +90,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       surface: ThanksColors.pageBackground,
     );
     final selectedBackground = brand.primary.withAlpha(28);
+    final interactiveHoverColor = brand.primary.withValues(alpha: 0.08);
     final buttonTextStyle = textTheme.bodyMedium;
     const buttonMinimumSize = Size(
       ThanksSpacing.buttonHeight,
@@ -130,7 +131,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       fillColor: ThanksColors.surface,
       focusColor: Colors.transparent,
       iconColor: brand.primary,
-      hoverColor: selectedBackground,
+      hoverColor: interactiveHoverColor,
       suffixIconColor: brand.primary,
       constraints: const BoxConstraints(minHeight: ThanksSpacing.inputHeight),
       isDense: true,
@@ -153,6 +154,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
 
     return ThemeData(
       useMaterial3: true,
+      hoverColor: interactiveHoverColor,
       primaryTextTheme: textTheme,
       textTheme: textTheme,
       colorScheme: colorScheme,

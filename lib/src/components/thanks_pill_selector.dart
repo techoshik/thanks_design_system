@@ -53,10 +53,10 @@ class ThanksPillSelector<T> extends StatelessWidget {
                         color: Colors.transparent,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(pillHeight),
+                          hoverColor: Theme.of(context).hoverColor,
                           onTap: () => onChanged(isSelected ? null : option),
-                          child: Container(
+                          child: Ink(
                             width: double.infinity,
-                            alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(
                               color: isSelected
@@ -64,29 +64,34 @@ class ThanksPillSelector<T> extends StatelessWidget {
                                   : colorScheme.surfaceContainer,
                               borderRadius: BorderRadius.circular(pillHeight),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (isSelected)
-                                  Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: colorScheme.onPrimary,
-                                  )
-                                else if (iconBuilder != null)
-                                  iconBuilder!(option),
-                                if (isSelected || iconBuilder != null)
-                                  const SizedBox(width: 6),
-                                Text(
-                                  labelBuilder(option),
-                                  style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(
-                                        color: isSelected
-                                            ? colorScheme.onPrimary
-                                            : colorScheme.onSurface,
-                                      ),
-                                ),
-                              ],
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (isSelected)
+                                    Icon(
+                                      Icons.check,
+                                      size: 18,
+                                      color: colorScheme.onPrimary,
+                                    )
+                                  else if (iconBuilder != null)
+                                    iconBuilder!(option),
+                                  if (isSelected || iconBuilder != null)
+                                    const SizedBox(width: 6),
+                                  Text(
+                                    labelBuilder(option),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: isSelected
+                                              ? colorScheme.onPrimary
+                                              : colorScheme.onSurface,
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
