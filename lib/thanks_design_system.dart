@@ -22,4 +22,5 @@ export 'src/foundations/typography.dart';
 export 'src/layout/thanks_grid.dart';
 export 'src/layout/thanks_scaffold.dart';
 export 'src/layout/thanks_section.dart';
+export 'src/logging/thanks_log.dart';
 export 'src/navigation/thanks_navigator.dart';
