@@ -160,14 +160,17 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       colorScheme: colorScheme,
       extensions: [_lightExtension],
       visualDensity: VisualDensity.compact,
-      iconTheme: const IconThemeData(size: 20),
+      iconTheme: const IconThemeData(size: ThanksSpacing.iconSmall),
       scaffoldBackgroundColor: ThanksColors.pageBackground,
       appBarTheme: AppBarTheme(
         centerTitle: false,
         toolbarHeight: ThanksSpacing.appBarHeight,
         actionsPadding: const EdgeInsets.only(right: ThanksSpacing.medium),
         titleSpacing: ThanksSpacing.medium,
-        iconTheme: IconThemeData(color: brand.primary, size: 20),
+        iconTheme: IconThemeData(
+          color: brand.primary,
+          size: ThanksSpacing.iconSmall,
+        ),
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -233,7 +236,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           shape: iconShape,
-          iconSize: 20,
+          iconSize: ThanksSpacing.iconSmall,
           minimumSize: buttonMinimumSize,
           fixedSize: const Size.square(ThanksSpacing.buttonHeight),
           padding: EdgeInsets.zero,
@@ -246,7 +249,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
           selectedBackgroundColor: selectedBackground,
           tapTargetSize: MaterialTapTargetSize.padded,
           textStyle: buttonTextStyle,
-          iconSize: 24,
+          iconSize: ThanksSpacing.iconSmall,
           minimumSize: const Size(0, ThanksSpacing.inputHeight),
           fixedSize: const Size(0, ThanksSpacing.inputHeight),
         ),
@@ -255,10 +258,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       popupMenuTheme: PopupMenuThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ThanksSpacing.radiusMedium),
-          side: BorderSide(
-            color: colorScheme.outlineVariant,
-            width: 1,
-          ),
+          side: BorderSide(color: colorScheme.outlineVariant, width: 1),
         ),
         textStyle: buttonTextStyle,
         labelTextStyle: WidgetStatePropertyAll(buttonTextStyle),

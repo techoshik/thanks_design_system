@@ -4,9 +4,6 @@ import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
 import 'thanks_button.dart';
 
-/// The size of the icon used by [ThanksMessageView] presets.
-const double _kIconSize = 60.0;
-
 /// A centered, non-sliver message widget for empty, error, and loading states.
 ///
 /// Use [ThanksMessageView] in non-scroll bodies (plain [Scaffold.body],
@@ -65,7 +62,7 @@ class ThanksMessageView extends StatelessWidget {
   }) => ThanksMessageView(
     key: key,
     icon: const SizedBox.square(
-      dimension: _kIconSize,
+      dimension: ThanksSpacing.iconLarge,
       child: CircularProgressIndicator(strokeWidth: 3),
     ),
     title: title,
@@ -177,7 +174,11 @@ class _ThanksMessageViewError extends ThanksMessageView {
     final errorColor = Theme.of(context).colorScheme.error;
     return ThanksMessageView(
       key: key,
-      icon: Icon(Icons.error_outline, size: _kIconSize, color: errorColor),
+      icon: Icon(
+        Icons.error_outline,
+        size: ThanksSpacing.iconLarge,
+        color: errorColor,
+      ),
       title: title,
       message: message,
       actionLabel: actionLabel,
@@ -196,7 +197,7 @@ class _ErrorIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Icon(
       Icons.error_outline,
-      size: _kIconSize,
+      size: ThanksSpacing.iconLarge,
       color: Theme.of(context).colorScheme.error,
     );
   }

@@ -11,6 +11,10 @@ abstract final class ThanksSpacing {
   static const double radiusMedium = medium;
   static const double radiusFull = 100;
 
+  static const double iconSmall = 20;
+  static const double iconMedium = 40;
+  static const double iconLarge = 60;
+
   static const double appBarHeight = 64;
   static const double inputHeight = 40;
   static const double buttonHeight = inputHeight - 8;
@@ -34,7 +38,6 @@ abstract final class ThanksSpacing {
     horizontal: medium,
     vertical: (inputHeight - medium) / 2,
   );
-  static const dialogConstraints = BoxConstraints(minWidth: 350, maxWidth: 600);
 
   static const spaceExtraSmall = SizedBox.square(dimension: extraSmall);
   static const spaceSmall = SizedBox.square(dimension: small);
@@ -49,12 +52,7 @@ abstract final class ThanksSpacing {
     small,
   );
   static const insetMedium = EdgeInsets.all(medium);
-  static final insetMediumTop0 = insetMedium.copyWith(top: 0);
-  static final insetMediumBottom0 = insetMedium.copyWith(bottom: 0);
 
-  static const insetExtraSmallHorizontal = EdgeInsets.symmetric(
-    horizontal: extraSmall,
-  );
   static const insetSmallHorizontal = EdgeInsets.symmetric(horizontal: small);
   static const insetMediumHorizontal = EdgeInsets.symmetric(horizontal: medium);
   static const insetMediumVertical = EdgeInsets.symmetric(vertical: medium);
@@ -63,9 +61,5 @@ abstract final class ThanksSpacing {
     medium,
     medium,
     fabClearance,
-  );
-  static const insetPageVertical = EdgeInsets.only(
-    top: medium,
-    bottom: fabClearance,
   );
 }
