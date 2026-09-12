@@ -1,6 +1,6 @@
 name: thanks_design_system
 description: Shared visual foundations and reusable Flutter UI components for Thanks applications.
-version: 1.0.4
+version: 1.0.11
 publish_to: none
 
 environment:
