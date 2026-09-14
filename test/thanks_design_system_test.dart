@@ -287,6 +287,65 @@ void main() {
     expect(find.byType(ElevatedButton), findsNothing);
   });
 
+  testWidgets('ThanksButton adaptive uses an icon-only control on mobile', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: Scaffold(
+          body: ThanksButton(
+            label: 'Save',
+            onPressed: () {},
+            adaptive: true,
+            leadingIcon: const Icon(Icons.save),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(IconButton), findsOneWidget);
+    expect(find.byType(FilledButton), findsNothing);
+    expect(find.byIcon(Icons.save), findsOneWidget);
+  });
+
+  testWidgets('ThanksButton adaptive keeps its label above mobile', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: Scaffold(
+          body: ThanksButton(
+            label: 'Save',
+            onPressed: () {},
+            adaptive: true,
+            leadingIcon: const Icon(Icons.save),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(FilledButton), findsOneWidget);
+    expect(find.text('Save'), findsOneWidget);
+    expect(find.byIcon(Icons.save), findsOneWidget);
+  });
+
+  test('ThanksButton adaptive requires a leading icon', () {
+    expect(
+      () => ThanksButton(label: 'Save', onPressed: () {}, adaptive: true),
+      throwsAssertionError,
+    );
+  });
+
   testWidgets('ThanksButton variants use the shared 32px button height', (
     tester,
   ) async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fit_it/fit_it.dart';
 
 import '../foundations/spacing.dart';
 
@@ -13,6 +14,8 @@ enum ThanksButtonColor { primary, secondary, tertiary }
 /// Set [isLoading] while an action is in progress. The button keeps its label
 /// width, disables its callback, and shows a progress indicator. Use
 /// [leadingIcon] and [trailingIcon] for icons on either side of the label.
+/// Set [adaptive] to render the [leadingIcon] as an icon-only button on mobile
+/// screens while retaining the labeled button above the mobile breakpoint.
 /// Use [ThanksButton.icon] for an icon-only action; it requires a [tooltip]
 /// so the control remains accessible.
 class ThanksButton extends StatelessWidget {
@@ -22,12 +25,17 @@ class ThanksButton extends StatelessWidget {
     this.variant = ThanksButtonVariant.filled,
     this.color = ThanksButtonColor.primary,
     this.isLoading = false,
+    this.adaptive = false,
     this.leadingIcon,
     this.trailingIcon,
     this.isExpanded = false,
     this.style,
     super.key,
-  }) : _icon = null,
+  }) : assert(
+         !adaptive || leadingIcon != null,
+         'ThanksButton: leadingIcon is required when adaptive is true.',
+       ),
+       _icon = null,
        _tooltip = null;
 
   const ThanksButton.icon({
@@ -39,7 +47,8 @@ class ThanksButton extends StatelessWidget {
     this.isLoading = false,
     this.style,
     super.key,
-  }) : label = null,
+  }) : adaptive = false,
+       label = null,
        leadingIcon = null,
        trailingIcon = null,
        isExpanded = false;
@@ -49,6 +58,7 @@ class ThanksButton extends StatelessWidget {
   final ThanksButtonVariant variant;
   final ThanksButtonColor color;
   final bool isLoading;
+  final bool adaptive;
   final Widget? leadingIcon;
   final Widget? trailingIcon;
   final bool isExpanded;
@@ -78,8 +88,10 @@ class ThanksButton extends StatelessWidget {
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
     );
-    if (_isIconOnly) {
+    if (_isIconOnly || _isAdaptiveIconOnly(context)) {
       return _buildIconButton(
+        icon: _isIconOnly ? _icon! : leadingIcon!,
+        tooltip: _isIconOnly ? _tooltip! : label!,
         buttonStyle: buttonStyle,
         backgroundColor: backgroundColor,
         foregroundColor: foregroundColor,
@@ -121,6 +133,10 @@ class ThanksButton extends StatelessWidget {
         : button;
   }
 
+  bool _isAdaptiveIconOnly(BuildContext context) {
+    return adaptive && FitSize.parse(MediaQuery.sizeOf(context).width).isMobile;
+  }
+
   ButtonStyle _buttonStyle({
     required Color backgroundColor,
     required Color foregroundColor,
@@ -142,11 +158,13 @@ class ThanksButton extends StatelessWidget {
   }
 
   Widget _buildIconButton({
+    required Widget icon,
+    required String tooltip,
     required ButtonStyle buttonStyle,
     required Color backgroundColor,
     required Color foregroundColor,
   }) {
-    final icon = isLoading
+    final effectiveIcon = isLoading
         ? SizedBox.square(
             dimension: 18,
             child: CircularProgressIndicator(
@@ -156,27 +174,27 @@ class ThanksButton extends StatelessWidget {
                   : backgroundColor,
             ),
           )
-        : _icon!;
+        : icon;
     final onPressed = isLoading ? null : this.onPressed;
 
     return switch (variant) {
       ThanksButtonVariant.text => IconButton(
-        tooltip: _tooltip,
+        tooltip: tooltip,
         onPressed: onPressed,
         style: buttonStyle,
-        icon: icon,
+        icon: effectiveIcon,
       ),
       ThanksButtonVariant.filled => IconButton.filled(
-        tooltip: _tooltip,
+        tooltip: tooltip,
         onPressed: onPressed,
         style: buttonStyle,
-        icon: icon,
+        icon: effectiveIcon,
       ),
       ThanksButtonVariant.outlined => IconButton.outlined(
-        tooltip: _tooltip,
+        tooltip: tooltip,
         onPressed: onPressed,
         style: buttonStyle,
-        icon: icon,
+        icon: effectiveIcon,
       ),
     };
   }
