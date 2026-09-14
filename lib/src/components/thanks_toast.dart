@@ -61,7 +61,8 @@ abstract final class ThanksToast {
     EdgeInsets margin = const EdgeInsets.fromLTRB(16, 24, 16, 0),
   }) {
     final navContext = ThanksNavigator.currentContext;
-    final overlay = ThanksNavigator.navigatorKey.currentState?.overlay ??
+    final overlay =
+        ThanksNavigator.navigatorKey.currentState?.overlay ??
         (navContext != null
             ? Overlay.maybeOf(navContext, rootOverlay: true)
             : null);
@@ -110,18 +111,18 @@ class _ToastView extends StatelessWidget {
     final thanksTheme = ThanksTheme.of(context);
     final (color, background, icon) = switch (type) {
       ThanksToastType.success => (
-        thanksTheme.success,
+        thanksTheme.success.main,
         thanksTheme.successBackground,
         Icons.check_circle_outline,
       ),
       ThanksToastType.error => (
-        thanksTheme.danger,
-        thanksTheme.dangerBackground,
+        thanksTheme.error.main,
+        thanksTheme.error.subtle,
         Icons.error_outline,
       ),
       ThanksToastType.info => (
-        thanksTheme.textPrimary,
-        thanksTheme.surfaceElevated,
+        thanksTheme.info.main,
+        thanksTheme.info.subtle,
         Icons.info_outline,
       ),
     };

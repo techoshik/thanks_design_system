@@ -9,6 +9,7 @@ import 'directories/components/thanks_disclosure_card_use_cases.dart';
 import 'directories/components/sliver_state_use_cases.dart';
 import 'directories/foundations/colors_use_case.dart';
 import 'directories/foundations/spacing_use_case.dart';
+import 'directories/foundations/theme_use_case.dart';
 import 'directories/foundations/typography_use_case.dart';
 import 'directories/layout/scaffold_use_cases.dart';
 
@@ -50,6 +51,15 @@ class ThanksWidgetbookApp extends StatelessWidget {
                 WidgetbookUseCase(
                   name: 'Dimensions & Radii',
                   builder: spacingUseCase,
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'ThanksTheme',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Semantic Palette & Surface Tokens',
+                  builder: themeUseCase,
                 ),
               ],
             ),

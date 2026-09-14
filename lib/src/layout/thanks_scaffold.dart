@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
 
 import '../components/thanks_button.dart';
-import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
+import '../foundations/theme.dart';
 import 'thanks_section.dart';
 
 /// Controls how [ThanksScaffold.filters] are presented.
@@ -114,6 +114,7 @@ class ThanksScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final thanksTheme = ThanksTheme.of(context);
     final showFiltersInBottomSheet = _showFiltersInBottomSheet(context);
 
     final hasBackButton =
@@ -128,7 +129,7 @@ class ThanksScaffold extends StatelessWidget {
 
       final leadingButtonStyle = IconButton.styleFrom(
         shape: const StadiumBorder(),
-        backgroundColor: ThanksColors.surface,
+        backgroundColor: thanksTheme.surface.panel,
         foregroundColor: Theme.of(context).colorScheme.primary,
         fixedSize: const Size.square(leadingSize),
         minimumSize: const Size.square(leadingSize),

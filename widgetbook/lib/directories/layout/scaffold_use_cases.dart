@@ -1,293 +1,139 @@
 import 'package:flutter/material.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
-import 'package:widgetbook/widgetbook.dart';
 
 Widget scaffoldPlaygroundUseCase(BuildContext context) {
-  final title = context.knobs.string(
-    label: 'Title',
-    initialValue: 'Invoices & Billing',
-  );
-  final subtitle = context.knobs.stringOrNull(
-    label: 'Subtitle',
-    initialValue: 'Manage open balances and tax receipts',
-  );
-  final showBackButton = context.knobs.boolean(
-    label: 'Show Back Button',
-    initialValue: false,
-  );
-  final showFilters = context.knobs.boolean(
-    label: 'Show Filters',
-    initialValue: true,
-  );
-
-  final sectionEnableGutter = context.knobs.boolean(
-    label: 'Section Enable Gutter',
-    initialValue: true,
-  );
-  final sectionBgColor = context.knobs.objectOrNull.dropdown<Color>(
-    label: 'Section Background Color',
-    options: const [
-      Colors.transparent,
-      Colors.white,
-      ThanksColors.primary50,
-      ThanksColors.surface2,
-      Color(0xFFF1F5F9),
-      Color(0xFFE2E8F0),
-    ],
-    initialOption: null,
-    labelBuilder: (c) => c.toARGB32().toRadixString(16).toUpperCase(),
-  );
-
+  final theme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
+  final spacing = thanksTheme.spacing;
   return ThanksScaffold(
-    title: title.isEmpty ? null : title,
-    subtitle: subtitle?.isEmpty ?? true ? null : subtitle,
-    showBackButton: showBackButton,
-    onBackPressed: showBackButton ? () {} : null,
-
-    drawer: const Drawer(
-      child: SafeArea(
-        child: Column(
-          children: [
-            ListTile(leading: Icon(Icons.dashboard), title: Text('Dashboard')),
-            ListTile(
-              leading: Icon(Icons.receipt_long),
-              title: Text('Invoices'),
-            ),
-            ListTile(leading: Icon(Icons.settings), title: Text('Settings')),
-          ],
-        ),
-      ),
-    ),
+    title: 'Orders',
+    subtitle: 'Workspace preview',
+    backgroundColor: theme.scaffoldBackgroundColor,
     actions: [
       ThanksButton.icon(
-        icon: const Icon(Icons.search),
-        tooltip: 'Search',
-        variant: ThanksButtonVariant.text,
-        onPressed: () {},
-      ),
-      ThanksButton(
-        label: 'New Invoice',
-        leadingIcon: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        tooltip: 'Create order',
         onPressed: () {},
       ),
     ],
-    filters: showFilters
-        ? [
-            ThanksButton(
-              label: 'Status: All',
-              variant: ThanksButtonVariant.outlined,
-              trailingIcon: const Icon(Icons.arrow_drop_down),
-              onPressed: () {},
-            ),
-            ThanksButton(
-              label: 'Due Date',
-              variant: ThanksButtonVariant.outlined,
-              trailingIcon: const Icon(Icons.calendar_today, size: 14),
-              onPressed: () {},
-            ),
-          ]
-        : const [],
-    body: SingleChildScrollView(
-      child: Column(
-        children: [
-          ThanksSection(
-            enableGutter: sectionEnableGutter,
-            backgroundColor: sectionBgColor,
-            child: ThanksCard(
-              title: 'Recent Invoices',
-              subtitle: 'Past 30 days',
-              variant: ThanksCardVariant.filledOutlined,
-              padding: ThanksCardSpacing.medium,
-              margin: ThanksCardSpacing.none,
-              headerPosition: ThanksCardHeaderPosition.outside,
-              child: ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 40,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (_, index) => Material(
-                  color: Colors.transparent,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const CircleAvatar(
-                      backgroundColor: ThanksColors.primary50,
-                      child: Icon(
-                        Icons.receipt,
-                        color: ThanksColors.primary500,
-                        size: 20,
-                      ),
-                    ),
-                    title: Text('Invoice #104${index + 1}'),
-                    subtitle: Text('Due in ${index + 2} days · Acme Corp'),
-                    trailing: Text(
-                      '\$${(index + 1) * 350}.00',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+    filters: [
+      SizedBox(
+        width: spacing.inputFieldWidthFilter,
+        child: const TextField(
+          decoration: InputDecoration(labelText: 'Search orders'),
+        ),
       ),
+      const Chip(label: Text('Active')),
+    ],
+    body: ThanksSection(
+      title: 'Recent orders',
+      subtitle: 'A fluid workspace surface using the active theme.',
+      child: _OrderPreview(thanksTheme: thanksTheme),
     ),
+    drawer: const Drawer(child: Center(child: Text('Navigation'))),
   );
 }
 
 Widget scaffoldEmptyStateUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
   return ThanksScaffold(
-    title: 'Orders & Receipts',
-    subtitle: 'Track your incoming deliveries',
-    showBackButton: true,
-    onBackPressed: () {},
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.inbox_outlined,
-            size: 56,
-            color: ThanksColors.textMuted,
-          ),
-          ThanksSpacing.spaceMedium,
-          Text('No Orders Yet', style: Theme.of(context).textTheme.titleMedium),
-          ThanksSpacing.spaceExtraSmall,
-          const Text(
-            'When you place orders, they will appear here with live tracking updates.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: ThanksColors.textSecondary),
-          ),
-          ThanksSpacing.spaceMedium,
-          ThanksButton(
-            label: 'Explore Catalog',
-            leadingIcon: const Icon(Icons.shopping_bag_outlined),
-            onPressed: () {},
-          ),
-        ],
+    title: 'Documents',
+    backgroundColor: theme.scaffoldBackgroundColor,
+    body: ThanksSection(
+      maxWidth: null,
+      child: ThanksMessageView(
+        icon: Icon(Icons.description_outlined, color: thanksTheme.textMuted),
+        title: 'No documents yet',
+        message: 'Upload a document to begin working with this case.',
+        actionLabel: 'Upload document',
+        onAction: () {},
       ),
     ),
   );
 }
 
 Widget scaffoldEditorUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final spacing = ThanksTheme.of(context).spacing;
   return ThanksScaffold(
-    title: 'Dynamic Form Editor',
-    subtitle: 'Multi-column editor with independent panel scrollbars',
-    actions: [
-      ThanksButton(
-        label: 'Preview',
-        variant: ThanksButtonVariant.outlined,
-        onPressed: () {},
-      ),
-      ThanksButton(
-        label: 'Save Form',
-        leadingIcon: const Icon(Icons.check),
-        onPressed: () {},
-      ),
-    ],
+    title: 'Applicant editor',
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Row(
-      spacing: ThanksSpacing.medium,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Left Column: Components Palette
         Expanded(
-          flex: 1,
-          child: ThanksCard(
-            title: 'Components',
-            subtitle: 'Drag or click to add',
-            variant: ThanksCardVariant.filledOutlined,
-            child: ListView.separated(
-              itemCount: 15,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (_, index) => ListTile(
-                leading: const Icon(Icons.add_circle_outline, size: 20),
-                title: Text('Field #${index + 1}'),
-                subtitle: Text(index.isEven ? 'Text Input' : 'Dropdown'),
-                onTap: () {},
-              ),
-            ),
-          ),
-        ),
-        // Central Column: Details of added components
-        Expanded(
-          flex: 2,
-          child: ThanksCard(
-            title: 'Form Canvas',
-            subtitle: 'Components on this form',
-            variant: ThanksCardVariant.filledOutlined,
-            child: ListView.separated(
-              itemCount: 20,
-              separatorBuilder: (_, __) =>
-                  const SizedBox(height: ThanksSpacing.small),
-              itemBuilder: (_, index) => Container(
-                padding: ThanksSpacing.insetMedium,
-                decoration: BoxDecoration(
-                  color: ThanksColors.surface,
-                  border: Border.all(color: ThanksColors.border),
-                  borderRadius: BorderRadius.circular(
-                    ThanksSpacing.radiusSmall,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Component ${index + 1}: ${index.isEven ? "Personal Information" : "Travel History"}',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Independent scrolling section without outer page scrollbars.',
-                      style: TextStyle(
-                        color: ThanksColors.textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        // Right Column: Details of selected field
-        Expanded(
-          flex: 1,
-          child: ThanksCard(
-            title: 'Field Details',
-            subtitle: 'Selected field inspector',
-            variant: ThanksCardVariant.filledOutlined,
-            child: ListView(
-              children: const [
-                Text('Field ID', style: TextStyle(fontWeight: FontWeight.w600)),
-                SizedBox(height: 4),
-                Text(
-                  'field_passport_number',
-                  style: TextStyle(color: ThanksColors.textSecondary),
-                ),
-                Divider(height: 24),
-                Text(
-                  'Label Text',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Passport / Travel Document Number',
-                  style: TextStyle(color: ThanksColors.textSecondary),
-                ),
-                Divider(height: 24),
-                Text(
-                  'Validation Rules',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '• Required\n• Alphanumeric (A-Z, 0-9)\n• Min length: 6',
-                  style: TextStyle(color: ThanksColors.textSecondary),
+          child: ThanksSection(
+            maxWidth: null,
+            title: 'Details',
+            child: Column(
+              children: [
+                const TextField(decoration: InputDecoration(labelText: 'Name')),
+                SizedBox(height: spacing.medium),
+                const TextField(
+                  decoration: InputDecoration(labelText: 'Reference'),
                 ),
               ],
+            ),
+          ),
+        ),
+        SizedBox(width: spacing.medium),
+        SizedBox(
+          width: spacing.formWidthMinimum,
+          child: ThanksSection(
+            title: 'Summary',
+            child: Card(
+              child: Padding(
+                padding: spacing.insetMedium,
+                child: Text(
+                  'Focused content remains constrained while the workspace stays fluid.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
             ),
           ),
         ),
       ],
     ),
   );
+}
+
+class _OrderPreview extends StatelessWidget {
+  const _OrderPreview({required this.thanksTheme});
+
+  final ThanksTheme thanksTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final materialTheme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: thanksTheme.spacing.insetMedium,
+        child: Column(
+          children: [
+            for (final order in const [
+              '#1042 · Acme Pty Ltd',
+              '#1041 · Northwind',
+            ])
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: CircleAvatar(
+                  backgroundColor: materialTheme.colorScheme.primaryContainer,
+                  child: Icon(
+                    Icons.receipt_long,
+                    color: materialTheme.colorScheme.primary,
+                  ),
+                ),
+                title: Text(order),
+                subtitle: const Text('Updated today'),
+                trailing: const ThanksStatusBadge(
+                  label: 'Active',
+                  tone: ThanksBadgeTone.success,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 }

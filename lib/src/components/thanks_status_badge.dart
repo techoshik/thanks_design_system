@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
+import '../foundations/theme.dart';
 
 /// The semantic colour treatment applied to a [ThanksStatusBadge].
 ///
 /// Each tone maps to a dedicated background/foreground/border triple from
-/// [ThanksColors], keeping badge colours consistent with the design system's
-/// semantic colour vocabulary.
+/// [ThanksTheme], keeping badge colours consistent with the active theme.
 enum ThanksBadgeTone {
   /// Green — active, complete, or successful states (e.g. *Published*).
   success,
@@ -96,45 +95,50 @@ class ThanksStatusBadge extends StatelessWidget {
   // ---------------------------------------------------------------------------
 
   /// Resolves the three design-system colours for [tone].
-  ({Color background, Color foreground, Color border}) get _colours =>
-      switch (tone) {
-        ThanksBadgeTone.success => (
-          background: ThanksColors.successBackground,
-          foreground: ThanksColors.success,
-          border: ThanksColors.successBorder,
-        ),
-        ThanksBadgeTone.warning => (
-          background: ThanksColors.warningBackground,
-          foreground: ThanksColors.warning,
-          border: ThanksColors.warningBorder,
-        ),
-        ThanksBadgeTone.danger => (
-          background: ThanksColors.dangerBackground,
-          foreground: ThanksColors.danger,
-          border: ThanksColors.dangerBorder,
-        ),
-        ThanksBadgeTone.neutral => (
-          background: ThanksColors.surface2,
-          foreground: ThanksColors.textSecondary,
-          border: ThanksColors.border,
-        ),
-        ThanksBadgeTone.primary => (
-          background: ThanksColors.primary50,
-          foreground: ThanksColors.primary500,
-          border: ThanksColors.primary100,
-        ),
-      };
+  ({Color background, Color foreground, Color border}) _colours(
+    BuildContext context,
+  ) {
+    final theme = ThanksTheme.of(context);
+    return switch (tone) {
+      ThanksBadgeTone.success => (
+        background: theme.success.subtle,
+        foreground: theme.success.main,
+        border: theme.success.border,
+      ),
+      ThanksBadgeTone.warning => (
+        background: theme.warning.subtle,
+        foreground: theme.warning.main,
+        border: theme.warning.border,
+      ),
+      ThanksBadgeTone.danger => (
+        background: theme.error.subtle,
+        foreground: theme.error.main,
+        border: theme.error.border,
+      ),
+      ThanksBadgeTone.neutral => (
+        background: theme.surface.hover,
+        foreground: theme.textSecondary,
+        border: theme.borderSubtle,
+      ),
+      ThanksBadgeTone.primary => (
+        background: theme.primary.subtle,
+        foreground: theme.primary.main,
+        border: theme.primary.border,
+      ),
+    };
+  }
 
   /// Resolves the padding preset for [size].
-  EdgeInsets get _padding => switch (size) {
-    ThanksBadgeSize.small => const EdgeInsets.symmetric(
-      horizontal: ThanksSpacing.small,
-    ),
-    ThanksBadgeSize.medium => const EdgeInsets.symmetric(
-      vertical: ThanksSpacing.extraSmall,
-      horizontal: ThanksSpacing.medium,
-    ),
-  };
+  EdgeInsets _padding(BuildContext context) {
+    final spacing = ThanksTheme.of(context).spacing;
+    return switch (size) {
+      ThanksBadgeSize.small => EdgeInsets.symmetric(horizontal: spacing.small),
+      ThanksBadgeSize.medium => EdgeInsets.symmetric(
+        vertical: spacing.extraSmall,
+        horizontal: spacing.medium,
+      ),
+    };
+  }
 
   /// Resolves the icon size for [size].
   double get _iconSize => switch (size) {
@@ -149,7 +153,7 @@ class ThanksStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colours = _colours;
+    final colours = _colours(context);
 
     final labelStyle = switch (size) {
       ThanksBadgeSize.small => textTheme.labelMedium,
@@ -176,7 +180,7 @@ class ThanksStatusBadge extends StatelessWidget {
     }
 
     return Container(
-      padding: _padding,
+      padding: _padding(context),
       decoration: BoxDecoration(
         color: colours.background,
         border: Border.all(color: colours.border),

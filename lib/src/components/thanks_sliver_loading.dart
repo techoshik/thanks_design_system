@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
+import '../foundations/theme.dart';
 
 /// A centered loading indicator sliver that fills the remaining viewport.
 ///
@@ -12,7 +12,7 @@ class ThanksSliverLoading extends StatelessWidget {
   const ThanksSliverLoading({
     super.key,
     this.message,
-    this.color = ThanksColors.primary500,
+    this.color,
     this.strokeWidth = 3.0,
     this.semanticsLabel,
   });
@@ -21,7 +21,7 @@ class ThanksSliverLoading extends StatelessWidget {
   final String? message;
 
   /// The color of the progress indicator.
-  final Color color;
+  final Color? color;
 
   /// The width of the circular progress indicator line.
   final double strokeWidth;
@@ -31,6 +31,9 @@ class ThanksSliverLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final thanksTheme = ThanksTheme.of(context);
+
     return SliverFillRemaining(
       hasScrollBody: false,
       child: Center(
@@ -42,16 +45,15 @@ class ThanksSliverLoading extends StatelessWidget {
             children: [
               CircularProgressIndicator(
                 strokeWidth: strokeWidth,
-                color: color,
+                color: color ?? theme.colorScheme.primary,
                 semanticsLabel: semanticsLabel,
               ),
               if (message != null) ...[
                 ThanksSpacing.spaceMedium,
                 Text(
                   message!,
-                  style: const TextStyle(
-                    color: ThanksColors.textSecondary,
-                    fontSize: 14,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: thanksTheme.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,

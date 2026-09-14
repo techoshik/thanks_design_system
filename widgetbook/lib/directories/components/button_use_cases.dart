@@ -3,6 +3,8 @@ import 'package:thanks_design_system/thanks_design_system.dart';
 import 'package:widgetbook/widgetbook.dart';
 
 Widget buttonPlaygroundUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final spacing = ThanksTheme.of(context).spacing;
   final label = context.knobs.string(
     label: 'Label',
     initialValue: 'Save Changes',
@@ -37,10 +39,10 @@ Widget buttonPlaygroundUseCase(BuildContext context) {
   );
 
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Center(
       child: Padding(
-        padding: ThanksSpacing.insetMedium,
+        padding: spacing.insetMedium,
         child: ThanksButton(
           label: label,
           variant: variant,
@@ -59,11 +61,13 @@ Widget buttonPlaygroundUseCase(BuildContext context) {
 }
 
 Widget buttonAllVariantsUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final spacing = ThanksTheme.of(context).spacing;
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Center(
       child: SingleChildScrollView(
-        padding: ThanksSpacing.insetMedium,
+        padding: spacing.insetMedium,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,10 +76,10 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
               'Primary Color',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            ThanksSpacing.spaceSmall,
+            spacing.spaceSmall,
             Wrap(
-              spacing: ThanksSpacing.medium,
-              runSpacing: ThanksSpacing.medium,
+              spacing: spacing.medium,
+              runSpacing: spacing.medium,
               children: [
                 ThanksButton(
                   label: 'Filled Primary',
@@ -94,15 +98,15 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
                 ),
               ],
             ),
-            ThanksSpacing.spaceMedium,
+            spacing.spaceMedium,
             Text(
               'Secondary Color',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            ThanksSpacing.spaceSmall,
+            spacing.spaceSmall,
             Wrap(
-              spacing: ThanksSpacing.medium,
-              runSpacing: ThanksSpacing.medium,
+              spacing: spacing.medium,
+              runSpacing: spacing.medium,
               children: [
                 ThanksButton(
                   label: 'Filled Secondary',
@@ -124,15 +128,15 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
                 ),
               ],
             ),
-            ThanksSpacing.spaceMedium,
+            spacing.spaceMedium,
             Text(
               'Tertiary Color',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            ThanksSpacing.spaceSmall,
+            spacing.spaceSmall,
             Wrap(
-              spacing: ThanksSpacing.medium,
-              runSpacing: ThanksSpacing.medium,
+              spacing: spacing.medium,
+              runSpacing: spacing.medium,
               children: [
                 ThanksButton(
                   label: 'Filled Tertiary',
@@ -154,15 +158,15 @@ Widget buttonAllVariantsUseCase(BuildContext context) {
                 ),
               ],
             ),
-            ThanksSpacing.spaceMedium,
+            spacing.spaceMedium,
             Text(
               'Icon Buttons',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            ThanksSpacing.spaceSmall,
+            spacing.spaceSmall,
             Wrap(
-              spacing: ThanksSpacing.medium,
-              runSpacing: ThanksSpacing.medium,
+              spacing: spacing.medium,
+              runSpacing: spacing.medium,
               children: [
                 ThanksButton.icon(
                   icon: const Icon(Icons.add),

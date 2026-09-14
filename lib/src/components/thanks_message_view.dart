@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
+import '../foundations/theme.dart';
 import 'thanks_button.dart';
 
 /// A centered, non-sliver message widget for empty, error, and loading states.
@@ -118,6 +118,7 @@ class ThanksMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final thanksTheme = ThanksTheme.of(context);
 
     return Center(
       child: Padding(
@@ -137,7 +138,7 @@ class ThanksMessageView extends StatelessWidget {
               Text(
                 message!,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: ThanksColors.textSecondary,
+                  color: thanksTheme.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),

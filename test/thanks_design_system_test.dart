@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
+import 'package:thanks_design_system/src/foundations/colors.dart';
+import 'package:thanks_design_system/src/foundations/spacing.dart';
+import 'package:thanks_design_system/src/foundations/typography.dart';
 
 void _noopPopupMenuSelected(String value) {}
 
@@ -84,6 +87,26 @@ void main() {
       theme.inputDecorationTheme.prefixIconConstraints?.maxHeight,
       ThanksSpacing.inputHeight,
     );
+  });
+
+  test('theme exposes semantic palettes and spacing tokens', () {
+    final materialTheme = ThanksTheme.light();
+    final theme = materialTheme.extension<ThanksTheme>()!;
+
+    expect(theme.success.main, ThanksColors.success);
+    expect(theme.success.onMain, ThanksColors.surface);
+    expect(theme.success.subtle, ThanksColors.successBackground);
+    expect(theme.success.onSubtle, ThanksColors.success);
+    expect(theme.success.border, ThanksColors.successBorder);
+    expect(theme.error.main, ThanksColors.danger);
+    expect(theme.info.main, ThanksColors.info);
+    expect(theme.spacing.inputHeight, ThanksSpacing.inputHeight);
+    expect(theme.spacing.buttonHeight, ThanksSpacing.buttonHeight);
+    expect(theme.surface.page, ThanksColors.pageBackground);
+    expect(theme.surface.panel, ThanksColors.surface);
+    expect(theme.surface.hover, ThanksColors.surface2);
+    expect(theme.surface.input, ThanksColors.surface);
+    expect(theme.surface.selected.a, closeTo(28 / 255, 0.001));
   });
 
   testWidgets('plain and icon text fields share the 40px minimum height', (

@@ -33,6 +33,10 @@ abstract final class ThanksColors {
   static const danger = Color(0xFFB92B2B);
   static const dangerBackground = Color(0xFFFDEAEA);
   static const dangerBorder = Color(0xFFF4C0C0);
+
+  static const info = primary500;
+  static const infoBackground = primary50;
+  static const infoBorder = primary100;
 }
 
 /// Brand-specific colours used to build a [ThanksTheme].

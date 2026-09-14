@@ -63,3 +63,103 @@ abstract final class ThanksSpacing {
     fabClearance,
   );
 }
+
+/// Spacing and dimension tokens exposed through [ThanksTheme].
+///
+/// [ThanksSpacing] remains the internal source used to construct the
+/// production theme. Consumers should read these values through
+/// `ThanksTheme.of(context).spacing`.
+@immutable
+class ThanksSpacingTokens {
+  const ThanksSpacingTokens({
+    required this.extraSmall,
+    required this.small,
+    required this.medium,
+    required this.radiusSmall,
+    required this.radiusMedium,
+    required this.radiusFull,
+    required this.iconSmall,
+    required this.iconMedium,
+    required this.iconLarge,
+    required this.appBarHeight,
+    required this.inputHeight,
+    required this.buttonHeight,
+    required this.navigationDrawerWidthLeft,
+    required this.navigationDrawerWidthRight,
+    required this.viewHeightMinimum,
+    required this.formWidthMinimum,
+    required this.formWidthMaximum,
+    required this.fabClearance,
+    required this.contentWidthForm,
+    required this.contentWidthWorkspace,
+    required this.inputFieldWidthFilter,
+  });
+
+  static const defaults = ThanksSpacingTokens(
+    extraSmall: ThanksSpacing.extraSmall,
+    small: ThanksSpacing.small,
+    medium: ThanksSpacing.medium,
+    radiusSmall: ThanksSpacing.radiusSmall,
+    radiusMedium: ThanksSpacing.radiusMedium,
+    radiusFull: ThanksSpacing.radiusFull,
+    iconSmall: ThanksSpacing.iconSmall,
+    iconMedium: ThanksSpacing.iconMedium,
+    iconLarge: ThanksSpacing.iconLarge,
+    appBarHeight: ThanksSpacing.appBarHeight,
+    inputHeight: ThanksSpacing.inputHeight,
+    buttonHeight: ThanksSpacing.buttonHeight,
+    navigationDrawerWidthLeft: ThanksSpacing.navigationDrawerWidthLeft,
+    navigationDrawerWidthRight: ThanksSpacing.navigationDrawerWidthRight,
+    viewHeightMinimum: ThanksSpacing.viewHeightMinimum,
+    formWidthMinimum: ThanksSpacing.formWidthMinimum,
+    formWidthMaximum: ThanksSpacing.formWidthMaximum,
+    fabClearance: ThanksSpacing.fabClearance,
+    contentWidthForm: ThanksSpacing.contentWidthForm,
+    contentWidthWorkspace: ThanksSpacing.contentWidthWorkspace,
+    inputFieldWidthFilter: ThanksSpacing.inputFieldWidthFilter,
+  );
+
+  final double extraSmall;
+  final double small;
+  final double medium;
+  final double radiusSmall;
+  final double radiusMedium;
+  final double radiusFull;
+  final double iconSmall;
+  final double iconMedium;
+  final double iconLarge;
+  final double appBarHeight;
+  final double inputHeight;
+  final double buttonHeight;
+  final double navigationDrawerWidthLeft;
+  final double navigationDrawerWidthRight;
+  final double viewHeightMinimum;
+  final double formWidthMinimum;
+  final double formWidthMaximum;
+  final double fabClearance;
+  final FitSize contentWidthForm;
+  final FitSize contentWidthWorkspace;
+  final double inputFieldWidthFilter;
+
+  EdgeInsets get inputContentPadding => EdgeInsets.symmetric(
+    horizontal: medium,
+    vertical: (inputHeight - medium) / 2,
+  );
+
+  SizedBox get spaceExtraSmall => SizedBox.square(dimension: extraSmall);
+  SizedBox get spaceSmall => SizedBox.square(dimension: small);
+  SizedBox get spaceMedium => SizedBox.square(dimension: medium);
+
+  EdgeInsets get insetExtraSmall => EdgeInsets.all(extraSmall);
+  EdgeInsets get insetSmall => EdgeInsets.all(small);
+  EdgeInsets get insetSmallHorizontal =>
+      EdgeInsets.symmetric(horizontal: small);
+  EdgeInsets get insetMedium => EdgeInsets.all(medium);
+  EdgeInsets get insetMediumHorizontal =>
+      EdgeInsets.symmetric(horizontal: medium);
+  EdgeInsets get insetMediumVertical => EdgeInsets.symmetric(vertical: medium);
+  EdgeInsets get insetSmallWithLeftMedium =>
+      EdgeInsets.fromLTRB(medium, small, small, small);
+  EdgeInsets get insetMediumWithFab =>
+      EdgeInsets.fromLTRB(medium, medium, medium, fabClearance);
+}

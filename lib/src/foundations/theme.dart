@@ -5,73 +5,208 @@ import 'colors.dart';
 import 'spacing.dart';
 import 'typography.dart';
 
+/// Semantic surface roles used to group application content without relying
+/// on elevation or page-local color values.
+@immutable
+class ThanksSurfaceTokens {
+  const ThanksSurfaceTokens({
+    required this.page,
+    required this.panel,
+    required this.hover,
+    required this.input,
+    required this.selected,
+  });
+
+  final Color page;
+  final Color panel;
+  final Color hover;
+  final Color input;
+  final Color selected;
+
+  ThanksSurfaceTokens copyWith({
+    Color? page,
+    Color? panel,
+    Color? hover,
+    Color? input,
+    Color? selected,
+  }) => ThanksSurfaceTokens(
+    page: page ?? this.page,
+    panel: panel ?? this.panel,
+    hover: hover ?? this.hover,
+    input: input ?? this.input,
+    selected: selected ?? this.selected,
+  );
+
+  static ThanksSurfaceTokens lerp(
+    ThanksSurfaceTokens a,
+    ThanksSurfaceTokens b,
+    double t,
+  ) => ThanksSurfaceTokens(
+    page: Color.lerp(a.page, b.page, t)!,
+    panel: Color.lerp(a.panel, b.panel, t)!,
+    hover: Color.lerp(a.hover, b.hover, t)!,
+    input: Color.lerp(a.input, b.input, t)!,
+    selected: Color.lerp(a.selected, b.selected, t)!,
+  );
+}
+
+/// A semantic color palette with foreground and surface roles.
+@immutable
+class ThanksColorPalette {
+  const ThanksColorPalette({
+    required this.main,
+    required this.onMain,
+    required this.subtle,
+    required this.onSubtle,
+    required this.border,
+  });
+
+  final Color main;
+  final Color onMain;
+  final Color subtle;
+  final Color onSubtle;
+  final Color border;
+
+  ThanksColorPalette copyWith({
+    Color? main,
+    Color? onMain,
+    Color? subtle,
+    Color? onSubtle,
+    Color? border,
+  }) => ThanksColorPalette(
+    main: main ?? this.main,
+    onMain: onMain ?? this.onMain,
+    subtle: subtle ?? this.subtle,
+    onSubtle: onSubtle ?? this.onSubtle,
+    border: border ?? this.border,
+  );
+
+  static ThanksColorPalette lerp(
+    ThanksColorPalette a,
+    ThanksColorPalette b,
+    double t,
+  ) => ThanksColorPalette(
+    main: Color.lerp(a.main, b.main, t)!,
+    onMain: Color.lerp(a.onMain, b.onMain, t)!,
+    subtle: Color.lerp(a.subtle, b.subtle, t)!,
+    onSubtle: Color.lerp(a.onSubtle, b.onSubtle, t)!,
+    border: Color.lerp(a.border, b.border, t)!,
+  );
+}
+
 /// Semantic theme tokens and the production Material theme.
 @immutable
 class ThanksTheme extends ThemeExtension<ThanksTheme> {
   const ThanksTheme({
-    required this.surfaceElevated,
-    required this.surface2,
+    required this.primary,
+    required this.success,
+    required this.warning,
+    required this.error,
+    required this.info,
+    required this.spacing,
+    required this.surface,
     required this.borderSubtle,
     required this.borderStrong,
     required this.textPrimary,
     required this.textSecondary,
     required this.textMuted,
-    required this.success,
-    required this.successBackground,
-    required this.successBorder,
-    required this.warning,
-    required this.warningBackground,
-    required this.warningBorder,
-    required this.danger,
-    required this.dangerBackground,
-    required this.dangerBorder,
     required this.mono,
   });
 
   static ThanksTheme of(BuildContext context) =>
-      Theme.of(context).extension<ThanksTheme>()!;
+      Theme.of(context).extension<ThanksTheme>() ?? _fallbackExtension;
 
-  final Color surfaceElevated;
-  final Color surface2;
+  static final ThanksTheme _fallbackExtension = _lightExtension(
+    brand: ThanksBrand.defaultBrand,
+  );
+
+  final ThanksColorPalette primary;
+  final ThanksColorPalette success;
+  final ThanksColorPalette warning;
+  final ThanksColorPalette error;
+  final ThanksColorPalette info;
+  final ThanksSpacingTokens spacing;
+  final ThanksSurfaceTokens surface;
   final Color borderSubtle;
   final Color borderStrong;
   final Color textPrimary;
   final Color textSecondary;
   final Color textMuted;
-  final Color success;
-  final Color successBackground;
-  final Color successBorder;
-  final Color warning;
-  final Color warningBackground;
-  final Color warningBorder;
-  final Color danger;
-  final Color dangerBackground;
-  final Color dangerBorder;
   final TextStyle mono;
 
-  static final _lightExtension = ThanksTheme(
-    surfaceElevated: ThanksColors.surface,
-    surface2: ThanksColors.surface2,
-    borderSubtle: ThanksColors.border,
-    borderStrong: ThanksColors.borderStrong,
-    textPrimary: ThanksColors.textPrimary,
-    textSecondary: ThanksColors.textSecondary,
-    textMuted: ThanksColors.textMuted,
-    success: ThanksColors.success,
-    successBackground: ThanksColors.successBackground,
-    successBorder: ThanksColors.successBorder,
-    warning: ThanksColors.warning,
-    warningBackground: ThanksColors.warningBackground,
-    warningBorder: ThanksColors.warningBorder,
-    danger: ThanksColors.danger,
-    dangerBackground: ThanksColors.dangerBackground,
-    dangerBorder: ThanksColors.dangerBorder,
-    mono: ThanksTypography.mono,
-  );
+  /// Compatibility alias for the previous panel token.
+  Color get surfaceElevated => surface.panel;
+
+  /// Compatibility alias for the previous neutral secondary surface token.
+  Color get surface2 => surface.hover;
+
+  // Transitional getters for internal consumers while they migrate to the
+  // semantic palette roles.
+  Color get successBackground => success.subtle;
+  Color get successBorder => success.border;
+  Color get warningBackground => warning.subtle;
+  Color get warningBorder => warning.border;
+  ThanksColorPalette get danger => error;
+  Color get dangerBackground => error.subtle;
+  Color get dangerBorder => error.border;
+
+  static ThanksTheme _lightExtension({required ThanksBrand brand}) =>
+      ThanksTheme(
+        primary: ThanksColorPalette(
+          main: brand.primary,
+          onMain: ThanksColors.surface,
+          subtle: brand.primaryContainer,
+          onSubtle: brand.onPrimaryContainer,
+          border: brand.primary.withValues(alpha: 0.35),
+        ),
+        success: const ThanksColorPalette(
+          main: ThanksColors.success,
+          onMain: ThanksColors.surface,
+          subtle: ThanksColors.successBackground,
+          onSubtle: ThanksColors.success,
+          border: ThanksColors.successBorder,
+        ),
+        warning: const ThanksColorPalette(
+          main: ThanksColors.warning,
+          onMain: ThanksColors.surface,
+          subtle: ThanksColors.warningBackground,
+          onSubtle: ThanksColors.warning,
+          border: ThanksColors.warningBorder,
+        ),
+        error: const ThanksColorPalette(
+          main: ThanksColors.danger,
+          onMain: ThanksColors.surface,
+          subtle: ThanksColors.dangerBackground,
+          onSubtle: ThanksColors.danger,
+          border: ThanksColors.dangerBorder,
+        ),
+        info: const ThanksColorPalette(
+          main: ThanksColors.info,
+          onMain: ThanksColors.surface,
+          subtle: ThanksColors.infoBackground,
+          onSubtle: ThanksColors.textPrimary,
+          border: ThanksColors.infoBorder,
+        ),
+        spacing: ThanksSpacingTokens.defaults,
+        surface: ThanksSurfaceTokens(
+          page: ThanksColors.pageBackground,
+          panel: ThanksColors.surface,
+          hover: ThanksColors.surface2,
+          input: ThanksColors.surface,
+          selected: brand.primary.withAlpha(28),
+        ),
+        borderSubtle: ThanksColors.border,
+        borderStrong: ThanksColors.borderStrong,
+        textPrimary: ThanksColors.textPrimary,
+        textSecondary: ThanksColors.textSecondary,
+        textMuted: ThanksColors.textMuted,
+        mono: ThanksTypography.mono,
+      );
 
   /// Builds the light-only production theme with an optional app brand.
   static ThemeData light({ThanksBrand brand = ThanksBrand.defaultBrand}) {
     final textTheme = ThanksTypography.textTheme;
+    final thanksTheme = _lightExtension(brand: brand);
     final colorScheme = ColorScheme.fromSeed(
       seedColor: brand.primary,
       primary: brand.primary,
@@ -81,15 +216,16 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       secondary: brand.secondary ?? ThanksColors.primary400,
       onSecondary: ThanksColors.surface,
       secondaryContainer: brand.primaryContainer,
-      surfaceContainer: ThanksColors.surface,
-      surfaceContainerHighest: ThanksColors.surface2,
       error: ThanksColors.danger,
       errorContainer: ThanksColors.dangerBackground,
-      onSurface: ThanksColors.textPrimary,
+      outline: ThanksColors.border,
       outlineVariant: ThanksColors.border,
-      surface: ThanksColors.pageBackground,
+      surface: thanksTheme.surface.page,
+      onSurface: ThanksColors.textPrimary,
+      surfaceContainer: thanksTheme.surface.panel,
+      surfaceContainerHighest: thanksTheme.surface.hover,
     );
-    final selectedBackground = brand.primary.withAlpha(28);
+    final selectedBackground = thanksTheme.surface.selected;
     final interactiveHoverColor = brand.primary.withValues(alpha: 0.08);
     final buttonTextStyle = textTheme.bodyMedium;
     const buttonMinimumSize = Size(
@@ -128,7 +264,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       disabledBorder: InputBorder.none,
       alignLabelWithHint: true,
       filled: true,
-      fillColor: ThanksColors.surface,
+      fillColor: thanksTheme.surface.input,
       focusColor: Colors.transparent,
       iconColor: brand.primary,
       hoverColor: interactiveHoverColor,
@@ -158,10 +294,10 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       primaryTextTheme: textTheme,
       textTheme: textTheme,
       colorScheme: colorScheme,
-      extensions: [_lightExtension],
+      extensions: [thanksTheme],
       visualDensity: VisualDensity.compact,
       iconTheme: const IconThemeData(size: ThanksSpacing.iconSmall),
-      scaffoldBackgroundColor: ThanksColors.pageBackground,
+      scaffoldBackgroundColor: thanksTheme.surface.page,
       appBarTheme: AppBarTheme(
         centerTitle: false,
         toolbarHeight: ThanksSpacing.appBarHeight,
@@ -179,7 +315,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       dividerColor: colorScheme.outlineVariant,
       menuTheme: MenuThemeData(
         style: MenuStyle(
-          backgroundColor: const WidgetStatePropertyAll(ThanksColors.surface),
+          backgroundColor: WidgetStatePropertyAll(thanksTheme.surface.panel),
           surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
           elevation: const WidgetStatePropertyAll(4),
           shadowColor: WidgetStatePropertyAll(colorScheme.shadow),
@@ -188,7 +324,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
       dividerTheme: const DividerThemeData(thickness: 0.5, space: 0),
       cardTheme: CardThemeData(
         clipBehavior: Clip.hardEdge,
-        color: ThanksColors.surface,
+        color: thanksTheme.surface.panel,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ThanksSpacing.radiusMedium),
@@ -262,7 +398,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
         ),
         textStyle: buttonTextStyle,
         labelTextStyle: WidgetStatePropertyAll(buttonTextStyle),
-        color: ThanksColors.surface,
+        color: thanksTheme.surface.panel,
         surfaceTintColor: Colors.transparent,
         elevation: 3,
         shadowColor: colorScheme.shadow,
@@ -274,7 +410,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
         textStyle: buttonTextStyle,
         menuStyle: MenuStyle(
           shape: WidgetStatePropertyAll(buttonShape),
-          backgroundColor: const WidgetStatePropertyAll(ThanksColors.surface),
+          backgroundColor: WidgetStatePropertyAll(thanksTheme.surface.panel),
           surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
           minimumSize: const WidgetStatePropertyAll(Size.fromHeight(300)),
           maximumSize: const WidgetStatePropertyAll(Size.fromHeight(600)),
@@ -286,40 +422,32 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
 
   @override
   ThanksTheme copyWith({
-    Color? surfaceElevated,
-    Color? surface2,
+    ThanksColorPalette? primary,
+    ThanksColorPalette? success,
+    ThanksColorPalette? warning,
+    ThanksColorPalette? error,
+    ThanksColorPalette? info,
+    ThanksSpacingTokens? spacing,
+    ThanksSurfaceTokens? surface,
     Color? borderSubtle,
     Color? borderStrong,
     Color? textPrimary,
     Color? textSecondary,
     Color? textMuted,
-    Color? success,
-    Color? successBackground,
-    Color? successBorder,
-    Color? warning,
-    Color? warningBackground,
-    Color? warningBorder,
-    Color? danger,
-    Color? dangerBackground,
-    Color? dangerBorder,
     TextStyle? mono,
   }) => ThanksTheme(
-    surfaceElevated: surfaceElevated ?? this.surfaceElevated,
-    surface2: surface2 ?? this.surface2,
+    primary: primary ?? this.primary,
+    success: success ?? this.success,
+    warning: warning ?? this.warning,
+    error: error ?? this.error,
+    info: info ?? this.info,
+    spacing: spacing ?? this.spacing,
+    surface: surface ?? this.surface,
     borderSubtle: borderSubtle ?? this.borderSubtle,
     borderStrong: borderStrong ?? this.borderStrong,
     textPrimary: textPrimary ?? this.textPrimary,
     textSecondary: textSecondary ?? this.textSecondary,
     textMuted: textMuted ?? this.textMuted,
-    success: success ?? this.success,
-    successBackground: successBackground ?? this.successBackground,
-    successBorder: successBorder ?? this.successBorder,
-    warning: warning ?? this.warning,
-    warningBackground: warningBackground ?? this.warningBackground,
-    warningBorder: warningBorder ?? this.warningBorder,
-    danger: danger ?? this.danger,
-    dangerBackground: dangerBackground ?? this.dangerBackground,
-    dangerBorder: dangerBorder ?? this.dangerBorder,
     mono: mono ?? this.mono,
   );
 
@@ -327,34 +455,18 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
   ThanksTheme lerp(covariant ThanksTheme? other, double t) {
     if (other == null) return this;
     return ThanksTheme(
-      surfaceElevated: Color.lerp(surfaceElevated, other.surfaceElevated, t)!,
-      surface2: Color.lerp(surface2, other.surface2, t)!,
+      primary: ThanksColorPalette.lerp(primary, other.primary, t),
+      success: ThanksColorPalette.lerp(success, other.success, t),
+      warning: ThanksColorPalette.lerp(warning, other.warning, t),
+      error: ThanksColorPalette.lerp(error, other.error, t),
+      info: ThanksColorPalette.lerp(info, other.info, t),
+      spacing: spacing,
+      surface: ThanksSurfaceTokens.lerp(surface, other.surface, t),
       borderSubtle: Color.lerp(borderSubtle, other.borderSubtle, t)!,
       borderStrong: Color.lerp(borderStrong, other.borderStrong, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textMuted: Color.lerp(textMuted, other.textMuted, t)!,
-      success: Color.lerp(success, other.success, t)!,
-      successBackground: Color.lerp(
-        successBackground,
-        other.successBackground,
-        t,
-      )!,
-      successBorder: Color.lerp(successBorder, other.successBorder, t)!,
-      warning: Color.lerp(warning, other.warning, t)!,
-      warningBackground: Color.lerp(
-        warningBackground,
-        other.warningBackground,
-        t,
-      )!,
-      warningBorder: Color.lerp(warningBorder, other.warningBorder, t)!,
-      danger: Color.lerp(danger, other.danger, t)!,
-      dangerBackground: Color.lerp(
-        dangerBackground,
-        other.dangerBackground,
-        t,
-      )!,
-      dangerBorder: Color.lerp(dangerBorder, other.dangerBorder, t)!,
       mono: TextStyle.lerp(mono, other.mono, t)!,
     );
   }

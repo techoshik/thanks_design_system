@@ -3,6 +3,7 @@ import 'package:thanks_design_system/thanks_design_system.dart';
 import 'package:widgetbook/widgetbook.dart';
 
 Widget sliverLoadingPlaygroundUseCase(BuildContext context) {
+  final theme = Theme.of(context);
   final message = context.knobs.stringOrNull(
     label: 'Message',
     initialValue: 'Loading invoices...',
@@ -15,7 +16,7 @@ Widget sliverLoadingPlaygroundUseCase(BuildContext context) {
   );
 
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: CustomScrollView(
       slivers: [
         ThanksSliverLoading(
@@ -28,6 +29,8 @@ Widget sliverLoadingPlaygroundUseCase(BuildContext context) {
 }
 
 Widget sliverEmptyStatePlaygroundUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
   final title = context.knobs.stringOrNull(
     label: 'Title',
     initialValue: 'No Invoices Found',
@@ -46,15 +49,15 @@ Widget sliverEmptyStatePlaygroundUseCase(BuildContext context) {
   );
 
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: CustomScrollView(
       slivers: [
         ThanksSliverEmptyState(
           icon: showIcon
-              ? const Icon(
+              ? Icon(
                   Icons.receipt_long_outlined,
                   size: 48,
-                  color: ThanksColors.textMuted,
+                  color: thanksTheme.textMuted,
                 )
               : null,
           title: title?.isEmpty ?? true ? null : title,

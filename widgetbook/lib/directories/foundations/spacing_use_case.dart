@@ -2,370 +2,155 @@ import 'package:flutter/material.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
 
 Widget spacingUseCase(BuildContext context) {
-  final coreSpaces = <(String, String, double)>[
-    ('Small', 'ThanksSpacing.small', ThanksSpacing.small),
-    ('Medium', 'ThanksSpacing.medium', ThanksSpacing.medium),
-  ];
-
-  final radii = <(String, String, double)>[
-    ('Radius Small', 'ThanksSpacing.radiusSmall', ThanksSpacing.radiusSmall),
-    ('Radius Medium', 'ThanksSpacing.radiusMedium', ThanksSpacing.radiusMedium),
-    ('Radius Full', 'ThanksSpacing.radiusFull', ThanksSpacing.radiusFull),
-  ];
-
-  final componentDimensions = <(String, String, double)>[
-    ('Button Height', 'ThanksSpacing.buttonHeight', ThanksSpacing.buttonHeight),
-    ('Input Height', 'ThanksSpacing.inputHeight', ThanksSpacing.inputHeight),
-    (
-      'App Bar Height',
-      'ThanksSpacing.appBarHeight',
-      ThanksSpacing.appBarHeight,
-    ),
-    ('FAB Clearance', 'ThanksSpacing.fabClearance', ThanksSpacing.fabClearance),
-  ];
-
-  final layoutDimensions = <(String, String, double)>[
-    (
-      'Nav Drawer Width',
-      'ThanksSpacing.navigationDrawerWidthLeft',
-      ThanksSpacing.navigationDrawerWidthLeft,
-    ),
-    (
-      'Right Drawer Width',
-      'ThanksSpacing.navigationDrawerWidthRight',
-      ThanksSpacing.navigationDrawerWidthRight,
-    ),
-    (
-      'View Height Min',
-      'ThanksSpacing.viewHeightMinimum',
-      ThanksSpacing.viewHeightMinimum,
-    ),
-    (
-      'Form Width Min',
-      'ThanksSpacing.formWidthMinimum',
-      ThanksSpacing.formWidthMinimum,
-    ),
-    (
-      'Form Width Max',
-      'ThanksSpacing.formWidthMaximum',
-      ThanksSpacing.formWidthMaximum,
-    ),
-  ];
-
-  final pageGutters = <(String, String, double)>[
-    ('Mobile Gutter', 'ThanksSpacing.medium (1x)', ThanksSpacing.medium),
-    (
-      'Tablet Gutter',
-      'ThanksSpacing.medium * 2 (2x)',
-      ThanksSpacing.medium * 2,
-    ),
-    (
-      'Desktop Gutter',
-      'ThanksSpacing.medium * 4 (4x)',
-      ThanksSpacing.medium * 4,
-    ),
-  ];
-
-  final insets = <(String, String, EdgeInsets)>[
-    ('Inset Small', 'all(8)', ThanksSpacing.insetSmall),
-    ('Inset Medium', 'all(16)', ThanksSpacing.insetMedium),
-    (
-      'Small w/ Left Medium',
-      'fromLTRB(16, 8, 8, 8)',
-      ThanksSpacing.insetSmallWithLeftMedium,
-    ),
-    (
-      'Medium w/ FAB',
-      'fromLTRB(16, 16, 16, 100)',
-      ThanksSpacing.insetMediumWithFab,
-    ),
-    (
-      'Page Vertical',
-      'only(top: 16, bottom: 100)',
-      ThanksSpacing.insetPageVertical,
-    ),
+  final materialTheme = Theme.of(context);
+  final theme = ThanksTheme.of(context);
+  final spacing = theme.spacing;
+  final dimensions = <({String name, double value})>[
+    (name: 'extraSmall', value: spacing.extraSmall),
+    (name: 'small', value: spacing.small),
+    (name: 'medium', value: spacing.medium),
+    (name: 'inputHeight', value: spacing.inputHeight),
+    (name: 'buttonHeight', value: spacing.buttonHeight),
+    (name: 'appBarHeight', value: spacing.appBarHeight),
+    (name: 'fabClearance', value: spacing.fabClearance),
+    (name: 'formWidthMinimum', value: spacing.formWidthMinimum),
+    (name: 'formWidthMaximum', value: spacing.formWidthMaximum),
+    (name: 'filterFieldWidth', value: spacing.inputFieldWidthFilter),
   ];
 
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
-    body: SingleChildScrollView(
-      padding: ThanksSpacing.insetMedium,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Core Spacing', style: Theme.of(context).textTheme.titleLarge),
-          ThanksSpacing.spaceSmall,
-          Text(
-            'Primary 8px-based spacing grid used for padding, gaps, and margins.',
-            style: TextStyle(color: ThanksColors.textSecondary, fontSize: 13),
-          ),
-          ThanksSpacing.spaceMedium,
-          for (final (name, token, dimension) in coreSpaces)
-            _DimensionBar(
-              name: name,
-              token: token,
-              dimension: dimension,
-              maxDisplayWidth: 300,
+    backgroundColor: materialTheme.scaffoldBackgroundColor,
+    body: ListView(
+      padding: spacing.insetMedium,
+      children: [
+        Text(
+          'Theme-owned dimensions',
+          style: materialTheme.textTheme.titleLarge,
+        ),
+        SizedBox(height: spacing.small),
+        Text(
+          'Spacing and sizing are read from ThanksTheme.of(context).spacing.',
+          style: materialTheme.textTheme.bodyMedium,
+        ),
+        SizedBox(height: spacing.medium),
+        for (final dimension in dimensions)
+          _DimensionRow(name: dimension.name, value: dimension.value),
+        SizedBox(height: spacing.medium),
+        Text('Radii', style: materialTheme.textTheme.titleLarge),
+        SizedBox(height: spacing.small),
+        Wrap(
+          spacing: spacing.medium,
+          runSpacing: spacing.medium,
+          children: [
+            _RadiusCard(label: 'small', radius: spacing.radiusSmall),
+            _RadiusCard(label: 'medium', radius: spacing.radiusMedium),
+            _RadiusCard(label: 'full', radius: spacing.radiusFull),
+          ],
+        ),
+        SizedBox(height: spacing.medium),
+        Text('Composed insets', style: materialTheme.textTheme.titleLarge),
+        SizedBox(height: spacing.small),
+        Wrap(
+          spacing: spacing.medium,
+          runSpacing: spacing.medium,
+          children: [
+            _InsetCard(label: 'small', inset: spacing.insetSmall),
+            _InsetCard(label: 'medium', inset: spacing.insetMedium),
+            _InsetCard(
+              label: 'mediumWithFab',
+              inset: spacing.insetMediumWithFab,
             ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text('Corner Radii', style: Theme.of(context).textTheme.titleLarge),
-          ThanksSpacing.spaceSmall,
-          Text(
-            'Border radius presets for cards, buttons, dialogs, and pills.',
-            style: TextStyle(color: ThanksColors.textSecondary, fontSize: 13),
-          ),
-          ThanksSpacing.spaceMedium,
-          Wrap(
-            spacing: ThanksSpacing.medium,
-            runSpacing: ThanksSpacing.medium,
-            children: [
-              for (final (name, token, radius) in radii)
-                Container(
-                  width: 170,
-                  padding: const EdgeInsets.all(ThanksSpacing.medium),
-                  decoration: BoxDecoration(
-                    color: ThanksColors.surface,
-                    borderRadius: BorderRadius.circular(radius),
-                    border: Border.all(
-                      color: ThanksColors.primary400,
-                      width: 2,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x0A000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(height: ThanksSpacing.small),
-                      Text(
-                        '${radius.toInt()}px',
-                        style: const TextStyle(
-                          color: ThanksColors.primary600,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                      Text(
-                        token,
-                        style: const TextStyle(
-                          color: ThanksColors.textMuted,
-                          fontSize: 10,
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text(
-            'Component Dimensions & Heights',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ThanksSpacing.spaceSmall,
-          Text(
-            'Standard heights and vertical clearance used by interactive widgets.',
-            style: TextStyle(color: ThanksColors.textSecondary, fontSize: 13),
-          ),
-          ThanksSpacing.spaceMedium,
-          for (final (name, token, dimension) in componentDimensions)
-            _DimensionBar(
-              name: name,
-              token: token,
-              dimension: dimension,
-              maxDisplayWidth: 400,
-            ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text(
-            'Responsive Page Gutters',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ThanksSpacing.spaceSmall,
-          Text(
-            'Adaptive horizontal margins applied by ThanksScaffold depending on screen size.',
-            style: TextStyle(color: ThanksColors.textSecondary, fontSize: 13),
-          ),
-          ThanksSpacing.spaceMedium,
-          for (final (name, token, dimension) in pageGutters)
-            _DimensionBar(
-              name: name,
-              token: token,
-              dimension: dimension,
-              color: ThanksColors.success,
-              maxDisplayWidth: 400,
-            ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text(
-            'Layout & Navigation Dimensions',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ThanksSpacing.spaceSmall,
-          Text(
-            'Structural dimensions for side drawers, modals, and responsive form sheets.',
-            style: TextStyle(color: ThanksColors.textSecondary, fontSize: 13),
-          ),
-          ThanksSpacing.spaceMedium,
-          for (final (name, token, dimension) in layoutDimensions)
-            _DimensionBar(
-              name: name,
-              token: token,
-              dimension: dimension,
-              color: ThanksColors.primary600,
-              maxDisplayWidth: 450,
-            ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text(
-            'Padding & Insets Presets',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ThanksSpacing.spaceSmall,
-          Text(
-            'Pre-composed EdgeInsets instances for consistent widget padding.',
-            style: TextStyle(color: ThanksColors.textSecondary, fontSize: 13),
-          ),
-          ThanksSpacing.spaceMedium,
-          Wrap(
-            spacing: ThanksSpacing.medium,
-            runSpacing: ThanksSpacing.medium,
-            children: [
-              for (final (name, spec, inset) in insets)
-                Container(
-                  width: 220,
-                  padding: const EdgeInsets.all(ThanksSpacing.small),
-                  decoration: BoxDecoration(
-                    color: ThanksColors.surface,
-                    borderRadius: BorderRadius.circular(
-                      ThanksSpacing.radiusSmall,
-                    ),
-                    border: Border.all(color: ThanksColors.border),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        spec,
-                        style: const TextStyle(
-                          color: ThanksColors.primary500,
-                          fontSize: 11,
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: ThanksColors.primary50,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: ThanksColors.primary100),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'T:${inset.top.toInt()} B:${inset.bottom.toInt()} L:${inset.left.toInt()} R:${inset.right.toInt()}',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: ThanksColors.textSecondary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: ThanksSpacing.fabClearance),
-        ],
-      ),
+          ],
+        ),
+      ],
     ),
   );
 }
 
-class _DimensionBar extends StatelessWidget {
-  const _DimensionBar({
-    required this.name,
-    required this.token,
-    required this.dimension,
-    this.color = ThanksColors.primary400,
-    this.maxDisplayWidth = 400,
-  });
+class _DimensionRow extends StatelessWidget {
+  const _DimensionRow({required this.name, required this.value});
 
   final String name;
-  final String token;
-  final double dimension;
-  final Color color;
-  final double maxDisplayWidth;
+  final double value;
 
   @override
   Widget build(BuildContext context) {
+    final spacing = ThanksTheme.of(context).spacing;
+    final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: ThanksSpacing.medium),
+      padding: EdgeInsets.only(bottom: spacing.small),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            width: 170,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-                Text(
-                  token,
-                  style: const TextStyle(
-                    color: ThanksColors.textMuted,
-                    fontSize: 10,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              ],
+            width: 180,
+            child: Text(name, style: theme.textTheme.bodyMedium),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                width: value.clamp(4, 420),
+                height: spacing.small,
+                color: theme.colorScheme.primary,
+              ),
             ),
           ),
-          Container(
-            height: 24,
-            width: dimension.clamp(8, maxDisplayWidth),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: ThanksSpacing.small),
+          SizedBox(width: spacing.small),
           Text(
-            '${dimension.toInt()}px',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: ThanksColors.textSecondary,
-            ),
+            '${value.toStringAsFixed(0)}px',
+            style: theme.textTheme.labelMedium,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RadiusCard extends StatelessWidget {
+  const _RadiusCard({required this.label, required this.radius});
+
+  final String label;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = ThanksTheme.of(context).spacing;
+    final theme = Theme.of(context);
+    return Container(
+      width: 150,
+      height: 80,
+      padding: spacing.insetSmall,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer,
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(radius),
+      ),
+      alignment: Alignment.bottomLeft,
+      child: Text(label, style: theme.textTheme.labelMedium),
+    );
+  }
+}
+
+class _InsetCard extends StatelessWidget {
+  const _InsetCard({required this.label, required this.inset});
+
+  final String label;
+  final EdgeInsets inset;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = ThanksTheme.of(context).spacing;
+    return Container(
+      color: theme.colorScheme.surfaceContainerHighest,
+      padding: inset,
+      child: Container(
+        width: 130,
+        height: 54,
+        padding: spacing.insetSmall,
+        color: theme.colorScheme.surface,
+        alignment: Alignment.center,
+        child: Text(label, style: theme.textTheme.labelMedium),
       ),
     );
   }

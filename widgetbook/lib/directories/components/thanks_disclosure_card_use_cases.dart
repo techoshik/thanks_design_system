@@ -19,10 +19,11 @@ class _ServiceDisclosureCardPrototypeState
 
   @override
   Widget build(BuildContext context) {
+    final spacing = ThanksTheme.of(context).spacing;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
-        padding: const EdgeInsets.all(ThanksSpacing.medium),
+        padding: EdgeInsets.all(spacing.medium),
         child: ThanksDisclosureCard(
           semanticLabel: 'Skilled Migration Service',
           expanded: _expanded,
@@ -54,12 +55,13 @@ class _ServiceSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = ThanksTheme.of(context).spacing;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Wrap(
-          spacing: ThanksSpacing.small,
-          runSpacing: ThanksSpacing.small,
+          spacing: spacing.small,
+          runSpacing: spacing.small,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
@@ -73,10 +75,10 @@ class _ServiceSummary extends StatelessWidget {
             ),
           ],
         ),
-        ThanksSpacing.spaceMedium,
+        spacing.spaceMedium,
         Wrap(
-          spacing: ThanksSpacing.medium,
-          runSpacing: ThanksSpacing.small,
+          spacing: spacing.medium,
+          runSpacing: spacing.small,
           children: const [
             _Metadata(
               icon: Icons.dynamic_form_outlined,
@@ -108,6 +110,7 @@ class _ServiceDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = ThanksTheme.of(context).spacing;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,22 +118,22 @@ class _ServiceDetails extends StatelessWidget {
           'A complete intake service for skilled-migration clients, including eligibility review, document collection, and preparation for the next case stage. The full description remains available here without making every list row tall.',
           style: theme.textTheme.bodyMedium,
         ),
-        ThanksSpacing.spaceMedium,
+        spacing.spaceMedium,
         Text('Requirements Form', style: theme.textTheme.titleSmall),
-        ThanksSpacing.spaceExtraSmall,
+        spacing.spaceExtraSmall,
         Text(
           'Skilled Migration Intake · 12 active fields · 3 document uploads',
           style: theme.textTheme.bodySmall,
         ),
-        ThanksSpacing.spaceMedium,
+        spacing.spaceMedium,
         Text(
           'Created 2 Sep 2026 · Last updated 9 Sep 2026',
           style: theme.textTheme.bodySmall,
         ),
-        ThanksSpacing.spaceMedium,
+        spacing.spaceMedium,
         Wrap(
-          spacing: ThanksSpacing.small,
-          runSpacing: ThanksSpacing.small,
+          spacing: spacing.small,
+          runSpacing: spacing.small,
           children: [
             ThanksButton(
               label: 'Preview Form',
@@ -160,11 +163,12 @@ class _Metadata extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = ThanksTheme.of(context).spacing;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: theme.colorScheme.onSurfaceVariant),
-        ThanksSpacing.spaceSmall,
+        spacing.spaceSmall,
         Text(label, style: theme.textTheme.bodySmall),
       ],
     );

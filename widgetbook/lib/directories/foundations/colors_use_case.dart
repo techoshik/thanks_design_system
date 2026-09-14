@@ -2,172 +2,74 @@ import 'package:flutter/material.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
 
 Widget colorsUseCase(BuildContext context) {
+  final materialTheme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
+  final spacing = thanksTheme.spacing;
+  final swatches = <({String name, Color color, Color textColor})>[
+    (
+      name: 'primary',
+      color: materialTheme.colorScheme.primary,
+      textColor: materialTheme.colorScheme.onPrimary,
+    ),
+    (
+      name: 'primaryContainer',
+      color: materialTheme.colorScheme.primaryContainer,
+      textColor: materialTheme.colorScheme.onPrimaryContainer,
+    ),
+    (
+      name: 'surface',
+      color: materialTheme.colorScheme.surface,
+      textColor: materialTheme.colorScheme.onSurface,
+    ),
+    (
+      name: 'surfaceContainerHighest',
+      color: materialTheme.colorScheme.surfaceContainerHighest,
+      textColor: materialTheme.colorScheme.onSurface,
+    ),
+    (
+      name: 'outlineVariant',
+      color: materialTheme.colorScheme.outlineVariant,
+      textColor: materialTheme.colorScheme.onSurface,
+    ),
+  ];
+
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
-    body: SingleChildScrollView(
-      padding: ThanksSpacing.insetMedium,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Primary Scale', style: Theme.of(context).textTheme.titleLarge),
-          ThanksSpacing.spaceMedium,
-          Wrap(
-            spacing: ThanksSpacing.medium,
-            runSpacing: ThanksSpacing.medium,
-            children: const [
+    backgroundColor: materialTheme.scaffoldBackgroundColor,
+    body: ListView(
+      padding: spacing.insetMedium,
+      children: [
+        Text('Material color roles', style: materialTheme.textTheme.titleLarge),
+        SizedBox(height: spacing.small),
+        Wrap(
+          spacing: spacing.medium,
+          runSpacing: spacing.medium,
+          children: [
+            for (final swatch in swatches)
               _ColorCard(
-                name: 'primary50',
-                color: ThanksColors.primary50,
-                textColor: Colors.black87,
+                name: swatch.name,
+                color: swatch.color,
+                textColor: swatch.textColor,
               ),
-              _ColorCard(
-                name: 'primary100',
-                color: ThanksColors.primary100,
-                textColor: Colors.black87,
-              ),
-              _ColorCard(
-                name: 'primary200',
-                color: ThanksColors.primary200,
-                textColor: Colors.black87,
-              ),
-              _ColorCard(
-                name: 'primary400',
-                color: ThanksColors.primary400,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'primary500 (Base)',
-                color: ThanksColors.primary500,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'primary600',
-                color: ThanksColors.primary600,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'primary800',
-                color: ThanksColors.primary800,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'primary950',
-                color: ThanksColors.primary950,
-                textColor: Colors.white,
-              ),
-            ],
-          ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text(
-            'Surfaces & Backgrounds',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ThanksSpacing.spaceMedium,
-          Wrap(
-            spacing: ThanksSpacing.medium,
-            runSpacing: ThanksSpacing.medium,
-            children: const [
-              _ColorCard(
-                name: 'pageBackground',
-                color: ThanksColors.pageBackground,
-                textColor: Colors.black87,
-                hasBorder: true,
-              ),
-              _ColorCard(
-                name: 'surface',
-                color: ThanksColors.surface,
-                textColor: Colors.black87,
-                hasBorder: true,
-              ),
-              _ColorCard(
-                name: 'surface2',
-                color: ThanksColors.surface2,
-                textColor: Colors.black87,
-                hasBorder: true,
-              ),
-            ],
-          ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text('Borders & Text', style: Theme.of(context).textTheme.titleLarge),
-          ThanksSpacing.spaceMedium,
-          Wrap(
-            spacing: ThanksSpacing.medium,
-            runSpacing: ThanksSpacing.medium,
-            children: const [
-              _ColorCard(
-                name: 'border',
-                color: ThanksColors.border,
-                textColor: Colors.black87,
-              ),
-              _ColorCard(
-                name: 'borderStrong',
-                color: ThanksColors.borderStrong,
-                textColor: Colors.black87,
-              ),
-              _ColorCard(
-                name: 'textPrimary',
-                color: ThanksColors.textPrimary,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'textSecondary',
-                color: ThanksColors.textSecondary,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'textMuted',
-                color: ThanksColors.textMuted,
-                textColor: Colors.white,
-              ),
-            ],
-          ),
-          const SizedBox(height: ThanksSpacing.medium * 1.5),
-          Text(
-            'Semantic Feedback',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          ThanksSpacing.spaceMedium,
-          Wrap(
-            spacing: ThanksSpacing.medium,
-            runSpacing: ThanksSpacing.medium,
-            children: const [
-              _ColorCard(
-                name: 'success',
-                color: ThanksColors.success,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'successBackground',
-                color: ThanksColors.successBackground,
-                textColor: ThanksColors.success,
-                hasBorder: true,
-              ),
-              _ColorCard(
-                name: 'warning',
-                color: ThanksColors.warning,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'warningBackground',
-                color: ThanksColors.warningBackground,
-                textColor: ThanksColors.warning,
-                hasBorder: true,
-              ),
-              _ColorCard(
-                name: 'danger',
-                color: ThanksColors.danger,
-                textColor: Colors.white,
-              ),
-              _ColorCard(
-                name: 'dangerBackground',
-                color: ThanksColors.dangerBackground,
-                textColor: ThanksColors.danger,
-                hasBorder: true,
-              ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
+        SizedBox(height: spacing.medium),
+        Text(
+          'Semantic status roles',
+          style: materialTheme.textTheme.titleLarge,
+        ),
+        SizedBox(height: spacing.small),
+        Wrap(
+          spacing: spacing.medium,
+          runSpacing: spacing.medium,
+          children: [
+            _PaletteCard(name: 'Primary', palette: thanksTheme.primary),
+            _PaletteCard(name: 'Success', palette: thanksTheme.success),
+            _PaletteCard(name: 'Warning', palette: thanksTheme.warning),
+            _PaletteCard(name: 'Error', palette: thanksTheme.error),
+            _PaletteCard(name: 'Info', palette: thanksTheme.info),
+          ],
+        ),
+      ],
     ),
   );
 }
@@ -177,56 +79,112 @@ class _ColorCard extends StatelessWidget {
     required this.name,
     required this.color,
     required this.textColor,
-    this.hasBorder = false,
   });
 
   final String name;
   final Color color;
   final Color textColor;
-  final bool hasBorder;
 
   @override
   Widget build(BuildContext context) {
-    final hexString =
-        '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
-
+    final spacing = ThanksTheme.of(context).spacing;
     return Container(
-      width: 170,
-      height: 90,
-      padding: const EdgeInsets.all(ThanksSpacing.small),
+      width: 150,
+      height: 72,
+      padding: spacing.insetSmall,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(ThanksSpacing.radiusSmall),
-        border: hasBorder ? Border.all(color: ThanksColors.border) : null,
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(spacing.radiusSmall),
+      ),
+      alignment: Alignment.bottomLeft,
+      child: Text(
+        name,
+        style: Theme.of(context).textTheme.labelMedium
+            ?.copyWith(color: textColor),
+      ),
+    );
+  }
+}
+
+class _PaletteCard extends StatelessWidget {
+  const _PaletteCard({required this.name, required this.palette});
+
+  final String name;
+  final ThanksColorPalette palette;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = ThanksTheme.of(context).spacing;
+    final materialTheme = Theme.of(context);
+    return Container(
+      width: 240,
+      padding: spacing.insetSmall,
+      decoration: BoxDecoration(
+        color: materialTheme.colorScheme.surface,
+        border: Border.all(color: materialTheme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(spacing.radiusSmall),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            name,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            ),
+          Text(name, style: materialTheme.textTheme.titleSmall),
+          SizedBox(height: spacing.small),
+          _RoleRow(
+            label: 'main',
+            color: palette.main,
+            textColor: palette.onMain,
           ),
-          Text(
-            hexString,
-            style: TextStyle(
-              color: textColor.withAlpha(200),
-              fontSize: 11,
-              fontFamily: 'monospace',
-            ),
+          _RoleRow(
+            label: 'onMain',
+            color: palette.onMain,
+            textColor: palette.main,
+          ),
+          _RoleRow(
+            label: 'subtle',
+            color: palette.subtle,
+            textColor: palette.onSubtle,
+          ),
+          _RoleRow(
+            label: 'onSubtle',
+            color: palette.onSubtle,
+            textColor: palette.main,
+          ),
+          _RoleRow(
+            label: 'border',
+            color: palette.border,
+            textColor: palette.onSubtle,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RoleRow extends StatelessWidget {
+  const _RoleRow({
+    required this.label,
+    required this.color,
+    required this.textColor,
+  });
+
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = ThanksTheme.of(context).spacing;
+    return Container(
+      height: 32,
+      margin: EdgeInsets.only(bottom: spacing.extraSmall),
+      padding: spacing.insetSmallHorizontal,
+      color: color,
+      alignment: Alignment.centerLeft,
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall
+            ?.copyWith(color: textColor),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
+import '../foundations/theme.dart';
 
 /// A centered empty state sliver that fills the remaining viewport.
 ///
@@ -54,27 +54,28 @@ class ThanksSliverEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
+    final thanksTheme = ThanksTheme.of(context);
 
     final effectiveTitleStyle =
         titleStyle ??
         textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: ThanksColors.textPrimary,
+          color: thanksTheme.textPrimary,
         ) ??
-        const TextStyle(
+        TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: ThanksColors.textPrimary,
+          color: thanksTheme.textPrimary,
         );
 
     final effectiveSubtitleStyle =
         subtitleStyle ??
         textTheme.bodyMedium?.copyWith(
-          color: ThanksColors.textSecondary,
+          color: thanksTheme.textSecondary,
         ) ??
-        const TextStyle(
+        TextStyle(
           fontSize: 14,
-          color: ThanksColors.textSecondary,
+          color: thanksTheme.textSecondary,
         );
 
     return SliverFillRemaining(

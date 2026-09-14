@@ -3,6 +3,9 @@ import 'package:thanks_design_system/thanks_design_system.dart';
 import 'package:widgetbook/widgetbook.dart';
 
 Widget cardPlaygroundUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
+  final spacing = thanksTheme.spacing;
   final title = context.knobs.string(
     label: 'Title',
     initialValue: 'Account Summary',
@@ -94,7 +97,7 @@ Widget cardPlaygroundUseCase(BuildContext context) {
   );
 
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -129,21 +132,21 @@ Widget cardPlaygroundUseCase(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Primary card content goes here. This area adapts to any layout or widgets.',
               ),
-              ThanksSpacing.spaceMedium,
+              spacing.spaceMedium,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Outstanding Balance',
-                    style: TextStyle(color: ThanksColors.textSecondary),
+                    style: TextStyle(color: thanksTheme.textSecondary),
                   ),
                   Text(
                     '\$1,240.00',
                     style: Theme.of(context).textTheme.titleMedium
-                        ?.copyWith(color: ThanksColors.primary500),
+                        ?.copyWith(color: thanksTheme.primary.main),
                   ),
                 ],
               ),
@@ -156,8 +159,11 @@ Widget cardPlaygroundUseCase(BuildContext context) {
 }
 
 Widget cardSectionOutsideUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
+  final spacing = thanksTheme.spacing;
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -175,22 +181,22 @@ Widget cardSectionOutsideUseCase(BuildContext context) {
               onPressed: () {},
             ),
           ],
-          child: const Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Name: Alex Morgan',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              SizedBox(height: ThanksSpacing.small),
+              SizedBox(height: spacing.small),
               Text(
                 'Email: alex.morgan@example.com',
-                style: TextStyle(color: ThanksColors.textSecondary),
+                style: TextStyle(color: thanksTheme.textSecondary),
               ),
-              SizedBox(height: ThanksSpacing.small),
+              SizedBox(height: spacing.small),
               Text(
                 'Location: San Francisco, CA',
-                style: TextStyle(color: ThanksColors.textSecondary),
+                style: TextStyle(color: thanksTheme.textSecondary),
               ),
             ],
           ),
@@ -201,8 +207,11 @@ Widget cardSectionOutsideUseCase(BuildContext context) {
 }
 
 Widget cardMetricInsideUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
+  final spacing = thanksTheme.spacing;
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 340),
@@ -215,7 +224,7 @@ Widget cardMetricInsideUseCase(BuildContext context) {
           showDivider: true,
           actions: [
             ThanksButton.icon(
-              icon: const Icon(Icons.trending_up, color: ThanksColors.success),
+              icon: Icon(Icons.trending_up, color: thanksTheme.success.main),
               tooltip: 'Growth indicator',
               variant: ThanksButtonVariant.text,
               onPressed: () {},
@@ -228,13 +237,13 @@ Widget cardMetricInsideUseCase(BuildContext context) {
                 '\$48,250',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: ThanksColors.primary500,
+                  color: thanksTheme.primary.main,
                 ),
               ),
-              ThanksSpacing.spaceSmall,
-              const Text(
+              spacing.spaceSmall,
+              Text(
                 'Target for Q3: \$50,000',
-                style: TextStyle(fontSize: 12, color: ThanksColors.textMuted),
+                style: TextStyle(fontSize: 12, color: thanksTheme.textMuted),
               ),
             ],
           ),
@@ -245,8 +254,11 @@ Widget cardMetricInsideUseCase(BuildContext context) {
 }
 
 Widget cardNestedUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final thanksTheme = ThanksTheme.of(context);
+  final spacing = thanksTheme.spacing;
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 550),
@@ -274,11 +286,11 @@ Widget cardNestedUseCase(BuildContext context) {
                     onPressed: () {},
                   ),
                 ],
-                child: const Text(
+                child: Text(
                   'Includes unlimited seats and dedicated 24/7 SLA support.',
                 ),
               ),
-              ThanksSpacing.spaceMedium,
+              spacing.spaceMedium,
               ThanksCard(
                 title: 'Payment Method',
                 subtitle: 'Visa ending in 4242',
@@ -292,7 +304,7 @@ Widget cardNestedUseCase(BuildContext context) {
                     onPressed: () {},
                   ),
                 ],
-                child: const Text('Default card for automated renewals.'),
+                child: Text('Default card for automated renewals.'),
               ),
             ],
           ),

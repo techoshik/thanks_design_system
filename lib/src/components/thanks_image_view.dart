@@ -1,8 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:thanks_design_system/src/foundations/colors.dart';
 import 'package:thanks_design_system/src/foundations/spacing.dart';
 
 /// Standard shape variants for [ThanksImageView].
@@ -93,10 +91,11 @@ class ThanksImageView extends StatelessWidget {
   BorderRadius _getBorderRadius() {
     return switch (shape) {
       ThanksImageShape.circle => BorderRadius.circular(
-          max(_effectiveWidth, _effectiveHeight),
-        ),
-      ThanksImageShape.rounded =>
-        BorderRadius.circular(borderRadius ?? ThanksSpacing.radiusMedium),
+        max(_effectiveWidth, _effectiveHeight),
+      ),
+      ThanksImageShape.rounded => BorderRadius.circular(
+        borderRadius ?? ThanksSpacing.radiusMedium,
+      ),
       ThanksImageShape.square => BorderRadius.zero,
     };
   }
@@ -105,8 +104,7 @@ class ThanksImageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final clipRadius = _getBorderRadius();
-    final effectiveBg =
-        backgroundColor ?? theme.colorScheme.primaryContainer;
+    final effectiveBg = backgroundColor ?? theme.colorScheme.primaryContainer;
     final onBgColor = theme.colorScheme.onPrimaryContainer;
 
     Widget buildFallback() {
@@ -171,29 +169,20 @@ class ThanksImageView extends StatelessWidget {
       );
     }
 
-    Widget result = ClipRRect(
-      borderRadius: clipRadius,
-      child: content,
-    );
+    Widget result = ClipRRect(borderRadius: clipRadius, child: content);
 
     if (onTap != null) {
       result = ClipRRect(
         borderRadius: clipRadius,
         child: Material(
           color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: result,
-          ),
+          child: InkWell(onTap: onTap, child: result),
         ),
       );
     }
 
     if (semanticLabel != null) {
-      result = Semantics(
-        label: semanticLabel,
-        child: result,
-      );
+      result = Semantics(label: semanticLabel, child: result);
     }
 
     return result;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../foundations/colors.dart';
 import '../foundations/spacing.dart';
 import '../foundations/theme.dart';
 
@@ -170,10 +169,9 @@ class ThanksCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final thanksTheme = theme.extension<ThanksTheme>();
-    final surfaceColor = thanksTheme?.surfaceElevated ?? ThanksColors.surface;
-    final defaultBorderColor = thanksTheme?.borderSubtle ?? ThanksColors.border;
+    final thanksTheme = ThanksTheme.of(context);
+    final surfaceColor = thanksTheme.surface.panel;
+    final defaultBorderColor = thanksTheme.borderSubtle;
     final effectiveBorderColor = borderColor ?? defaultBorderColor;
 
     final effectiveMargin = customMargin ?? margin.insets;
@@ -257,11 +255,11 @@ class ThanksCard extends StatelessWidget {
                     subtitle!,
                     style:
                         textTheme.bodySmall?.copyWith(
-                          color: ThanksColors.textSecondary,
+                          color: ThanksTheme.of(context).textSecondary,
                         ) ??
-                        const TextStyle(
+                        TextStyle(
                           fontSize: 12,
-                          color: ThanksColors.textSecondary,
+                          color: ThanksTheme.of(context).textSecondary,
                         ),
                   ),
               ],

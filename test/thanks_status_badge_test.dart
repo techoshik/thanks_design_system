@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
+import 'package:thanks_design_system/src/foundations/colors.dart';
+import 'package:thanks_design_system/src/foundations/spacing.dart';
 
 /// Wraps [child] in a minimal [MaterialApp] with the Thanks light theme so
 /// that [Theme.of] and [IconTheme] resolve correctly in every test.
@@ -100,14 +102,12 @@ void main() {
   // Default size — small
   // ---------------------------------------------------------------------------
 
-  testWidgets('default size is small — uses extraSmall vertical padding',
-      (tester) async {
+  testWidgets('default size is small — uses extraSmall vertical padding', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildApp(
-        const ThanksStatusBadge(
-          label: 'Active',
-          tone: ThanksBadgeTone.success,
-        ),
+        const ThanksStatusBadge(label: 'Active', tone: ThanksBadgeTone.success),
       ),
     );
 
@@ -131,8 +131,9 @@ void main() {
   // Medium size
   // ---------------------------------------------------------------------------
 
-  testWidgets('medium size uses small vertical and medium horizontal padding',
-      (tester) async {
+  testWidgets('medium size uses small vertical and medium horizontal padding', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildApp(
         const ThanksStatusBadge(
@@ -180,8 +181,9 @@ void main() {
     expect(find.text('Active'), findsOneWidget);
   });
 
-  testWidgets('icon is tinted with tone foreground colour via IconTheme',
-      (tester) async {
+  testWidgets('icon is tinted with tone foreground colour via IconTheme', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildApp(
         const ThanksStatusBadge(
@@ -209,14 +211,12 @@ void main() {
   // Foreground text colour
   // ---------------------------------------------------------------------------
 
-  testWidgets('label text colour matches the tone foreground token',
-      (tester) async {
+  testWidgets('label text colour matches the tone foreground token', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildApp(
-        const ThanksStatusBadge(
-          label: 'Draft',
-          tone: ThanksBadgeTone.warning,
-        ),
+        const ThanksStatusBadge(label: 'Draft', tone: ThanksBadgeTone.warning),
       ),
     );
 

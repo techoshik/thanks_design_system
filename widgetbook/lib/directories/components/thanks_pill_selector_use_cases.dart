@@ -3,6 +3,8 @@ import 'package:thanks_design_system/thanks_design_system.dart';
 import 'package:widgetbook/widgetbook.dart';
 
 Widget pillSelectorPlaygroundUseCase(BuildContext context) {
+  final theme = Theme.of(context);
+  final spacing = ThanksTheme.of(context).spacing;
   final isDense = context.knobs.boolean(label: 'Is Dense', initialValue: false);
   final isExpanded = context.knobs.boolean(
     label: 'Is Expanded',
@@ -10,10 +12,10 @@ Widget pillSelectorPlaygroundUseCase(BuildContext context) {
   );
 
   return Scaffold(
-    backgroundColor: ThanksColors.pageBackground,
+    backgroundColor: theme.scaffoldBackgroundColor,
     body: Center(
       child: Padding(
-        padding: ThanksSpacing.insetMedium,
+        padding: spacing.insetMedium,
         child: _InteractivePillSelector(
           isDense: isDense,
           isExpanded: isExpanded,
@@ -42,6 +44,8 @@ class _InteractivePillSelectorState extends State<_InteractivePillSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = ThanksTheme.of(context).spacing;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -67,10 +71,12 @@ class _InteractivePillSelectorState extends State<_InteractivePillSelector> {
             isExpanded: widget.isExpanded,
           ),
         ),
-        ThanksSpacing.spaceMedium,
+        spacing.spaceMedium,
         Text(
           'Selected filter: $selected',
-          style: const TextStyle(color: ThanksColors.textSecondary),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: ThanksTheme.of(context).textSecondary,
+          ),
         ),
       ],
     );
