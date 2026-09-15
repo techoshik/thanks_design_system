@@ -148,6 +148,7 @@ class ThanksMessageView extends StatelessWidget {
               ThanksButton(
                 label: actionLabel!,
                 leadingIcon: actionIcon,
+                variant: ThanksButtonVariant.outlined,
                 onPressed: onAction,
               ),
             ],

@@ -41,24 +41,27 @@ void main() {
     expect(find.byType(Text), findsOneWidget);
   });
 
-  testWidgets('shows action button when actionLabel and onAction are provided',
-      (tester) async {
-    var tapped = false;
-    await tester.pumpWidget(
-      buildApp(
-        ThanksMessageView(
-          icon: const Icon(Icons.inbox),
-          title: 'No data',
-          actionLabel: 'Refresh',
-          onAction: () => tapped = true,
+  testWidgets(
+    'shows action button when actionLabel and onAction are provided',
+    (tester) async {
+      var tapped = false;
+      await tester.pumpWidget(
+        buildApp(
+          ThanksMessageView(
+            icon: const Icon(Icons.inbox),
+            title: 'No data',
+            actionLabel: 'Refresh',
+            onAction: () => tapped = true,
+          ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('Refresh'), findsOneWidget);
-    await tester.tap(find.text('Refresh'));
-    expect(tapped, isTrue);
-  });
+      expect(find.text('Refresh'), findsOneWidget);
+      expect(find.widgetWithText(OutlinedButton, 'Refresh'), findsOneWidget);
+      await tester.tap(find.text('Refresh'));
+      expect(tapped, isTrue);
+    },
+  );
 
   testWidgets('hides action button when onAction is null', (tester) async {
     await tester.pumpWidget(
@@ -75,7 +78,9 @@ void main() {
     expect(find.byType(ThanksButton), findsNothing);
   });
 
-  testWidgets('action button shows optional leading actionIcon', (tester) async {
+  testWidgets('action button shows optional leading actionIcon', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildApp(
         ThanksMessageView(
@@ -105,19 +110,16 @@ void main() {
   // .loading() factory
   // ---------------------------------------------------------------------------
 
-  testWidgets('loading factory renders a CircularProgressIndicator',
-      (tester) async {
-    await tester.pumpWidget(
-      buildApp(ThanksMessageView.loading()),
-    );
+  testWidgets('loading factory renders a CircularProgressIndicator', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildApp(ThanksMessageView.loading()));
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
   testWidgets('loading factory renders default title', (tester) async {
-    await tester.pumpWidget(
-      buildApp(ThanksMessageView.loading()),
-    );
+    await tester.pumpWidget(buildApp(ThanksMessageView.loading()));
 
     expect(find.text('Loading'), findsOneWidget);
   });
@@ -132,18 +134,14 @@ void main() {
 
   testWidgets('loading factory renders optional message', (tester) async {
     await tester.pumpWidget(
-      buildApp(
-        ThanksMessageView.loading(message: 'This may take a moment.'),
-      ),
+      buildApp(ThanksMessageView.loading(message: 'This may take a moment.')),
     );
 
     expect(find.text('This may take a moment.'), findsOneWidget);
   });
 
   testWidgets('loading factory spinner is 60 × 60', (tester) async {
-    await tester.pumpWidget(
-      buildApp(ThanksMessageView.loading()),
-    );
+    await tester.pumpWidget(buildApp(ThanksMessageView.loading()));
 
     // The spinner is wrapped in a SizedBox(60)
     final spinnerBox = tester.widget<SizedBox>(
@@ -162,12 +160,11 @@ void main() {
   // .error() factory
   // ---------------------------------------------------------------------------
 
-  testWidgets('error factory renders Icons.error_outline and title',
-      (tester) async {
+  testWidgets('error factory renders Icons.error_outline and title', (
+    tester,
+  ) async {
     await tester.pumpWidget(
-      buildApp(
-        ThanksMessageView.error(title: 'Something went wrong'),
-      ),
+      buildApp(ThanksMessageView.error(title: 'Something went wrong')),
     );
 
     expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -187,8 +184,9 @@ void main() {
     expect(find.text('Check your connection.'), findsOneWidget);
   });
 
-  testWidgets('error factory renders action button when onAction is provided',
-      (tester) async {
+  testWidgets('error factory renders action button when onAction is provided', (
+    tester,
+  ) async {
     var retried = false;
     await tester.pumpWidget(
       buildApp(
@@ -200,16 +198,16 @@ void main() {
     );
 
     expect(find.text('Retry'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Retry'), findsOneWidget);
     await tester.tap(find.text('Retry'));
     expect(retried, isTrue);
   });
 
-  testWidgets('error factory hides action button when onAction is null',
-      (tester) async {
+  testWidgets('error factory hides action button when onAction is null', (
+    tester,
+  ) async {
     await tester.pumpWidget(
-      buildApp(
-        ThanksMessageView.error(title: 'Load failed'),
-      ),
+      buildApp(ThanksMessageView.error(title: 'Load failed')),
     );
 
     expect(find.byType(ThanksButton), findsNothing);
@@ -230,9 +228,7 @@ void main() {
   });
 
   testWidgets('error icon is 60 × 60', (tester) async {
-    await tester.pumpWidget(
-      buildApp(ThanksMessageView.error(title: 'Oops')),
-    );
+    await tester.pumpWidget(buildApp(ThanksMessageView.error(title: 'Oops')));
 
     final icon = tester.widget<Icon>(find.byIcon(Icons.error_outline));
     expect(icon.size, 60);
