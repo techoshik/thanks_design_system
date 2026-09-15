@@ -105,6 +105,48 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('custom content removes only the action section top padding',
+      (tester) async {
+    await tester.pumpWidget(buildApp(const SizedBox()));
+
+    ThanksDialog.show<void>(
+      content: const Text('Card content'),
+      actions: [
+        ThanksDialogAction.primary(
+          label: 'Done',
+          onPressed: () => ThanksNavigator.pop(),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    final cardDialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+    expect((cardDialog.actionsPadding as EdgeInsets).top, 0);
+
+    ThanksNavigator.pop();
+    await tester.pumpAndSettle();
+
+    ThanksDialog.show<void>(
+      message: 'Description text',
+      actions: [
+        ThanksDialogAction.primary(
+          label: 'Done',
+          onPressed: () => ThanksNavigator.pop(),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    final messageDialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+    expect(
+      (messageDialog.actionsPadding as EdgeInsets).top,
+      ThanksSpacing.medium,
+    );
+
+    ThanksNavigator.pop();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('dialog without actions has no action section padding', (
     tester,
   ) async {

@@ -175,7 +175,13 @@ abstract final class ThanksDialog {
               content: body,
               actionsPadding: actionWidgets == null
                   ? null
-                  : ThanksSpacing.insetMedium,
+                  : content == null
+                  ? ThanksSpacing.insetMedium
+                  : EdgeInsets.only(
+                      left: ThanksSpacing.medium,
+                      right: ThanksSpacing.medium,
+                      bottom: ThanksSpacing.medium,
+                    ),
               actions: actionWidgets,
             ),
           ),
