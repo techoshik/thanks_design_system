@@ -125,11 +125,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: e194e4d54148a0af9a51e8cfa2ff788e9e165b94
-      url: "https://github.com/techoshik/fit_it"
+      ref: "v0.1.0"
+      resolved-ref: dc34f80424d11dfc3835488ff982daa05d3d938f
+      url: "https://github.com/techoshik/fit_it.git"
     source: git
-    version: "0.0.2"
+    version: "0.1.0"
   fixnum:
     dependency: transitive
     description:
