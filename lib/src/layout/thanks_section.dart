@@ -1,5 +1,5 @@
 import 'package:fit_it/fit_it.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
 
@@ -59,25 +59,30 @@ class ThanksSection extends StatelessWidget {
     final theme = Theme.of(context);
     final hasHeader = title != null || subtitle != null || trailing != null;
 
+    Widget? header;
+    if (hasHeader) {
+      header = ListTile(
+        title: Text(title ?? '', style: theme.textTheme.titleMedium),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              )
+            : null,
+        trailing: trailing,
+      );
+      if (backgroundColor != null) {
+        header = Material(color: Colors.transparent, child: header);
+      }
+    }
+
     Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (hasHeader) ...[
-          ListTile(
-            title: Text(title ?? '', style: theme.textTheme.titleMedium),
-            subtitle: subtitle != null
-                ? Text(
-                    subtitle!,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  )
-                : null,
-            trailing: trailing,
-          ),
-          ThanksSpacing.spaceExtraSmall,
-        ],
+        if (header != null) ...[header, ThanksSpacing.spaceExtraSmall],
         child,
       ],
     );

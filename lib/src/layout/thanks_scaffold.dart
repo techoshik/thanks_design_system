@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
 
@@ -177,26 +177,29 @@ class ThanksScaffold extends StatelessWidget {
       header = ThanksSection(
         maxWidth: null,
         backgroundColor: backgroundColor,
-        child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: leading,
-          minLeadingWidth: leadingSize + ThanksSpacing.medium,
-          title: Text(title!, style: Theme.of(context).textTheme.titleLarge),
-          subtitle: subtitle != null
-              ? Text(
-                  subtitle!,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                )
-              : null,
-          trailing: effectiveActions.isNotEmpty
-              ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: ThanksSpacing.small,
-                  children: effectiveActions,
-                )
-              : null,
+        child: Material(
+          color: Colors.transparent,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: leading,
+            minLeadingWidth: leadingSize + ThanksSpacing.medium,
+            title: Text(title!, style: Theme.of(context).textTheme.titleLarge),
+            subtitle: subtitle != null
+                ? Text(
+                    subtitle!,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  )
+                : null,
+            trailing: effectiveActions.isNotEmpty
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: ThanksSpacing.small,
+                    children: effectiveActions,
+                  )
+                : null,
+          ),
         ),
       );
     }

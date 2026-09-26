@@ -1,5 +1,5 @@
 import 'package:fit_it/fit_it.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import '../foundations/spacing.dart';

@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
-import 'package:thanks_design_system/src/foundations/colors.dart';
-import 'package:thanks_design_system/src/foundations/spacing.dart';
 
 /// Wraps [child] in a minimal [MaterialApp] with the Thanks light theme so
 /// that [Theme.of] and [IconTheme] resolve correctly in every test.
@@ -102,7 +100,7 @@ void main() {
   // Default size — small
   // ---------------------------------------------------------------------------
 
-  testWidgets('default size is small — uses extraSmall vertical padding', (
+  testWidgets('default size is small — uses small horizontal padding', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -119,10 +117,10 @@ void main() {
       BorderRadius.circular(ThanksSpacing.radiusFull),
     );
 
-    // Small: extraSmall vertical, small horizontal
+    // Small: zero vertical, small horizontal
     final padding = container.padding as EdgeInsets;
-    expect(padding.top, ThanksSpacing.extraSmall);
-    expect(padding.bottom, ThanksSpacing.extraSmall);
+    expect(padding.top, 0);
+    expect(padding.bottom, 0);
     expect(padding.left, ThanksSpacing.small);
     expect(padding.right, ThanksSpacing.small);
   });
@@ -131,9 +129,9 @@ void main() {
   // Medium size
   // ---------------------------------------------------------------------------
 
-  testWidgets('medium size uses small vertical and medium horizontal padding', (
-    tester,
-  ) async {
+  testWidgets(
+    'medium size uses extraSmall vertical and medium horizontal padding',
+    (tester) async {
     await tester.pumpWidget(
       buildApp(
         const ThanksStatusBadge(
@@ -146,8 +144,8 @@ void main() {
 
     final container = tester.widget<Container>(find.byType(Container).first);
     final padding = container.padding as EdgeInsets;
-    expect(padding.top, ThanksSpacing.small);
-    expect(padding.bottom, ThanksSpacing.small);
+    expect(padding.top, ThanksSpacing.extraSmall);
+    expect(padding.bottom, ThanksSpacing.extraSmall);
     expect(padding.left, ThanksSpacing.medium);
     expect(padding.right, ThanksSpacing.medium);
   });

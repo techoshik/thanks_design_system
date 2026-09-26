@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:thanks_design_system/thanks_design_system.dart';
 
 Widget colorsUseCase(BuildContext context) {

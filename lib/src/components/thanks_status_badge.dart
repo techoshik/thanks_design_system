@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../foundations/spacing.dart';
 import '../foundations/theme.dart';
@@ -28,13 +28,13 @@ enum ThanksBadgeTone {
 enum ThanksBadgeSize {
   /// Compact pill — suitable for table rows, list tiles, and inline chips.
   ///
-  /// Padding: [ThanksSpacing.extraSmall] vertical × [ThanksSpacing.small]
-  /// horizontal. Text: [TextTheme.labelMedium]. Icon size: 12.
+  /// Padding: zero vertical × [ThanksSpacing.small] horizontal. Text:
+  /// [TextTheme.labelMedium]. Icon size: 12.
   small,
 
   /// Standard pill — suitable for cards and prominent status indicators.
   ///
-  /// Padding: [ThanksSpacing.small] vertical × [ThanksSpacing.medium]
+  /// Padding: [ThanksSpacing.extraSmall] vertical × [ThanksSpacing.medium]
   /// horizontal. Text: [TextTheme.labelLarge]. Icon size: 14.
   medium,
 }

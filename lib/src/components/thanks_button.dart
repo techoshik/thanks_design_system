@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fit_it/fit_it.dart';
 
 import '../foundations/spacing.dart';

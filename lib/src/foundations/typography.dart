@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The production type scale, backed by the package-provided DM Sans font.
 abstract final class ThanksTypography {
