@@ -24,3 +24,5 @@ export 'src/layout/thanks_scaffold.dart';
 export 'src/layout/thanks_section.dart';
 export 'src/logging/thanks_log.dart';
 export 'src/navigation/thanks_navigator.dart';
+export 'src/components/thanks_date_range_picker.dart';
+export 'src/components/thanks_date_range_picker_button.dart';
