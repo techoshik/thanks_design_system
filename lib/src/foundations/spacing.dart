@@ -44,18 +44,29 @@ abstract final class ThanksSpacing {
   static const spaceMedium = SizedBox.square(dimension: medium);
 
   static const insetExtraSmall = EdgeInsets.all(extraSmall);
+
   static const insetSmall = EdgeInsets.all(small);
+  static const insetSmallHorizontal = EdgeInsets.symmetric(horizontal: small);
+  static const insetSmallVertical = EdgeInsets.symmetric(vertical: small);
+  static const insetSmallTop0 = EdgeInsets.fromLTRB(small, 0, small, small);
+  static const insetSmallBottom0 = EdgeInsets.fromLTRB(small, small, small, 0);
   static const insetSmallWithLeftMedium = EdgeInsets.fromLTRB(
     medium,
     small,
     small,
     small,
   );
-  static const insetMedium = EdgeInsets.all(medium);
 
-  static const insetSmallHorizontal = EdgeInsets.symmetric(horizontal: small);
+  static const insetMedium = EdgeInsets.all(medium);
   static const insetMediumHorizontal = EdgeInsets.symmetric(horizontal: medium);
   static const insetMediumVertical = EdgeInsets.symmetric(vertical: medium);
+  static const insetMediumTop0 = EdgeInsets.fromLTRB(medium, 0, medium, medium);
+  static const insetMediumBottom0 = EdgeInsets.fromLTRB(
+    medium,
+    medium,
+    medium,
+    0,
+  );
   static const insetMediumWithFab = EdgeInsets.fromLTRB(
     medium,
     medium,

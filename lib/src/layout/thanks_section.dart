@@ -1,5 +1,6 @@
 import 'package:fit_it/fit_it.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
 
@@ -8,7 +9,7 @@ import '../foundations/spacing.dart';
 /// A standard content section container with consistent vertical spacing,
 /// responsive horizontal gutters, optional maximum width constraints,
 /// and optional header with title, subtitle, and trailing action.
-class ThanksSection extends StatelessWidget {
+class ThanksSection extends HookConsumerWidget {
   const ThanksSection({
     super.key,
     this.title,
@@ -55,7 +56,9 @@ class ThanksSection extends StatelessWidget {
   final Color? backgroundColor;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final size = useFitSize();
+
     final theme = Theme.of(context);
     final hasHeader = title != null || subtitle != null || trailing != null;
 
@@ -89,7 +92,7 @@ class ThanksSection extends StatelessWidget {
 
     if (enableGutter) {
       content = Padding(
-        padding: EdgeInsets.symmetric(horizontal: _horizontalGutter(context)),
+        padding: EdgeInsets.symmetric(horizontal: _horizontalGutter(size)),
         child: content,
       );
     }
@@ -114,11 +117,8 @@ class ThanksSection extends StatelessWidget {
     return content;
   }
 
-  double _horizontalGutter(BuildContext context) {
-    final size = FitSize.parse(MediaQuery.sizeOf(context).width);
-    return size.isDesktopOrAbove
-        ? ThanksSpacing.medium * 4
-        : size.isTabletOrAbove
+  double _horizontalGutter(FitSize size) {
+    return size.isTabletOrAbove
         ? ThanksSpacing.medium * 2
         : ThanksSpacing.medium;
   }

@@ -1,3 +1,4 @@
+import 'package:fit_it/fit_it.dart';
 import 'package:material_ui/material_ui.dart';
 
 export 'package:fit_it/fit_it.dart' show FitContainer, FitIt, FitSize;
@@ -6,6 +7,8 @@ import '../components/thanks_button.dart';
 import '../foundations/spacing.dart';
 import '../foundations/theme.dart';
 import 'thanks_section.dart';
+
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// Controls how [ThanksScaffold.filters] are presented.
 enum ThanksFilterDisplayMode {
@@ -67,7 +70,7 @@ class ThanksScaffoldController {
 /// navigation control. Otherwise, if [drawer] is available, a menu button is
 /// shown. Supply [controller] when a custom widget needs to open or close either
 /// drawer programmatically.
-class ThanksScaffold extends StatelessWidget {
+class ThanksScaffold extends HookConsumerWidget {
   const ThanksScaffold({
     super.key,
     this.controller,
@@ -113,107 +116,14 @@ class ThanksScaffold extends StatelessWidget {
   final Color? backgroundColor;
 
   @override
-  Widget build(BuildContext context) {
-    final thanksTheme = ThanksTheme.of(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isMobile = useFitSize().isMobile;
     final showFiltersInBottomSheet = _showFiltersInBottomSheet(context);
 
     final hasBackButton =
         title != null &&
         showBackButton &&
         (onBackPressed != null || Navigator.of(context).canPop());
-
-    Widget? header;
-    if (title != null) {
-      final hasDrawer = drawer != null;
-      const double leadingSize = ThanksSpacing.inputHeight;
-
-      final leadingButtonStyle = IconButton.styleFrom(
-        shape: const StadiumBorder(),
-        backgroundColor: thanksTheme.surface.panel,
-        foregroundColor: Theme.of(context).colorScheme.primary,
-        fixedSize: const Size.square(leadingSize),
-        minimumSize: const Size.square(leadingSize),
-        padding: EdgeInsets.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      );
-
-      Widget? leading;
-      if (hasBackButton) {
-        leading = IconButton.filledTonal(
-          tooltip: 'Back',
-          icon: const Icon(Icons.arrow_back),
-          style: leadingButtonStyle,
-          onPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
-        );
-      } else if (hasDrawer) {
-        leading = Builder(
-          builder: (buttonContext) => IconButton.filledTonal(
-            tooltip: 'Open menu',
-            icon: const Icon(Icons.menu_rounded),
-            style: leadingButtonStyle,
-            onPressed: () {
-              if (controller != null) {
-                controller!.openDrawer();
-              } else {
-                Scaffold.of(buttonContext).openDrawer();
-              }
-            },
-          ),
-        );
-      }
-
-      final effectiveActions = [
-        ...actions,
-        if (showFiltersInBottomSheet)
-          Builder(
-            builder: (buttonContext) => IconButton(
-              tooltip: 'Show filters',
-              icon: const Icon(Icons.filter_list_rounded),
-              onPressed: () => _showFiltersBottomSheet(buttonContext),
-            ),
-          ),
-      ];
-
-      header = ThanksSection(
-        maxWidth: null,
-        backgroundColor: backgroundColor,
-        child: Material(
-          color: Colors.transparent,
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: leading,
-            minLeadingWidth: leadingSize + ThanksSpacing.medium,
-            title: Text(title!, style: Theme.of(context).textTheme.titleLarge),
-            subtitle: subtitle != null
-                ? Text(
-                    subtitle!,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  )
-                : null,
-            trailing: effectiveActions.isNotEmpty
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: ThanksSpacing.small,
-                    children: effectiveActions,
-                  )
-                : null,
-          ),
-        ),
-      );
-    }
-
-    final inlineFilters = filters.isNotEmpty && !showFiltersInBottomSheet
-        ? ThanksSection(
-            maxWidth: null,
-            child: Wrap(
-              spacing: ThanksSpacing.medium,
-              runSpacing: ThanksSpacing.medium,
-              children: filters,
-            ),
-          )
-        : null;
 
     return Scaffold(
       key: controller?._scaffoldKey,
@@ -226,8 +136,32 @@ class ThanksScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ?header,
-            ?inlineFilters,
+            if (!isMobile) const SizedBox(height: ThanksSpacing.medium),
+
+            if (title != null) ...[
+              _Header(
+                title: title!,
+                subtitle: subtitle,
+                actions: actions,
+                hasBackButton: hasBackButton,
+                onBackPressed: onBackPressed,
+                hasDrawer: drawer != null,
+                controller: controller,
+                showFiltersInBottomSheet: showFiltersInBottomSheet,
+                onShowFiltersPressed: _showFiltersBottomSheet,
+                backgroundColor: backgroundColor,
+              ),
+            ],
+
+            if (filters.isNotEmpty && !showFiltersInBottomSheet)
+              ThanksSection(
+                child: Wrap(
+                  spacing: ThanksSpacing.medium,
+                  runSpacing: ThanksSpacing.medium,
+                  children: filters,
+                ),
+              ),
+
             Expanded(child: body ?? const SizedBox.shrink()),
           ],
         ),
@@ -253,6 +187,126 @@ class ThanksScaffold extends StatelessWidget {
       builder: (sheetContext) => _ThanksFiltersBottomSheet(
         filters: filters,
         spacing: ThanksSpacing.medium,
+      ),
+    );
+  }
+}
+
+class _Header extends HookConsumerWidget {
+  const _Header({
+    required this.title,
+    this.subtitle,
+    required this.actions,
+    required this.hasBackButton,
+    this.onBackPressed,
+    required this.hasDrawer,
+    this.controller,
+    required this.showFiltersInBottomSheet,
+    required this.onShowFiltersPressed,
+    this.backgroundColor,
+  });
+
+  final String title;
+  final String? subtitle;
+  final List<Widget> actions;
+  final bool hasBackButton;
+  final VoidCallback? onBackPressed;
+  final bool hasDrawer;
+  final ThanksScaffoldController? controller;
+  final bool showFiltersInBottomSheet;
+  final void Function(BuildContext) onShowFiltersPressed;
+  final Color? backgroundColor;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final thanksTheme = ThanksTheme.of(context);
+    const double leadingSize = ThanksSpacing.inputHeight;
+
+    final leadingButtonStyle = IconButton.styleFrom(
+      shape: const StadiumBorder(),
+      backgroundColor: thanksTheme.surface.panel,
+      foregroundColor: Theme.of(context).colorScheme.primary,
+      fixedSize: const Size.square(leadingSize),
+      minimumSize: const Size.square(leadingSize),
+      padding: EdgeInsets.zero,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+
+    Widget? leading;
+    if (hasBackButton) {
+      leading = IconButton.filledTonal(
+        tooltip: 'Back',
+        icon: const Icon(Icons.arrow_back),
+        style: leadingButtonStyle,
+        onPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
+      );
+    } else if (hasDrawer) {
+      leading = Builder(
+        builder: (buttonContext) => IconButton.filledTonal(
+          tooltip: 'Open menu',
+          icon: const Icon(Icons.menu_rounded),
+          style: leadingButtonStyle,
+          onPressed: () {
+            if (controller != null) {
+              controller!.openDrawer();
+            } else {
+              Scaffold.of(buttonContext).openDrawer();
+            }
+          },
+        ),
+      );
+    }
+
+    final effectiveActions = [
+      ...actions,
+      if (showFiltersInBottomSheet)
+        Builder(
+          builder: (buttonContext) => IconButton(
+            tooltip: 'Show filters',
+            icon: const Icon(Icons.filter_list_rounded),
+            onPressed: () => onShowFiltersPressed(buttonContext),
+          ),
+        ),
+    ];
+
+    return ThanksSection(
+      backgroundColor: backgroundColor,
+      child: Row(
+        crossAxisAlignment: subtitle != null
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
+        children: [
+          if (leading != null) ...[
+            leading,
+            const SizedBox(width: ThanksSpacing.medium),
+          ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleLarge),
+                if (subtitle != null) ...[
+                  const SizedBox(height: ThanksSpacing.extraSmall),
+                  Text(
+                    subtitle!,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (effectiveActions.isNotEmpty) ...[
+            const SizedBox(width: ThanksSpacing.medium),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: ThanksSpacing.small,
+              children: effectiveActions,
+            ),
+          ],
+        ],
       ),
     );
   }
