@@ -333,6 +333,7 @@ class ThanksTheme extends ThemeExtension<ThanksTheme> {
         margin: EdgeInsets.zero,
       ),
       listTileTheme: ListTileThemeData(
+        tileColor: Colors.transparent,
         titleTextStyle: textTheme.titleSmall,
         textColor: ThanksColors.textPrimary,
         contentPadding: const EdgeInsets.only(
