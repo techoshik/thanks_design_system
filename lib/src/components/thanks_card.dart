@@ -317,7 +317,7 @@ class ThanksCard extends StatelessWidget {
           borderRadius: borderRadius,
           side: border == null ? BorderSide.none : border.top,
         ),
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: Clip.hardEdge,
         child: InkWell(
           onTap: onTap,
           borderRadius: borderRadius.resolve(Directionality.of(context)),
@@ -332,9 +332,7 @@ class ThanksCard extends StatelessWidget {
         border: border,
         borderRadius: borderRadius,
       ),
-      clipBehavior: variant == ThanksCardVariant.none
-          ? Clip.none
-          : Clip.antiAlias,
+      clipBehavior: Clip.hardEdge,
       child: content,
     );
   }
