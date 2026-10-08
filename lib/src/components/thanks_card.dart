@@ -101,7 +101,7 @@ class ThanksCard extends StatelessWidget {
     this.variant = ThanksCardVariant.none,
     this.padding = ThanksCardSpacing.none,
     this.margin = ThanksCardSpacing.none,
-    this.radius = ThanksCardSpacing.medium,
+    this.radius = ThanksCardSpacing.small,
     this.customPadding,
     this.customMargin,
     this.customBorderRadius,
