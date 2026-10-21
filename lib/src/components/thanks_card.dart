@@ -243,7 +243,7 @@ class ThanksCard extends StatelessWidget {
       ThanksSpacing.medium,
       ThanksSpacing.medium,
       ThanksSpacing.medium,
-      headerPosition == .inside ? ThanksSpacing.medium : ThanksSpacing.small,
+      ThanksSpacing.small,
     );
 
     return Padding(
