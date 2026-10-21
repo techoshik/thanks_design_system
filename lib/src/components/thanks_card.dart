@@ -262,13 +262,27 @@ class ThanksCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (title != null) Text(title!, style: textTheme.titleMedium),
-                  if (subtitle != null)
-                    Text(
-                      subtitle!,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: ThanksTheme.of(context).textSecondary,
-                      ),
+                  if (title != null || titleWidget != null)
+                    Row(
+                      spacing: ThanksSpacing.medium,
+                      children: [
+                        Text(title!, style: textTheme.titleMedium),
+                        ?titleWidget,
+                      ],
+                    ),
+
+                  if (subtitle != null || subtitleWidget != null)
+                    Row(
+                      spacing: ThanksSpacing.medium,
+                      children: [
+                        Text(
+                          subtitle!,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: ThanksTheme.of(context).textSecondary,
+                          ),
+                        ),
+                        ?subtitleWidget,
+                      ],
                     ),
                 ],
               ),
