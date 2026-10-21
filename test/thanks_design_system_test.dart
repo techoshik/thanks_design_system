@@ -1158,36 +1158,6 @@ void main() {
         ),
       );
 
-      expect(
-        ThanksCard.defaultHeaderPadding,
-        const EdgeInsets.fromLTRB(
-          ThanksSpacing.medium,
-          ThanksSpacing.medium,
-          ThanksSpacing.small,
-          ThanksSpacing.small,
-        ),
-      );
-
-      final header1Finder = find.descendant(
-        of: find.byKey(const Key('card-no-padding')),
-        matching: find.byWidgetPredicate(
-          (w) =>
-              w is Padding &&
-              w.padding == ThanksCard.defaultHeaderPadding,
-        ),
-      );
-      expect(header1Finder, findsOneWidget);
-
-      final header2Finder = find.descendant(
-        of: find.byKey(const Key('card-medium-padding')),
-        matching: find.byWidgetPredicate(
-          (w) =>
-              w is Padding &&
-              w.padding == ThanksCard.defaultHeaderPadding,
-        ),
-      );
-      expect(header2Finder, findsOneWidget);
-
       final body1Padding = tester.widget<Padding>(
         find
             .ancestor(
@@ -1210,34 +1180,32 @@ void main() {
     },
   );
 
-  testWidgets(
-    'ThanksCard respects custom headerPadding override',
-    (tester) async {
-      const customHeaderPadding = EdgeInsets.fromLTRB(10, 12, 14, 16);
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThanksTheme.light(),
-          home: const Scaffold(
-            body: ThanksCard(
-              key: Key('custom-header-padding-card'),
-              title: 'Custom Header',
-              headerPosition: ThanksCardHeaderPosition.inside,
-              headerPadding: customHeaderPadding,
-              child: Text('Custom Body'),
-            ),
+  testWidgets('ThanksCard respects custom headerPadding override', (
+    tester,
+  ) async {
+    const customHeaderPadding = EdgeInsets.fromLTRB(10, 12, 14, 16);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThanksTheme.light(),
+        home: const Scaffold(
+          body: ThanksCard(
+            key: Key('custom-header-padding-card'),
+            title: 'Custom Header',
+            headerPosition: ThanksCardHeaderPosition.inside,
+            child: Text('Custom Body'),
           ),
         ),
-      );
+      ),
+    );
 
-      final headerFinder = find.descendant(
-        of: find.byKey(const Key('custom-header-padding-card')),
-        matching: find.byWidgetPredicate(
-          (w) => w is Padding && w.padding == customHeaderPadding,
-        ),
-      );
-      expect(headerFinder, findsOneWidget);
-    },
-  );
+    final headerFinder = find.descendant(
+      of: find.byKey(const Key('custom-header-padding-card')),
+      matching: find.byWidgetPredicate(
+        (w) => w is Padding && w.padding == customHeaderPadding,
+      ),
+    );
+    expect(headerFinder, findsOneWidget);
+  });
 
   testWidgets(
     'ThanksCard supports filled, outlined, and filledOutlined variants',

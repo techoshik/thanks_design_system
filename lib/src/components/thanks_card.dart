@@ -98,9 +98,12 @@ class ThanksCard extends StatelessWidget {
     this.padding = .none,
     this.margin = .none,
     this.radius = .none,
-    this.title,
-    this.subtitle,
     this.headerPosition = ThanksCardHeaderPosition.outside,
+    this.leadingWidget,
+    this.title,
+    this.titleWidget,
+    this.subtitle,
+    this.subtitleWidget,
     this.actions = const [],
     this.customPadding,
     this.customMargin,
@@ -114,11 +117,15 @@ class ThanksCard extends StatelessWidget {
   /// The primary content rendered inside the card.
   final Widget child;
 
+  final Widget? leadingWidget;
+
   /// The header title displayed in the card header.
   final String? title;
+  final Widget? titleWidget;
 
   /// The secondary text displayed beneath [title].
   final String? subtitle;
+  final Widget? subtitleWidget;
 
   /// Action widgets rendered to the right of [title] and [subtitle].
   final List<Widget> actions;
@@ -244,6 +251,11 @@ class ThanksCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          if (leadingWidget != null) ...[
+            ?leadingWidget,
+            ThanksSpacing.spaceMedium,
+          ],
+
           if (title != null || subtitle != null)
             Expanded(
               child: Column(
@@ -263,8 +275,9 @@ class ThanksCard extends StatelessWidget {
             )
           else
             const Spacer(),
+
           if (actions.isNotEmpty) ...[
-            if (title != null || subtitle != null) ThanksSpacing.spaceSmall,
+            ThanksSpacing.spaceSmall,
             Row(
               mainAxisSize: MainAxisSize.min,
               spacing: ThanksSpacing.small,
