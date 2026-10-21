@@ -92,16 +92,16 @@ enum ThanksCardHeaderPosition {
 /// and nested widgets.
 class ThanksCard extends StatelessWidget {
   const ThanksCard({
-    required this.child,
     super.key,
+    required this.child,
+    this.variant = .none,
+    this.padding = .none,
+    this.margin = .none,
+    this.radius = .none,
     this.title,
     this.subtitle,
-    this.actions = const [],
     this.headerPosition = ThanksCardHeaderPosition.outside,
-    this.variant = ThanksCardVariant.none,
-    this.padding = ThanksCardSpacing.none,
-    this.margin = ThanksCardSpacing.none,
-    this.radius = ThanksCardSpacing.small,
+    this.actions = const [],
     this.customPadding,
     this.customMargin,
     this.customBorderRadius,
@@ -183,7 +183,7 @@ class ThanksCard extends StatelessWidget {
     final isInsideHeader =
         _hasHeader && headerPosition == ThanksCardHeaderPosition.inside;
 
-    Widget surfaceContent = child;
+    Widget surfaceContent;
 
     if (isInsideHeader) {
       final headerWidget = _buildHeader(context);
@@ -192,20 +192,13 @@ class ThanksCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           headerWidget,
-          if (showDivider) ...[
-            ThanksSpacing.spaceSmall,
-            Divider(color: effectiveBorderColor, height: 1),
-            ThanksSpacing.spaceSmall,
-          ] else ...[
-            ThanksSpacing.spaceSmall,
-          ],
-          child,
+          if (showDivider) Divider(color: effectiveBorderColor, height: 1),
+          Padding(padding: effectivePadding, child: child),
         ],
       );
+    } else {
+      surfaceContent = Padding(padding: effectivePadding, child: child);
     }
-
-    // Apply internal padding
-    surfaceContent = Padding(padding: effectivePadding, child: surfaceContent);
 
     // Build the visual card surface
     final surface = _buildSurface(
@@ -224,7 +217,7 @@ class ThanksCard extends StatelessWidget {
       rootWidget = Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [headerWidget, ThanksSpacing.spaceSmall, surface],
+        children: [headerWidget, surface],
       );
     } else {
       rootWidget = surface;
@@ -239,43 +232,47 @@ class ThanksCard extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final defaultHeaderPadding = EdgeInsets.fromLTRB(
+      ThanksSpacing.medium,
+      ThanksSpacing.medium,
+      ThanksSpacing.medium,
+      headerPosition == .inside ? ThanksSpacing.medium : ThanksSpacing.small,
+    );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (title != null || subtitle != null)
-          Expanded(
-            child: Column(
+    return Padding(
+      padding: defaultHeaderPadding,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (title != null || subtitle != null)
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (title != null) Text(title!, style: textTheme.titleMedium),
+                  if (subtitle != null)
+                    Text(
+                      subtitle!,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: ThanksTheme.of(context).textSecondary,
+                      ),
+                    ),
+                ],
+              ),
+            )
+          else
+            const Spacer(),
+          if (actions.isNotEmpty) ...[
+            if (title != null || subtitle != null) ThanksSpacing.spaceSmall,
+            Row(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (title != null) Text(title!, style: textTheme.titleMedium),
-                if (subtitle != null)
-                  Text(
-                    subtitle!,
-                    style:
-                        textTheme.bodySmall?.copyWith(
-                          color: ThanksTheme.of(context).textSecondary,
-                        ) ??
-                        TextStyle(
-                          fontSize: 12,
-                          color: ThanksTheme.of(context).textSecondary,
-                        ),
-                  ),
-              ],
+              spacing: ThanksSpacing.small,
+              children: actions,
             ),
-          )
-        else
-          const Spacer(),
-        if (actions.isNotEmpty) ...[
-          if (title != null || subtitle != null) ThanksSpacing.spaceSmall,
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: ThanksSpacing.small,
-            children: actions,
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 

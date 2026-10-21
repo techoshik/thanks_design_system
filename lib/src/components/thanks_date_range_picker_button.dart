@@ -43,7 +43,6 @@ class ThanksDateRangePickerButton extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       variant: ThanksCardVariant.outlined,
       radius: ThanksCardSpacing.small,
-      padding: ThanksCardSpacing.none,
       child: Row(
         mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
         children: [

@@ -1130,6 +1130,116 @@ void main() {
   );
 
   testWidgets(
+    'ThanksCard applies header padding (left/top medium, bottom/right small) irrespective of view padding',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const Scaffold(
+            body: Column(
+              children: [
+                ThanksCard(
+                  key: Key('card-no-padding'),
+                  title: 'Header 1',
+                  headerPosition: ThanksCardHeaderPosition.inside,
+                  padding: ThanksCardSpacing.none,
+                  child: Text('Body 1', key: Key('body-1')),
+                ),
+                ThanksCard(
+                  key: Key('card-medium-padding'),
+                  title: 'Header 2',
+                  headerPosition: ThanksCardHeaderPosition.inside,
+                  padding: ThanksCardSpacing.medium,
+                  child: Text('Body 2', key: Key('body-2')),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        ThanksCard.defaultHeaderPadding,
+        const EdgeInsets.fromLTRB(
+          ThanksSpacing.medium,
+          ThanksSpacing.medium,
+          ThanksSpacing.small,
+          ThanksSpacing.small,
+        ),
+      );
+
+      final header1Finder = find.descendant(
+        of: find.byKey(const Key('card-no-padding')),
+        matching: find.byWidgetPredicate(
+          (w) =>
+              w is Padding &&
+              w.padding == ThanksCard.defaultHeaderPadding,
+        ),
+      );
+      expect(header1Finder, findsOneWidget);
+
+      final header2Finder = find.descendant(
+        of: find.byKey(const Key('card-medium-padding')),
+        matching: find.byWidgetPredicate(
+          (w) =>
+              w is Padding &&
+              w.padding == ThanksCard.defaultHeaderPadding,
+        ),
+      );
+      expect(header2Finder, findsOneWidget);
+
+      final body1Padding = tester.widget<Padding>(
+        find
+            .ancestor(
+              of: find.byKey(const Key('body-1')),
+              matching: find.byType(Padding),
+            )
+            .first,
+      );
+      expect(body1Padding.padding, EdgeInsets.zero);
+
+      final body2Padding = tester.widget<Padding>(
+        find
+            .ancestor(
+              of: find.byKey(const Key('body-2')),
+              matching: find.byType(Padding),
+            )
+            .first,
+      );
+      expect(body2Padding.padding, const EdgeInsets.all(ThanksSpacing.medium));
+    },
+  );
+
+  testWidgets(
+    'ThanksCard respects custom headerPadding override',
+    (tester) async {
+      const customHeaderPadding = EdgeInsets.fromLTRB(10, 12, 14, 16);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThanksTheme.light(),
+          home: const Scaffold(
+            body: ThanksCard(
+              key: Key('custom-header-padding-card'),
+              title: 'Custom Header',
+              headerPosition: ThanksCardHeaderPosition.inside,
+              headerPadding: customHeaderPadding,
+              child: Text('Custom Body'),
+            ),
+          ),
+        ),
+      );
+
+      final headerFinder = find.descendant(
+        of: find.byKey(const Key('custom-header-padding-card')),
+        matching: find.byWidgetPredicate(
+          (w) => w is Padding && w.padding == customHeaderPadding,
+        ),
+      );
+      expect(headerFinder, findsOneWidget);
+    },
+  );
+
+  testWidgets(
     'ThanksCard supports filled, outlined, and filledOutlined variants',
     (tester) async {
       await tester.pumpWidget(
