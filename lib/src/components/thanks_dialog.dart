@@ -109,6 +109,7 @@ abstract final class ThanksDialog {
                 variant: ThanksCardVariant.filledOutlined,
                 padding: contentCardPadding,
                 margin: ThanksCardSpacing.none,
+                radius: .small,
                 child: content,
               );
         final actionWidgets = actions.isEmpty
